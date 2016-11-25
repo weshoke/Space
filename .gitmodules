@@ -1,0 +1,3 @@
+[submodule "vendor/brigand"]
+	path = vendor/brigand
+	url = https://github.com/edouarda/brigand
