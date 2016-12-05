@@ -23,6 +23,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A802F34A1DF4F6F10038AAED /* product.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = product.hpp; sourceTree = "<group>"; };
+		A874769C1DEB727000F4696C /* unique.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = unique.hpp; sourceTree = "<group>"; };
 		A8DDCF741DE8E72D00F7F876 /* Space */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Space; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8DDCF771DE8E72D00F7F876 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A8DDCF811DE8E76C00F7F876 /* fusion.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = fusion.hpp; sourceTree = "<group>"; };
@@ -231,6 +233,7 @@
 				A8DDCF971DE8E76C00F7F876 /* merge.hpp */,
 				A8DDCF981DE8E76C00F7F876 /* none.hpp */,
 				A8DDCF991DE8E76C00F7F876 /* partition.hpp */,
+				A802F34A1DF4F6F10038AAED /* product.hpp */,
 				A8DDCF9A1DE8E76C00F7F876 /* remove.hpp */,
 				A8DDCF9B1DE8E76C00F7F876 /* replace.hpp */,
 				A8DDCF9C1DE8E76C00F7F876 /* reverse.hpp */,
@@ -239,6 +242,7 @@
 				A8DDCF9F1DE8E76C00F7F876 /* split.hpp */,
 				A8DDCFA01DE8E76C00F7F876 /* split_at.hpp */,
 				A8DDCFA11DE8E76C00F7F876 /* transform.hpp */,
+				A874769C1DEB727000F4696C /* unique.hpp */,
 				A8DDCFA21DE8E76C00F7F876 /* wrap.hpp */,
 			);
 			path = algorithms;
@@ -464,7 +468,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				APP_DIR = "$(SRCROOT)";
 				BRIGAND_DIR = "$(VENDOR_DIR)/brigand";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -499,6 +503,11 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fno-elide-type",
+					"-fdiagnostics-show-template-tree",
+				);
 				ROOT_DIR = "$(APP_DIR)/../..";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$(BRIGAND_DIR)";
@@ -512,7 +521,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				APP_DIR = "$(SRCROOT)";
 				BRIGAND_DIR = "$(VENDOR_DIR)/brigand";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -540,6 +549,11 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fno-elide-type",
+					"-fdiagnostics-show-template-tree",
+				);
 				ROOT_DIR = "$(APP_DIR)/../..";
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "$(BRIGAND_DIR)";
@@ -580,6 +594,7 @@
 				A8DDCF7D1DE8E72D00F7F876 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
