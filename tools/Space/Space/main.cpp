@@ -123,43 +123,6 @@ namespace space
 		using Bits = Bits<uint16_t>;
 	};
 	
-	template<uint16_t Idx>
-	struct Index : public brigand::uint16_t<Idx> {};
-	
-	template<uint16_t B>
-	struct Base : public brigand::uint16_t<B> {};
-
-	template<class List>
-	using count_list = brigand::make_sequence<brigand::uint16_t<0>, brigand::size<List>::value>;
-	
-	template<class B>
-	struct make_index
-	{
-		using type = Index<B::value>;
-	};
-	
-	template<class B>
-	struct make_base
-	{
-		using type = Base<B::value>;
-	};
-	
-	namespace
-	{
-		template<class List>
-		using index_bases_idx = brigand::transform<count_list<List>, make_index<brigand::_1>>;
-		
-		template<class List>
-		using index_bases_bases = brigand::transform<List, make_base<brigand::_1>>;
-	}
-	
-	template<class List>
-	struct IndexBases : public
-		brigand::type_<brigand::transform<index_bases_idx<List>, index_bases_bases<List>, brigand::pair_wrapper_<brigand::_1, brigand::_2>>>
-	{
-	
-	};
-	
 	
 	template<class A_, class B_>
 	struct GpOp : public brigand::bitxor_<A_, B_>
@@ -173,38 +136,6 @@ namespace space
 			return Bits<uint16_t>::HasSignFlip(A::value, B::value) ? T(-1) : T(1);
 		}
 	};
-	
-	template<class V>
-	struct to_uint16_t
-	{
-		using type = brigand::uint16_t<V::value>;
-	};
-	
-//	template<class Indices1>
-//	struct Op;
-//	
-//	template<template<class...> class Indices1, class... Idx1>
-//	struct Op<Indices1<Idx1...>>
-//	{
-//		template<class A>
-//		static constexpr auto op(const A& a)
-//		{
-//			// TODO: use brigand::for_each
-//			float res = 0;
-//			using expand_variadic_pack  = float[]; // dirty trick, see below
-//			(void)expand_variadic_pack{0.f, ((res += Idx1::value), void(), 0.f)... };
-//			// first void: silence variable unused warning
-//			// uses braced-init-list initialization rules, which evaluates
-//			//  the elements inside a braced-init-list IN ORDER, to repetetively
-//			//  execute a certain operation
-//			// second void is to prevent malicious "operator," overloads, which
-//			//  cannot exist for void types
-//			// 0 at the end is to handle empty variadic pack (zero-size array initializer is illegal.
-//			return res;
-//			
-//		}
-//	};
-
 	
 	template<class L>
 	struct CalcX {};
