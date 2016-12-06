@@ -24,6 +24,7 @@
 
 /* Begin PBXFileReference section */
 		A802F34A1DF4F6F10038AAED /* product.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = product.hpp; sourceTree = "<group>"; };
+		A827EFB41DF6A5F600C2BBAC /* group.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = group.hpp; sourceTree = "<group>"; };
 		A874769C1DEB727000F4696C /* unique.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = unique.hpp; sourceTree = "<group>"; };
 		A8DDCF741DE8E72D00F7F876 /* Space */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Space; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8DDCF771DE8E72D00F7F876 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -228,6 +229,7 @@
 				A8DDCF921DE8E76C00F7F876 /* fold.hpp */,
 				A8DDCF931DE8E76C00F7F876 /* for_each.hpp */,
 				A8DDCF941DE8E76C00F7F876 /* for_each_args.hpp */,
+				A827EFB41DF6A5F600C2BBAC /* group.hpp */,
 				A8DDCF951DE8E76C00F7F876 /* index_of.hpp */,
 				A8DDCF961DE8E76C00F7F876 /* is_set.hpp */,
 				A8DDCF971DE8E76C00F7F876 /* merge.hpp */,

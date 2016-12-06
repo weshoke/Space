@@ -22,10 +22,12 @@
 #include "brigand/algorithms/sort.hpp"
 #include "brigand/algorithms/unique.hpp"
 #include "brigand/algorithms/product.hpp"
+#include "brigand/algorithms/group.hpp"
 #include "brigand/algorithms/partition.hpp"
 #include "brigand/algorithms/replace.hpp"
 #include "brigand/algorithms/count.hpp"
 #include "brigand/functions/misc.hpp"
+#include "brigand/functions/arithmetic.hpp"
 #include "brigand/functions/comparisons.hpp"
 #include "brigand/functions/bitwise.hpp"
 #include "brigand/functions/logical.hpp"
@@ -87,7 +89,6 @@ std::string pretty_demangle(const char* name)
 	}
 	return ss.str();
 }
-
 
 namespace space
 {
@@ -179,28 +180,76 @@ namespace space
 		using type = brigand::uint16_t<V::value>;
 	};
 	
-	template<class Indices1>
-	struct Op;
+//	template<class Indices1>
+//	struct Op;
+//	
+//	template<template<class...> class Indices1, class... Idx1>
+//	struct Op<Indices1<Idx1...>>
+//	{
+//		template<class A>
+//		static constexpr auto op(const A& a)
+//		{
+//			// TODO: use brigand::for_each
+//			float res = 0;
+//			using expand_variadic_pack  = float[]; // dirty trick, see below
+//			(void)expand_variadic_pack{0.f, ((res += Idx1::value), void(), 0.f)... };
+//			// first void: silence variable unused warning
+//			// uses braced-init-list initialization rules, which evaluates
+//			//  the elements inside a braced-init-list IN ORDER, to repetetively
+//			//  execute a certain operation
+//			// second void is to prevent malicious "operator," overloads, which
+//			//  cannot exist for void types
+//			// 0 at the end is to handle empty variadic pack (zero-size array initializer is illegal.
+//			return res;
+//			
+//		}
+//	};
+
 	
-	template<template<class...> class Indices1, class... Idx1>
-	struct Op<Indices1<Idx1...>>
+	template<class L>
+	struct CalcX {};
+	
+	template<template<class...> class L, class IdxC, class IdxA, class IdxB, class Product>
+	struct CalcX<L<IdxC, IdxA, IdxB, Product>>
 	{
-		template<class A>
-		static constexpr auto op(const A& a)
+		template<class A, class B>
+		static constexpr auto Op(const A& a, const B& b)
 		{
-			// TODO: use brigand::for_each
-			float res = 0;
-			using expand_variadic_pack  = float[]; // dirty trick, see below
-			(void)expand_variadic_pack{0.f, ((res += Idx1::value), void(), 0.f)... };
-			// first void: silence variable unused warning
-			// uses braced-init-list initialization rules, which evaluates
-			//  the elements inside a braced-init-list IN ORDER, to repetetively
-			//  execute a certain operation
-			// second void is to prevent malicious "operator," overloads, which
-			//  cannot exist for void types
-			// 0 at the end is to handle empty variadic pack (zero-size array initializer is illegal.
+			using Scalar = typename A::Scalar;
+			return Product::template Sign<Scalar>() *
+				a.values[IdxA::value] *
+				b.values[IdxB::value];
+		}
+	};
+	
+	template<class L>
+	struct CalcElem {};
+	
+	template<template<class ...> class L, class... Ints>
+	struct CalcElem<L<Ints...>>
+	{
+		template<class A, class B>
+		static constexpr auto Op(const A& a, const B& b)
+		{
+			using Scalar = typename A::Scalar;
+			// In C++17 can use parameter pack expansion fold
+			auto res = Scalar{0};
+			(void)std::initializer_list<int>{((res += CalcX<Ints>::Op(a, b)), void(), 0)...};
 			return res;
-			
+		}
+	};
+	
+	
+	template<class L, class C>
+	struct Calc {};
+	
+	template<template<class...> class L, class... Ints, class C>
+	struct Calc<L<Ints...>, C>
+	{
+		template<class A, class B>
+		static constexpr C Op(const A& a, const B& b)
+		{
+			return C(CalcElem<Ints>::Op(a, b)...);
 		}
 	};
 	
@@ -264,7 +313,7 @@ namespace space
 				>
 			>;
 			using ordered_instructions = brigand::sort<instructions>;
-			using basis_values = brigand::transform<ordered_instructions, to_uint16_t<brigand::_1>>;
+			using basis_values = brigand::transform<ordered_instructions, brigand::int_<brigand::_1>>;
 			using basis = brigand::unique<basis_values>;
 			using mv = Multivector<Algebra, basis>;
 			
@@ -283,55 +332,29 @@ namespace space
 				>
 			>;
 			
-			
 			using mv_indices = typename mv::template Indices<basis_values>;
 			using b1_indices = Indices<b1_bases>;
 			using b2_indices = typename MV2::template Indices<b2_bases>;
 			
-			// Interleave mv_indices, b1_indices, b2_indices
-//			using elems = brigand::transform<
-//				mv_indices,
-//				b1_indices,
-//				b2_indices,
-//				brigand::bind<
-//					brigand::list,
-//					brigand::_1,
-//					brigand::_2,
-//					brigand::_3
-//				>
-//			>;
-			using count = brigand::make_sequence<brigand::uint16_t<0>, brigand::size<basis_values>::value>;
+			using indices = brigand::transform<
+				mv_indices,
+				b1_indices,
+				b2_indices,
+				ordered_instructions,
+				brigand::bind<brigand::list, brigand::_1, brigand::_2, brigand::_3, brigand::_4>
+			>;
 			
-//			std::cout << pretty_demangle(typeid(ordered_instructions).name()) << "\n";
-//			std::cout << "\n";
-//			std::cout << pretty_demangle(typeid(b1_bases).name()) << "\n";
-//			std::cout << "\n";
-//			std::cout << pretty_demangle(typeid(b1_indices).name()) << "\n";
-//			std::cout << "\n";
-//			std::cout << pretty_demangle(typeid(b2_indices).name()) << "\n";
-//			std::cout << "\n";
-//			std::cout << pretty_demangle(typeid(mv_indices).name()) << "\n";
-//			std::cout << "\n";
-//			std::cout << pretty_demangle(typeid(elems).name()) << "\n";
-//			std::cout << "\n";
+			using grouped_instructions = brigand::group<
+				indices,
+				brigand::bind<brigand::front, brigand::_1>
+				>;
 			
+//			std::cout << pretty_demangle(typeid(indices).name()) << "\n";
+//			std::cout << "\n";
+//			std::cout << pretty_demangle(typeid(grouped_instructions).name()) << "\n";
+//			std::cout << "\n";
 
-			// for_each(Lists, [])...
-			auto mm = mv(0.f, 0.f);
-			brigand::for_each<count>([&](auto v)
-			{
-				using Idx = brigand::type_from<decltype(v)>;
-				using ResIdx = brigand::at_c<mv_indices, Idx::value>;
-				using B1dx = brigand::at_c<b1_indices, Idx::value>;
-				using B2dx = brigand::at_c<b2_indices, Idx::value>;
-				using Op = brigand::at_c<ordered_instructions, Idx::value>;
-
-				mm.values[ResIdx::value] +=
-					Op::template Sign<Scalar>() *
-					values[B1dx::value] *
-					b.values[B2dx::value];
-			});
-			return mm;
+			return Calc<grouped_instructions, mv>::Op(*this, b);
 		}
 		
 		std::array<Scalar, Size> values;
@@ -360,11 +383,34 @@ namespace space
 using A = space::Algebra<space::Metric<2>, float>;
 using Vec = A::Vec;
 
+
+
+//using namespace brigand;
+//
+//using L = list<brigand::uint16_t<0>, brigand::uint16_t<0>, brigand::uint16_t<1>, brigand::uint16_t<2>, brigand::uint16_t<2>>;
+//using A_ = group<L, less<_1, brigand::uint16_t<2>>>;
+
 int main(int argc, const char * argv[])
 {
-//	std::cout << pretty_demangle(typeid(A::VecBasis).name()) << "\n";
+//	std::cout << pretty_demangle(typeid(L).name()) << "\n";
 //	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(decltype(v1)).name()) << "\n";
+//	std::cout << pretty_demangle(typeid(A_).name()) << "\n";
+//	std::cout << "\n";
+//	std::cout << pretty_demangle(typeid(sorted).name()) << "\n";
+//	std::cout << pretty_demangle(typeid(B_).name()) << "\n";
+//	std::cout << pretty_demangle(typeid(X).name()) << "\n";
+//	std::cout << "\n";
+//	std::cout << pretty_demangle(typeid(B_).name()) << "\n";
+//	std::cout << "\n";
+//	std::cout << pretty_demangle(typeid(C_).name()) << "\n";
+//	std::cout << "\n";
+//	std::cout << pretty_demangle(typeid(D_).name()) << "\n";
+//	std::cout << "\n";
+//	std::cout << pretty_demangle(typeid(E_).name()) << "\n";
+//	std::cout << "\n";
+	
+	
+//	std::cout << pretty_demangle(typeid(X).name()) << "\n";
 //	std::cout << "\n";
 //	std::cout << pretty_demangle(typeid(decltype(res)).name()) << "\n";
 //	std::cout << "\n";
