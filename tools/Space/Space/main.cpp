@@ -124,12 +124,9 @@ namespace space
 	};
 	
 	
-	template<class A_, class B_>
-	struct GpOp : public brigand::bitxor_<A_, B_>
+	template<class A, class B>
+	struct GpOp : public brigand::bitxor_<A, B>
 	{
-		using A = A_;
-		using B = B_;
-		
 		template<class T>
 		static constexpr auto Sign()
 		{
@@ -138,13 +135,13 @@ namespace space
 	};
 	
 	template<class L>
-	struct CalcX {};
+	struct BasisProduct {};
 	
 	template<template<class...> class L, class IdxC, class IdxA, class IdxB, class Product>
-	struct CalcX<L<IdxC, IdxA, IdxB, Product>>
+	struct BasisProduct<L<IdxC, IdxA, IdxB, Product>>
 	{
 		template<class A, class B>
-		static constexpr auto Op(const A& a, const B& b)
+		static constexpr auto Eval(const A& a, const B& b)
 		{
 			using Scalar = typename A::Scalar;
 			return Product::template Sign<Scalar>() *
@@ -154,33 +151,33 @@ namespace space
 	};
 	
 	template<class L>
-	struct CalcElem {};
+	struct BasisProductList {};
 	
 	template<template<class ...> class L, class... Ints>
-	struct CalcElem<L<Ints...>>
+	struct BasisProductList<L<Ints...>>
 	{
 		template<class A, class B>
-		static constexpr auto Op(const A& a, const B& b)
+		static constexpr auto Eval(const A& a, const B& b)
 		{
 			using Scalar = typename A::Scalar;
 			// In C++17 can use parameter pack expansion fold
 			auto res = Scalar{0};
-			(void)std::initializer_list<int>{((res += CalcX<Ints>::Op(a, b)), void(), 0)...};
+			(void)std::initializer_list<int>{((res += BasisProduct<Ints>::Eval(a, b)), void(), 0)...};
 			return res;
 		}
 	};
 	
 	
 	template<class L, class C>
-	struct Calc {};
+	struct MultivectorProduct {};
 	
 	template<template<class...> class L, class... Ints, class C>
-	struct Calc<L<Ints...>, C>
+	struct MultivectorProduct<L<Ints...>, C>
 	{
 		template<class A, class B>
 		static constexpr C Op(const A& a, const B& b)
 		{
-			return C(CalcElem<Ints>::Op(a, b)...);
+			return C(BasisProductList<Ints>::Eval(a, b)...);
 		}
 	};
 	
@@ -197,10 +194,11 @@ namespace space
 		using Scalar = typename Algebra::Scalar;
 		static constexpr auto Size = sizeof...(Elements);
 		
-		using B1 = Basis<Elements...>;
+		using BasisA = Basis<Elements...>;
+		using MultivectorA = Multivector<Algebra, BasisA>;
 		
 		template<class T>
-		using IndexOf = brigand::index_of<B1, T>;
+		using IndexOf = brigand::index_of<BasisA, T>;
 		
 		template<class Bases>
 		using Indices = brigand::transform<
@@ -223,12 +221,12 @@ namespace space
         }
 		
 		
-		template<template<class...> class Basis2, class...Elements2>
-		auto operator * (const Multivector<Algebra, Basis2<Elements2...>>& b) const
+		template<class BasisB>
+		auto operator * (const Multivector<Algebra, BasisB>& b) const
 		{
-			using B2 = Basis2<Elements2...>;
-			using MV2 = Multivector<Algebra, B2>;
-			using prod = brigand::product<B1, B2>;
+//			using B2 = Basis2<Elements2...>;
+			using MultivectorB = Multivector<Algebra, BasisB>;
+			using prod = brigand::product<BasisA, BasisB>;
 			using instructions = brigand::transform<
 				prod,
 				brigand::bind<
@@ -265,8 +263,9 @@ namespace space
 			
 			using mv_indices = typename mv::template Indices<basis_values>;
 			using b1_indices = Indices<b1_bases>;
-			using b2_indices = typename MV2::template Indices<b2_bases>;
+			using b2_indices = typename MultivectorB::template Indices<b2_bases>;
 			
+			// TODO: don't need mv_indices
 			using indices = brigand::transform<
 				mv_indices,
 				b1_indices,
@@ -279,13 +278,8 @@ namespace space
 				indices,
 				brigand::bind<brigand::front, brigand::_1>
 				>;
-			
-//			std::cout << pretty_demangle(typeid(indices).name()) << "\n";
-//			std::cout << "\n";
-//			std::cout << pretty_demangle(typeid(grouped_instructions).name()) << "\n";
-//			std::cout << "\n";
 
-			return Calc<grouped_instructions, mv>::Op(*this, b);
+			return MultivectorProduct<grouped_instructions, mv>::Op(*this, b);
 		}
 		
 		std::array<Scalar, Size> values;
