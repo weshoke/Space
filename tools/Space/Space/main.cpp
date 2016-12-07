@@ -114,6 +114,26 @@ namespace space
 			((c & 1) ? true : false);
 		}
 		
+//		/// Whether reversion causes a sign flip
+//		constexpr bool reverse(type a){
+//		return cpow( -1, (grade(a) * (grade(a)-1) / 2.0) ) == -1;
+//		}
+//		/// Whether involution causes a sign flip
+//		constexpr bool involute(type a){
+//		return cpow( -1, grade(a) ) == -1;
+//		}
+//		/// Whether conjugation causes a sign flip
+//		constexpr bool conjugate(type a){
+//		return cpow( -1,(grade(a) * (grade(a)+1) / 2.0) ) == -1;   
+//		}
+		
+		
+		/// Utitilty for raising x to the Nth power at compile-time
+		constexpr T Pow(T v, T N)
+		{
+			return (N > 0) ? (v * v(v, N - 1)) : T{1};
+		}
+		
 		static constexpr bool HasInner(T a, T b)
 		{
 			return !((Grade(a) > Grade(b)) || (Grade(a ^ b) != (Grade(b) - Grade(a))));
@@ -300,10 +320,6 @@ namespace space
         {
         }
 		
-		
-		
-		
-		
 		template<class BasisB>
 		auto operator * (const Multivector<Algebra, BasisB>& b) const
 		{
@@ -342,7 +358,7 @@ namespace space
 		{
 			using MultivectorB = Multivector<Algebra, BasisB>;
 			using prod = brigand::product<BasisA, BasisB>;
-			using op_prod = brigand::remove_if<
+			using ip_prod = brigand::remove_if<
 				prod,
 				brigand::bind<
 					brigand::not_,
@@ -359,8 +375,52 @@ namespace space
 					>
 				>
 			>;
-			return ProductOp<Algebra, op_prod>(*this, b);
+			return ProductOp<Algebra, ip_prod>(*this, b);
 		}
+		
+		friend std::ostream& operator << (std::ostream& os, const Multivector& m){
+			auto i = 0u;
+			os << "{";
+			brigand::for_each<BasisA>([&](auto v)
+			{
+				using T = brigand::type_from<decltype(v)>;
+				if(i != 0u)
+				{
+					os << ", ";
+				}
+				if(T::value == 0)
+				{
+					os << "s(" << m.values[i] << ")";
+				}
+				else
+				{
+					os << "e";
+					// TODO: metaprogram this
+					for(auto j = 0u; j < Algebra::Dim; ++j)
+					{
+						if(T::value & (1 << j))
+						{
+							os << (j + 1);
+						}
+					}
+					os << "(" << m.values[i] << ")";
+				}
+				++i;
+			});
+			os << "}";
+			return os;
+		}
+		
+		// conjugate
+		// involute
+		// invert
+		// reverse
+		// div
+		// add
+		// sub
+		// operator[](basis)
+		// dual
+		// undual
 		
 		std::array<Scalar, Size> values;
 	};
@@ -369,6 +429,7 @@ namespace space
 	template<class Metric, class T>
 	struct Algebra
 	{
+		static constexpr auto Dim = Metric::Dim;
 		using Bits = typename Metric::Bits;
 		using BitsType = typename Bits::Type;
 		
@@ -390,32 +451,22 @@ using Vec = A::Vec;
 
 int main(int argc, const char * argv[])
 {
-	
-	const auto print_vec = [](const auto &v)
-	{
-		std::cout << "{";
-		for(auto i = 0u; i < v.values.size(); ++i)
-		{
-			if(i != 0)
-			{
-				std::cout << ", ";
-			}
-			std::cout << v.values[i];
-		}
-		std::cout << "}\n";
-	};
-	
 	auto v1 = Vec(0.5f, 0.5f);
 	auto v2 = Vec(0.5f, -0.5f);
 	auto res = v1 * v2;
 	auto res2 = v1 ^ v2;
 	auto res3 = v1 <= v2;
 	
-	print_vec(v1);
-	print_vec(v2);
-	print_vec(res);
-	print_vec(res2);
-	print_vec(res3);
+//	print_vec(v1);
+//	print_vec(v2);
+//	print_vec(res);
+//	print_vec(res2);
+//	print_vec(res3);
+	std::cout << v1 << "\n";
+	std::cout << v2 << "\n";
+	std::cout << res << "\n";
+	std::cout << res2 << "\n";
+	std::cout << res3 << "\n";
 	
 	
 //	std::cout << pretty_demangle(typeid(Gp).name()) << "\n";
