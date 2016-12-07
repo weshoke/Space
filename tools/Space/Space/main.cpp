@@ -92,7 +92,7 @@ std::string pretty_demangle(const char* name)
 
 namespace space
 {
-	static constexpr auto Dim = uint16_t{2};
+//	static constexpr auto Dim = uint16_t{2};
 
 	template <class T>
 	struct Bits
@@ -113,7 +113,23 @@ namespace space
 			(HasSignFlip(right, b, c + Grade(right & b))) :
 			((c & 1) ? true : false);
 		}
+		
+		static constexpr bool HasInner(T a, T b)
+		{
+			return !((Grade(a) > Grade(b)) || (Grade(a ^ b) != (Grade(b) - Grade(a))));
+		}
+		
+		static constexpr bool HasOuter(T a, T b)
+		{
+			return !(a & b);
+		}
 	};
+	
+	template <class A, class B>
+	struct HasInner : std::integral_constant < bool, Bits<typename A::value_type>::HasInner(A::value, B::value)> {};
+	
+	template <class A, class B>
+	struct HasOuter : std::integral_constant < bool, Bits<typename A::value_type>::HasOuter(A::value, B::value)> {};
 	
 	
 	template<uint16_t N, uint16_t M = 0>
@@ -125,7 +141,7 @@ namespace space
 	
 	
 	template<class A, class B>
-	struct GpOp : public brigand::bitxor_<A, B>
+	struct Product : public brigand::bitxor_<A, B>
 	{
 		template<class T>
 		static constexpr auto Sign()
@@ -135,10 +151,10 @@ namespace space
 	};
 	
 	template<class L>
-	struct BasisProduct {};
+	struct BladeProduct {};
 	
 	template<template<class...> class L, class IdxC, class IdxA, class IdxB, class Product>
-	struct BasisProduct<L<IdxC, IdxA, IdxB, Product>>
+	struct BladeProduct<L<IdxC, IdxA, IdxB, Product>>
 	{
 		template<class A, class B>
 		static constexpr auto Eval(const A& a, const B& b)
@@ -151,10 +167,10 @@ namespace space
 	};
 	
 	template<class L>
-	struct BasisProductList {};
+	struct BladeProductList {};
 	
 	template<template<class ...> class L, class... Ints>
-	struct BasisProductList<L<Ints...>>
+	struct BladeProductList<L<Ints...>>
 	{
 		template<class A, class B>
 		static constexpr auto Eval(const A& a, const B& b)
@@ -162,7 +178,7 @@ namespace space
 			using Scalar = typename A::Scalar;
 			// In C++17 can use parameter pack expansion fold
 			auto res = Scalar{0};
-			(void)std::initializer_list<int>{((res += BasisProduct<Ints>::Eval(a, b)), void(), 0)...};
+			(void)std::initializer_list<int>{((res += BladeProduct<Ints>::Eval(a, b)), void(), 0)...};
 			return res;
 		}
 	};
@@ -175,18 +191,82 @@ namespace space
 	struct MultivectorProduct<L<Ints...>, C>
 	{
 		template<class A, class B>
-		static constexpr C Op(const A& a, const B& b)
+		static constexpr C Eval(const A& a, const B& b)
 		{
-			return C(BasisProductList<Ints>::Eval(a, b)...);
+			return C(BladeProductList<Ints>::Eval(a, b)...);
 		}
 	};
 	
-
 	// Blades are the individual dimensions in a Clifford algebra
 	// Multivector is a linear combination of basis blades
 	// Grade is the dimension of a given blade
 	template<class Algebra, class Basis>
-	struct Multivector {};
+	struct Multivector
+	{
+		static constexpr auto Size = size_t{0};
+	};
+	
+	template<class Algebra, class product, class A, class B>
+	auto ProductOp(const A &a, const B &b)
+	{
+		using instructions = brigand::transform<
+			product,
+			brigand::bind<
+				Product,
+				brigand::bind<
+					brigand::front,
+					brigand::_1
+				>,
+				brigand::bind<
+					brigand::back,
+					brigand::_1
+				>
+			>
+		>;
+
+		using ordered_instructions = brigand::sort<instructions>;
+		using basis_values = brigand::transform<ordered_instructions, brigand::int_<brigand::_1>>;
+		using basis = brigand::unique<basis_values>;
+		using mv = Multivector<Algebra, basis>;
+		
+		using a_bases = brigand::transform<
+			ordered_instructions,
+			brigand::bind<
+				brigand::front,
+				brigand::_1
+			>
+		>;
+		using b_bases = brigand::transform<
+			ordered_instructions,
+			brigand::bind<
+				brigand::back,
+				brigand::_1
+			>
+		>;
+		
+		using mv_indices = typename mv::template Indices<basis_values>;
+		using a_indices = typename A::template Indices<a_bases>;
+		using b_indices = typename B::template Indices<b_bases>;
+		
+		// TODO: don't need mv_indices
+		using indices = brigand::transform<
+			mv_indices,
+			a_indices,
+			b_indices,
+			ordered_instructions,
+			brigand::bind<brigand::list, brigand::_1, brigand::_2, brigand::_3, brigand::_4>
+		>;
+		
+		using grouped_instructions = brigand::group<
+			indices,
+			brigand::bind<brigand::front, brigand::_1>
+			>;
+
+		return MultivectorProduct<grouped_instructions, mv>::Eval(a, b);
+	}
+	
+
+	
 	
 	template<class Algebra, template<class...> class Basis, class...Elements>
 	struct Multivector<Algebra, Basis<Elements...>>
@@ -221,65 +301,65 @@ namespace space
         }
 		
 		
+		
+		
+		
 		template<class BasisB>
 		auto operator * (const Multivector<Algebra, BasisB>& b) const
 		{
-//			using B2 = Basis2<Elements2...>;
 			using MultivectorB = Multivector<Algebra, BasisB>;
 			using prod = brigand::product<BasisA, BasisB>;
-			using instructions = brigand::transform<
+			return ProductOp<Algebra, prod>(*this, b);
+		}
+		
+		template<class BasisB>
+		auto operator ^ (const Multivector<Algebra, BasisB>& b) const
+		{
+			using MultivectorB = Multivector<Algebra, BasisB>;
+			using prod = brigand::product<BasisA, BasisB>;
+			using op_prod = brigand::remove_if<
 				prod,
 				brigand::bind<
-					space::GpOp,
+					brigand::not_,
 					brigand::bind<
-						brigand::front,
-						brigand::_1
-					>,
-					brigand::bind<
-						brigand::back,
-						brigand::_1
+						HasOuter,
+						brigand::bind<
+							brigand::front,
+							brigand::_1
+						>,
+						brigand::bind<
+							brigand::back,
+							brigand::_1
+						>
 					>
 				>
 			>;
-			using ordered_instructions = brigand::sort<instructions>;
-			using basis_values = brigand::transform<ordered_instructions, brigand::int_<brigand::_1>>;
-			using basis = brigand::unique<basis_values>;
-			using mv = Multivector<Algebra, basis>;
-			
-			using b1_bases = brigand::transform<
-				ordered_instructions,
+			return ProductOp<Algebra, op_prod>(*this, b);
+		}
+		
+		template<class BasisB>
+		auto operator <= (const Multivector<Algebra, BasisB>& b) const
+		{
+			using MultivectorB = Multivector<Algebra, BasisB>;
+			using prod = brigand::product<BasisA, BasisB>;
+			using op_prod = brigand::remove_if<
+				prod,
 				brigand::bind<
-					brigand::front,
-					brigand::_1
+					brigand::not_,
+					brigand::bind<
+						HasInner,
+						brigand::bind<
+							brigand::front,
+							brigand::_1
+						>,
+						brigand::bind<
+							brigand::back,
+							brigand::_1
+						>
+					>
 				>
 			>;
-			using b2_bases = brigand::transform<
-				ordered_instructions,
-				brigand::bind<
-					brigand::back,
-					brigand::_1
-				>
-			>;
-			
-			using mv_indices = typename mv::template Indices<basis_values>;
-			using b1_indices = Indices<b1_bases>;
-			using b2_indices = typename MultivectorB::template Indices<b2_bases>;
-			
-			// TODO: don't need mv_indices
-			using indices = brigand::transform<
-				mv_indices,
-				b1_indices,
-				b2_indices,
-				ordered_instructions,
-				brigand::bind<brigand::list, brigand::_1, brigand::_2, brigand::_3, brigand::_4>
-			>;
-			
-			using grouped_instructions = brigand::group<
-				indices,
-				brigand::bind<brigand::front, brigand::_1>
-				>;
-
-			return MultivectorProduct<grouped_instructions, mv>::Op(*this, b);
+			return ProductOp<Algebra, op_prod>(*this, b);
 		}
 		
 		std::array<Scalar, Size> values;
@@ -308,50 +388,34 @@ namespace space
 using A = space::Algebra<space::Metric<2>, float>;
 using Vec = A::Vec;
 
-
-
-//using namespace brigand;
-//
-//using L = list<brigand::uint16_t<0>, brigand::uint16_t<0>, brigand::uint16_t<1>, brigand::uint16_t<2>, brigand::uint16_t<2>>;
-//using A_ = group<L, less<_1, brigand::uint16_t<2>>>;
-
 int main(int argc, const char * argv[])
 {
-//	std::cout << pretty_demangle(typeid(L).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(A_).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(sorted).name()) << "\n";
-//	std::cout << pretty_demangle(typeid(B_).name()) << "\n";
-//	std::cout << pretty_demangle(typeid(X).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(B_).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(C_).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(D_).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(E_).name()) << "\n";
-//	std::cout << "\n";
-	
-	
-//	std::cout << pretty_demangle(typeid(X).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(decltype(res)).name()) << "\n";
-//	std::cout << "\n";
 	
 	const auto print_vec = [](const auto &v)
 	{
-		std::cout << "{" << v.values[0] << ", " << v.values[1] << "}\n";
+		std::cout << "{";
+		for(auto i = 0u; i < v.values.size(); ++i)
+		{
+			if(i != 0)
+			{
+				std::cout << ", ";
+			}
+			std::cout << v.values[i];
+		}
+		std::cout << "}\n";
 	};
 	
 	auto v1 = Vec(0.5f, 0.5f);
 	auto v2 = Vec(0.5f, -0.5f);
 	auto res = v1 * v2;
+	auto res2 = v1 ^ v2;
+	auto res3 = v1 <= v2;
 	
 	print_vec(v1);
 	print_vec(v2);
 	print_vec(res);
+	print_vec(res2);
+	print_vec(res3);
 	
 	
 //	std::cout << pretty_demangle(typeid(Gp).name()) << "\n";
