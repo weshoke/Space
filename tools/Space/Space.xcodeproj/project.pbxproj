@@ -138,6 +138,12 @@
 		A8DDCFF81DE8E76C00F7F876 /* type.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = type.hpp; sourceTree = "<group>"; };
 		A8DDCFF91DE8E76C00F7F876 /* voidp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = voidp.hpp; sourceTree = "<group>"; };
 		A8DDCFFA1DE8E76C00F7F876 /* types.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = types.hpp; sourceTree = "<group>"; };
+		A8E6EF7F1DF8074B00C8F391 /* product.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = product.h; sourceTree = "<group>"; };
+		A8E6EF801DF8081000C8F391 /* blade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = blade.h; sourceTree = "<group>"; };
+		A8E6EF811DF80B8100C8F391 /* multivector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = multivector.h; sourceTree = "<group>"; };
+		A8E6EF821DF80D0300C8F391 /* basis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = basis.h; sourceTree = "<group>"; };
+		A8E6EF831DF872C100C8F391 /* algebra.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = algebra.h; sourceTree = "<group>"; };
+		A8E6EF841DF872C100C8F391 /* metric.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = metric.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +160,7 @@
 		A8DDCF6B1DE8E72D00F7F876 = {
 			isa = PBXGroup;
 			children = (
+				A8E6EF7E1DF8074B00C8F391 /* include */,
 				A8DDCF761DE8E72D00F7F876 /* Space */,
 				A8DDCF7E1DE8E75D00F7F876 /* vendor */,
 				A8DDCF751DE8E72D00F7F876 /* Products */,
@@ -399,6 +406,20 @@
 				A8DDCFF91DE8E76C00F7F876 /* voidp.hpp */,
 			);
 			path = types;
+			sourceTree = "<group>";
+		};
+		A8E6EF7E1DF8074B00C8F391 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				A8E6EF831DF872C100C8F391 /* algebra.h */,
+				A8E6EF821DF80D0300C8F391 /* basis.h */,
+				A8E6EF801DF8081000C8F391 /* blade.h */,
+				A8E6EF841DF872C100C8F391 /* metric.h */,
+				A8E6EF811DF80B8100C8F391 /* multivector.h */,
+				A8E6EF7F1DF8074B00C8F391 /* product.h */,
+			);
+			name = include;
+			path = ../../include;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

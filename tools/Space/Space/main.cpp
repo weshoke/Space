@@ -4,34 +4,9 @@
 #include <iostream>
 #include <cxxabi.h>
 #include <sstream>
-#include "brigand/adapted/pair.hpp"
-#include "brigand/sequences/at.hpp"
-#include "brigand/sequences/filled_list.hpp"
-#include "brigand/sequences/make_sequence.hpp"
-#include "brigand/sequences/map.hpp"
-#include "brigand/sequences/at.hpp"
-#include "brigand/sequences/has_key.hpp"
-#include "brigand/sequences/keys_as_sequence.hpp"
-#include "brigand/sequences/values_as_sequence.hpp"
-#include "brigand/sequences/front.hpp"
-#include "brigand/algorithms/flatten.hpp"
-#include "brigand/algorithms/index_of.hpp"
-#include "brigand/algorithms/fold.hpp"
-#include "brigand/algorithms/transform.hpp"
-#include "brigand/algorithms/for_each.hpp"
-#include "brigand/algorithms/sort.hpp"
-#include "brigand/algorithms/unique.hpp"
-#include "brigand/algorithms/product.hpp"
-#include "brigand/algorithms/group.hpp"
-#include "brigand/algorithms/partition.hpp"
-#include "brigand/algorithms/replace.hpp"
-#include "brigand/algorithms/count.hpp"
-#include "brigand/functions/misc.hpp"
-#include "brigand/functions/arithmetic.hpp"
-#include "brigand/functions/comparisons.hpp"
-#include "brigand/functions/bitwise.hpp"
-#include "brigand/functions/logical.hpp"
-#include "brigand/functions/eval_if.hpp"
+#include "blade.h"
+#include "algebra.h"
+#include "metric.h"
 
 std::string demangle(const char* name) {
     int status = -4; // some arbitrary value to eliminate the compiler warning
@@ -89,388 +64,124 @@ std::string pretty_demangle(const char* name)
 	}
 	return ss.str();
 }
-
-namespace space
-{
-//	static constexpr auto Dim = uint16_t{2};
-
-	template <class T>
-	struct Bits
-	{
-		using Type = T;
-	
-		/// Grade of blade (count number of "on" bits)
-		static constexpr T Grade(T a, T c = 0){
-		  auto right = a >> 1;
-		  return a != T{0} ?
-		  (a & 1 ? Grade(right, c + 1) : Grade(right, c)) : c;
-		}
-	
-		// Flip Check when multiplying two blades a and b
-		static constexpr bool HasSignFlip(T a, T b, T c = 0){
-		  auto right = a >> 1;
-		  return right != T{0} ?
-			(HasSignFlip(right, b, c + Grade(right & b))) :
-			((c & 1) ? true : false);
-		}
-		
-//		/// Whether reversion causes a sign flip
-//		constexpr bool reverse(type a){
-//		return cpow( -1, (grade(a) * (grade(a)-1) / 2.0) ) == -1;
-//		}
-//		/// Whether involution causes a sign flip
-//		constexpr bool involute(type a){
-//		return cpow( -1, grade(a) ) == -1;
-//		}
-//		/// Whether conjugation causes a sign flip
-//		constexpr bool conjugate(type a){
-//		return cpow( -1,(grade(a) * (grade(a)+1) / 2.0) ) == -1;   
-//		}
-		
-		
-		/// Utitilty for raising x to the Nth power at compile-time
-		constexpr T Pow(T v, T N)
-		{
-			return (N > 0) ? (v * v(v, N - 1)) : T{1};
-		}
-		
-		static constexpr bool HasInner(T a, T b)
-		{
-			return !((Grade(a) > Grade(b)) || (Grade(a ^ b) != (Grade(b) - Grade(a))));
-		}
-		
-		static constexpr bool HasOuter(T a, T b)
-		{
-			return !(a & b);
-		}
-	};
-	
-	template <class A, class B>
-	struct HasInner : std::integral_constant < bool, Bits<typename A::value_type>::HasInner(A::value, B::value)> {};
-	
-	template <class A, class B>
-	struct HasOuter : std::integral_constant < bool, Bits<typename A::value_type>::HasOuter(A::value, B::value)> {};
-	
-	
-	template<uint16_t N, uint16_t M = 0>
-	struct Metric
-	{
-		static constexpr auto Dim = N + M;
-		using Bits = Bits<uint16_t>;
-	};
-	
-	
-	template<class A, class B>
-	struct Product : public brigand::bitxor_<A, B>
-	{
-		template<class T>
-		static constexpr auto Sign()
-		{
-			return Bits<uint16_t>::HasSignFlip(A::value, B::value) ? T(-1) : T(1);
-		}
-	};
-	
-	template<class L>
-	struct BladeProduct {};
-	
-	template<template<class...> class L, class IdxC, class IdxA, class IdxB, class Product>
-	struct BladeProduct<L<IdxC, IdxA, IdxB, Product>>
-	{
-		template<class A, class B>
-		static constexpr auto Eval(const A& a, const B& b)
-		{
-			using Scalar = typename A::Scalar;
-			return Product::template Sign<Scalar>() *
-				a.values[IdxA::value] *
-				b.values[IdxB::value];
-		}
-	};
-	
-	template<class L>
-	struct BladeProductList {};
-	
-	template<template<class ...> class L, class... Ints>
-	struct BladeProductList<L<Ints...>>
-	{
-		template<class A, class B>
-		static constexpr auto Eval(const A& a, const B& b)
-		{
-			using Scalar = typename A::Scalar;
-			// In C++17 can use parameter pack expansion fold
-			auto res = Scalar{0};
-			(void)std::initializer_list<int>{((res += BladeProduct<Ints>::Eval(a, b)), void(), 0)...};
-			return res;
-		}
-	};
-	
-	
-	template<class L, class C>
-	struct MultivectorProduct {};
-	
-	template<template<class...> class L, class... Ints, class C>
-	struct MultivectorProduct<L<Ints...>, C>
-	{
-		template<class A, class B>
-		static constexpr C Eval(const A& a, const B& b)
-		{
-			return C(BladeProductList<Ints>::Eval(a, b)...);
-		}
-	};
-	
-	// Blades are the individual dimensions in a Clifford algebra
-	// Multivector is a linear combination of basis blades
-	// Grade is the dimension of a given blade
-	template<class Algebra, class Basis>
-	struct Multivector
-	{
-		static constexpr auto Size = size_t{0};
-	};
-	
-	template<class Algebra, class product, class A, class B>
-	auto ProductOp(const A &a, const B &b)
-	{
-		using instructions = brigand::transform<
-			product,
-			brigand::bind<
-				Product,
-				brigand::bind<
-					brigand::front,
-					brigand::_1
-				>,
-				brigand::bind<
-					brigand::back,
-					brigand::_1
-				>
-			>
-		>;
-
-		using ordered_instructions = brigand::sort<instructions>;
-		using basis_values = brigand::transform<ordered_instructions, brigand::int_<brigand::_1>>;
-		using basis = brigand::unique<basis_values>;
-		using mv = Multivector<Algebra, basis>;
-		
-		using a_bases = brigand::transform<
-			ordered_instructions,
-			brigand::bind<
-				brigand::front,
-				brigand::_1
-			>
-		>;
-		using b_bases = brigand::transform<
-			ordered_instructions,
-			brigand::bind<
-				brigand::back,
-				brigand::_1
-			>
-		>;
-		
-		using mv_indices = typename mv::template Indices<basis_values>;
-		using a_indices = typename A::template Indices<a_bases>;
-		using b_indices = typename B::template Indices<b_bases>;
-		
-		// TODO: don't need mv_indices
-		using indices = brigand::transform<
-			mv_indices,
-			a_indices,
-			b_indices,
-			ordered_instructions,
-			brigand::bind<brigand::list, brigand::_1, brigand::_2, brigand::_3, brigand::_4>
-		>;
-		
-		using grouped_instructions = brigand::group<
-			indices,
-			brigand::bind<brigand::front, brigand::_1>
-			>;
-
-		return MultivectorProduct<grouped_instructions, mv>::Eval(a, b);
-	}
-	
-
-	
-	
-	template<class Algebra, template<class...> class Basis, class...Elements>
-	struct Multivector<Algebra, Basis<Elements...>>
-	{
-		using Scalar = typename Algebra::Scalar;
-		static constexpr auto Size = sizeof...(Elements);
-		
-		using BasisA = Basis<Elements...>;
-		using MultivectorA = Multivector<Algebra, BasisA>;
-		
-		template<class T>
-		using IndexOf = brigand::index_of<BasisA, T>;
-		
-		template<class Bases>
-		using Indices = brigand::transform<
-			Bases,
-			brigand::bind<
-				IndexOf,
-				brigand::_1
-			>
-		>;
-
-		
-		Multivector()
-		: values{}
-		{}
-		
-		template <class... Values>
-        Multivector(const Values&... v)
-        : values{v...}
-        {
-        }
-		
-		template<class BasisB>
-		auto operator * (const Multivector<Algebra, BasisB>& b) const
-		{
-			using MultivectorB = Multivector<Algebra, BasisB>;
-			using prod = brigand::product<BasisA, BasisB>;
-			return ProductOp<Algebra, prod>(*this, b);
-		}
-		
-		template<class BasisB>
-		auto operator ^ (const Multivector<Algebra, BasisB>& b) const
-		{
-			using MultivectorB = Multivector<Algebra, BasisB>;
-			using prod = brigand::product<BasisA, BasisB>;
-			using op_prod = brigand::remove_if<
-				prod,
-				brigand::bind<
-					brigand::not_,
-					brigand::bind<
-						HasOuter,
-						brigand::bind<
-							brigand::front,
-							brigand::_1
-						>,
-						brigand::bind<
-							brigand::back,
-							brigand::_1
-						>
-					>
-				>
-			>;
-			return ProductOp<Algebra, op_prod>(*this, b);
-		}
-		
-		template<class BasisB>
-		auto operator <= (const Multivector<Algebra, BasisB>& b) const
-		{
-			using MultivectorB = Multivector<Algebra, BasisB>;
-			using prod = brigand::product<BasisA, BasisB>;
-			using ip_prod = brigand::remove_if<
-				prod,
-				brigand::bind<
-					brigand::not_,
-					brigand::bind<
-						HasInner,
-						brigand::bind<
-							brigand::front,
-							brigand::_1
-						>,
-						brigand::bind<
-							brigand::back,
-							brigand::_1
-						>
-					>
-				>
-			>;
-			return ProductOp<Algebra, ip_prod>(*this, b);
-		}
-		
-		friend std::ostream& operator << (std::ostream& os, const Multivector& m){
-			auto i = 0u;
-			os << "{";
-			brigand::for_each<BasisA>([&](auto v)
-			{
-				using T = brigand::type_from<decltype(v)>;
-				if(i != 0u)
-				{
-					os << ", ";
-				}
-				if(T::value == 0)
-				{
-					os << "s(" << m.values[i] << ")";
-				}
-				else
-				{
-					os << "e";
-					// TODO: metaprogram this
-					for(auto j = 0u; j < Algebra::Dim; ++j)
-					{
-						if(T::value & (1 << j))
-						{
-							os << (j + 1);
-						}
-					}
-					os << "(" << m.values[i] << ")";
-				}
-				++i;
-			});
-			os << "}";
-			return os;
-		}
-		
-		// conjugate
-		// involute
-		// invert
-		// reverse
-		// div
-		// add
-		// sub
-		// operator[](basis)
-		// dual
-		// undual
-		
-		std::array<Scalar, Size> values;
-	};
+//
+//namespace space
+//{
+////	static constexpr auto Dim = uint16_t{2};
+//
+//	
+//	
+//	template <class A, class B>
+//	struct HasInner : std::integral_constant < bool, Bits<typename A::value_type>::HasInner(A::value, B::value)> {};
+//	
+//	template <class A, class B>
+//	struct HasOuter : std::integral_constant < bool, Bits<typename A::value_type>::HasOuter(A::value, B::value)> {};
+//	
+//
+//
+//	template<class Metric, class T>
+//	struct Algebra
+//	{
+//		static constexpr auto Dim = Metric::Dim;
+//		using Bits = typename Metric::Bits;
+//		using BitsType = typename Bits::Type;
+//		
+//		using Scalar = T;
+//	
+//		template<class Basis>
+//		using Multivector = Multivector<Algebra, Basis>;
+//		
+//		using dimensions = brigand::make_sequence<brigand::uint16_t<0>, Metric::Dim>;
+//		
+//		// TODO: tuple<Basis0, Basis1, ..., Basis[Dim - 1]>
+//		using VecBasis = brigand::transform<dimensions, brigand::shift_left<brigand::uint16_t<1>, brigand::_1>>;
+//		using Vec = Multivector<VecBasis>;
+//	};
+//}
+//
+//using A = space::Algebra<space::Metric<2>, float>;
+//using Vec = A::Vec;
 
 
-	template<class Metric, class T>
-	struct Algebra
-	{
-		static constexpr auto Dim = Metric::Dim;
-		using Bits = typename Metric::Bits;
-		using BitsType = typename Bits::Type;
-		
-		using Scalar = T;
-	
-		template<class Basis>
-		using Multivector = Multivector<Algebra, Basis>;
-		
-		using dimensions = brigand::make_sequence<brigand::uint16_t<0>, Metric::Dim>;
-		
-		// TODO: tuple<Basis0, Basis1, ..., Basis[Dim - 1]>
-		using VecBasis = brigand::transform<dimensions, brigand::shift_left<brigand::uint16_t<1>, brigand::_1>>;
-		using Vec = Multivector<VecBasis>;
-	};
-}
+static_assert(space::blade::detail::Grade(0) == 0, "Grade error");
+static_assert(space::blade::detail::Grade(0b1) == 1, "Grade error");
+static_assert(space::blade::detail::Grade(0b10) == 1, "Grade error");
+static_assert(space::blade::detail::Grade(0b11) == 2, "Grade error");
+static_assert(space::blade::detail::Grade(0b101) == 2, "Grade error");
+static_assert(space::blade::detail::Grade(0b1000) == 1, "Grade error");
+static_assert(space::blade::detail::Grade(0b1011) == 3, "Grade error");
 
-using A = space::Algebra<space::Metric<2>, float>;
-using Vec = A::Vec;
+static_assert(space::blade::detail::HasInner(0b01, 0b01) == true, "HasInner error");
+static_assert(space::blade::detail::HasInner(0b01, 0b10) == false, "HasInner error");
+static_assert(space::blade::detail::HasInner(0b01, 0b11) == true, "HasInner error");
+static_assert(space::blade::detail::HasInner(0b11, 0b10) == false, "HasInner error");
+
+static_assert(space::blade::detail::HasOuter(0b01, 0b01) == false, "HasOuter error");
+static_assert(space::blade::detail::HasOuter(0b01, 0b10) == true, "HasOuter error");
+// TODO: is this correct?
+static_assert(space::blade::detail::HasOuter(0b01, 0b11) == false, "HasOuter error");
+static_assert(space::blade::detail::HasOuter(0b11, 0b10) == false, "HasOuter error");
+
+static_assert(space::blade::detail::HasSignFlip(0b01, 0b10) == false, "HasSignFlip error");
+static_assert(space::blade::detail::HasSignFlip(0b10, 0b01) == true, "HasSignFlip error");
+static_assert(space::blade::detail::HasSignFlip(0b01, 0b11) == false, "HasSignFlip error");
+static_assert(space::blade::detail::HasSignFlip(0b10, 0b11) == true, "HasSignFlip error");
+static_assert(space::blade::detail::HasSignFlip(0b11, 0b01) == true, "HasSignFlip error");
+static_assert(space::blade::detail::HasSignFlip(0b11, 0b10) == false, "HasSignFlip error");
+
+
+static_assert(
+	space::blade::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b01>>::value == 0b00,
+	"BitProduct error");
+static_assert(
+	space::blade::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b10>>::value == 0b11,
+	"BitProduct error");
+static_assert(
+	space::blade::BitProduct<brigand::uint16_t<0b10>, brigand::uint16_t<0b01>>::value == 0b11,
+	"BitProduct error");
+static_assert(
+	space::blade::BitProduct<brigand::uint16_t<0b101>, brigand::uint16_t<0b01>>::value == 0b100,
+	"BitProduct error");
+
+
+using E2 = space::Algebra<space::Metric<2>, float>;
+using E3 = space::Algebra<space::Metric<3>, float>;
+static_assert(std::is_same<
+	typename E2::VectorBasis,
+	brigand::list<brigand::uint16_t<1>, brigand::uint16_t<2>>
+>::value, "Vector Basis error");
+static_assert(std::is_same<
+	typename E3::VectorBasis,
+	brigand::list<brigand::uint16_t<1>, brigand::uint16_t<2>, brigand::uint16_t<4>>
+>::value, "Vector Basis error");
 
 int main(int argc, const char * argv[])
 {
-	auto v1 = Vec(0.5f, 0.5f);
-	auto v2 = Vec(0.5f, -0.5f);
-	auto res = v1 * v2;
-	auto res2 = v1 ^ v2;
-	auto res3 = v1 <= v2;
+
+//	std::cout << 0b10 << "\n";
+	// e1 ^ e1 ^ e2
+	// e2
+
+//	auto v1 = Vec(0.5f, 0.5f);
+//	auto v2 = Vec(0.5f, -0.5f);
+//	auto res = v1 * v2;
+//	auto res2 = v1 ^ v2;
+//	auto res3 = v1 <= v2;
+//	
+////	print_vec(v1);
+////	print_vec(v2);
+////	print_vec(res);
+////	print_vec(res2);
+////	print_vec(res3);
+//	std::cout << v1 << "\n";
+//	std::cout << v2 << "\n";
+//	std::cout << res << "\n";
+//	std::cout << res2 << "\n";
+//	std::cout << res3 << "\n";
 	
-//	print_vec(v1);
-//	print_vec(v2);
-//	print_vec(res);
-//	print_vec(res2);
-//	print_vec(res3);
-	std::cout << v1 << "\n";
-	std::cout << v2 << "\n";
-	std::cout << res << "\n";
-	std::cout << res2 << "\n";
-	std::cout << res3 << "\n";
 	
-	
-//	std::cout << pretty_demangle(typeid(Gp).name()) << "\n";
-//	std::cout << "\n";
+	std::cout << pretty_demangle(typeid(typename E2::VectorBasis).name()) << "\n";
+	std::cout << "\n";
 //	std::cout << pretty_demangle(typeid(Gp2).name()) << "\n";
 //	std::cout << "\n";
 //	std::cout << pretty_demangle(typeid(Gp3).name()) << "\n";
