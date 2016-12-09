@@ -1,7 +1,10 @@
 #ifndef SPACE_BLADE_H
 #define SPACE_BLADE_H
 
+#include "brigand/algorithms/index_of.hpp"
 #include "brigand/functions/bitwise/bitxor.hpp"
+#include "brigand/sequences/back.hpp"
+#include "brigand/sequences/front.hpp"
 
 namespace space
 {
@@ -12,7 +15,6 @@ namespace space
 			template<class T>
 			static constexpr T Pow(T v, T N)
 			{
-				// Recurse
 				return (N > 0) ? (v * Pow(v, N - 1)) : T{1};
 			}
 			
@@ -38,20 +40,30 @@ namespace space
 			{
 				auto a_shift = a >> 1;
 				return a_shift == T{0} ? bool(count & 1)
-					: HasSignFlip(a_shift, b, count + Grade(a_shift & b));
+					: HasSignFlip<T>(a_shift, b, count + Grade(a_shift & b));
 			}
+			
+			template<class A, class B>
+			struct BitProduct : public brigand::bitxor_<A, B>
+			{
+				static constexpr bool HasOuter() { return detail::HasOuter(A::value, B::value); }
+				static constexpr bool HasInner() { return detail::HasInner(A::value, B::value); }
+				static constexpr bool HasSignFlip() { return detail::HasSignFlip(A::value, B::value); }
+				
+				template<class Basis>
+				static constexpr auto IndexA(Basis) { return brigand::index_of<Basis, A>::value; }
+				
+				template<class Basis>
+				static constexpr auto IndexB(Basis) { return brigand::index_of<Basis, B>::value; }
+			};
 		}
-	
+		
+		template<class V>
+		struct Blade : std::integral_constant<typename V::value_type, V::value>
+		{};
 
-		template<class A, class B>
-		struct BitProduct : public brigand::bitxor_<A, B>
-		{
-	//		template<class Scalar>
-	//		static constexpr auto Sign()
-	//		{
-	//			return Blade::HasSignFlip(A::value, B::value) ? Scalar(-1) : Scalar(1);
-	//		}
-		};
+		template<class Pair>
+		using BitProduct = detail::BitProduct<brigand::front<Pair>, brigand::back<Pair>>;
 	}
 
 	

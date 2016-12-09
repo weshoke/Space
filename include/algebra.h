@@ -17,6 +17,7 @@ namespace space
 		using Multivector = Multivector<Algebra, Basis>;
 
 		using VectorBasis = basis::Vectors<Algebra>;
+		using Vec = Multivector<VectorBasis>;
 	};
 }
 

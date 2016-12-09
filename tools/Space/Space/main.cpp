@@ -7,6 +7,7 @@
 #include "blade.h"
 #include "algebra.h"
 #include "metric.h"
+#include "product.h"
 
 std::string demangle(const char* name) {
     int status = -4; // some arbitrary value to eliminate the compiler warning
@@ -131,16 +132,16 @@ static_assert(space::blade::detail::HasSignFlip(0b11, 0b10) == false, "HasSignFl
 
 
 static_assert(
-	space::blade::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b01>>::value == 0b00,
+	space::blade::detail::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b01>>::value == 0b00,
 	"BitProduct error");
 static_assert(
-	space::blade::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b10>>::value == 0b11,
+	space::blade::detail::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b10>>::value == 0b11,
 	"BitProduct error");
 static_assert(
-	space::blade::BitProduct<brigand::uint16_t<0b10>, brigand::uint16_t<0b01>>::value == 0b11,
+	space::blade::detail::BitProduct<brigand::uint16_t<0b10>, brigand::uint16_t<0b01>>::value == 0b11,
 	"BitProduct error");
 static_assert(
-	space::blade::BitProduct<brigand::uint16_t<0b101>, brigand::uint16_t<0b01>>::value == 0b100,
+	space::blade::detail::BitProduct<brigand::uint16_t<0b101>, brigand::uint16_t<0b01>>::value == 0b100,
 	"BitProduct error");
 
 
@@ -157,6 +158,12 @@ static_assert(std::is_same<
 
 int main(int argc, const char * argv[])
 {
+	using Vec = E2::Vec;
+	auto v1 = Vec(0.5f, 0.5f);
+	auto v2 = Vec(-0.5f, 0.5f);
+	auto b = v1 * v2;
+	std::cout << b[0] << " " << b[1] << "\n";
+	
 
 //	std::cout << 0b10 << "\n";
 	// e1 ^ e1 ^ e2
@@ -180,8 +187,8 @@ int main(int argc, const char * argv[])
 //	std::cout << res3 << "\n";
 	
 	
-	std::cout << pretty_demangle(typeid(typename E2::VectorBasis).name()) << "\n";
-	std::cout << "\n";
+//	std::cout << pretty_demangle(typeid(typename E2::VectorBasis).name()) << "\n";
+//	std::cout << "\n";
 //	std::cout << pretty_demangle(typeid(Gp2).name()) << "\n";
 //	std::cout << "\n";
 //	std::cout << pretty_demangle(typeid(Gp3).name()) << "\n";
