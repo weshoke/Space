@@ -161,42 +161,10 @@ int main(int argc, const char * argv[])
 	using Vec = E2::Vec;
 	auto v1 = Vec(0.5f, 0.5f);
 	auto v2 = Vec(-0.5f, 0.5f);
-	auto b = v1 * v2;
-	std::cout << b[0] << " " << b[1] << "\n";
-	
-
-//	std::cout << 0b10 << "\n";
-	// e1 ^ e1 ^ e2
-	// e2
-
-//	auto v1 = Vec(0.5f, 0.5f);
-//	auto v2 = Vec(0.5f, -0.5f);
-//	auto res = v1 * v2;
-//	auto res2 = v1 ^ v2;
-//	auto res3 = v1 <= v2;
-//	
-////	print_vec(v1);
-////	print_vec(v2);
-////	print_vec(res);
-////	print_vec(res2);
-////	print_vec(res3);
-//	std::cout << v1 << "\n";
-//	std::cout << v2 << "\n";
-//	std::cout << res << "\n";
-//	std::cout << res2 << "\n";
-//	std::cout << res3 << "\n";
-	
-	
-//	std::cout << pretty_demangle(typeid(typename E2::VectorBasis).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(Gp2).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(Gp3).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(Gp4).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(Gp5).name()) << "\n";
-//	std::cout << "\n";
-//	std::cout << pretty_demangle(typeid(Gpa).name()) << "\n";
+	std::cout << v1 << "\n";
+	std::cout << v2 << "\n";
+	std::cout << (v1 * v2) << "\n";
+	std::cout << (v1 ^ v2) << "\n";
+	std::cout << (v1 <= v2) << "\n";
 	return 0;
 }

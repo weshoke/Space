@@ -120,6 +120,28 @@ namespace space
 			using ProductLists = typename detail::BitProduct<BasisA, BasisB, op::Gp<brigand::_1>>::type;
 			return detail::MultivectorProduct(ProductLists{}, a, b);
 		}
+		
+		template<
+			class Algebra,
+			template<class...> class Multivector,
+			class BasisA,
+			class BasisB>
+		constexpr auto Op(const Multivector<Algebra, BasisA>& a, const Multivector<Algebra, BasisB>& b)
+		{
+			using ProductLists = typename detail::BitProduct<BasisA, BasisB, op::Op<brigand::_1>>::type;
+			return detail::MultivectorProduct(ProductLists{}, a, b);
+		}
+		
+		template<
+			class Algebra,
+			template<class...> class Multivector,
+			class BasisA,
+			class BasisB>
+		constexpr auto Ip(const Multivector<Algebra, BasisA>& a, const Multivector<Algebra, BasisB>& b)
+		{
+			using ProductLists = typename detail::BitProduct<BasisA, BasisB, op::Ip<brigand::_1>>::type;
+			return detail::MultivectorProduct(ProductLists{}, a, b);
+		}
 	}
 }
 

@@ -3,6 +3,7 @@
 
 #include "basis.h"
 #include "product.h"
+#include "brigand/algorithms/for_each.hpp"
 #include "brigand/functions/bitwise/bitxor.hpp"
 #include <array>
 
@@ -34,6 +35,18 @@ namespace space
 			return product::Gp(*this, b);
 		}
 		
+		template<class MultivectorB>
+		auto operator ^ (const MultivectorB &b)
+		{
+			return product::Op(*this, b);
+		}
+		
+		template<class MultivectorB>
+		auto operator <= (const MultivectorB &b)
+		{
+			return product::Ip(*this, b);
+		}
+		
 		auto& operator[] (const int32_t idx)
 		{
 			return values[idx];
@@ -44,43 +57,43 @@ namespace space
 			return values[idx];
 		}
 		
+		friend std::ostream& operator << (std::ostream& os, const Multivector& m)
+		{
+			auto i = 0u;
+			os << "{";
+			brigand::for_each<Basis>([&](auto v)
+			{
+				using T = brigand::type_from<decltype(v)>;
+				if(i != 0u)
+				{
+					os << ", ";
+				}
+				if(T::value == 0)
+				{
+					os << "s(" << m.values[i] << ")";
+				}
+				else
+				{
+					os << "e";
+					// TODO: metaprogram this
+					for(auto j = 0u; j < Algebra::Dim; ++j)
+					{
+						if(T::value & (1 << j))
+						{
+							os << (j + 1);
+						}
+					}
+					os << "(" << m.values[i] << ")";
+				}
+				++i;
+			});
+			os << "}";
+			return os;
+		}
+		
 		std::array<Scalar, Size::value> values;
 	};
 
-
-//		friend std::ostream& operator << (std::ostream& os, const Multivector& m){
-//			auto i = 0u;
-//			os << "{";
-//			brigand::for_each<BasisA>([&](auto v)
-//			{
-//				using T = brigand::type_from<decltype(v)>;
-//				if(i != 0u)
-//				{
-//					os << ", ";
-//				}
-//				if(T::value == 0)
-//				{
-//					os << "s(" << m.values[i] << ")";
-//				}
-//				else
-//				{
-//					os << "e";
-//					// TODO: metaprogram this
-//					for(auto j = 0u; j < Algebra::Dim; ++j)
-//					{
-//						if(T::value & (1 << j))
-//						{
-//							os << (j + 1);
-//						}
-//					}
-//					os << "(" << m.values[i] << ")";
-//				}
-//				++i;
-//			});
-//			os << "}";
-//			return os;
-//		}
-//		
 //		// conjugate
 //		// involute
 //		// invert
