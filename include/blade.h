@@ -5,6 +5,7 @@
 #include "brigand/functions/bitwise/bitxor.hpp"
 #include "brigand/sequences/back.hpp"
 #include "brigand/sequences/front.hpp"
+#include <type_traits>
 
 namespace space
 {
@@ -42,6 +43,34 @@ namespace space
 				return a_shift == T{0} ? bool(count & 1)
 					: HasSignFlip<T>(a_shift, b, count + Grade(a_shift & b));
 			}
+			
+			template<class T>
+			constexpr bool ReverseHasSignFlip(T a)
+			{
+				using Signed = std::make_signed_t<T>;
+				auto a_signed = Signed(a);
+				auto grade = Grade(a_signed);
+				return Pow(-1, (grade * (grade - 1) / 2)) == -1;
+			}
+			
+			template<class T>
+			constexpr bool InvoluteHasSignFlip(T a)
+			{
+				using Signed = std::make_signed_t<T>;
+				auto a_signed = Signed(a);
+				auto grade = Grade(a_signed);
+				return Pow(-1, grade) == -1;
+			}
+			
+			template<class T>
+			constexpr bool ConjugateHasSignFlip(T a)
+			{
+				using Signed = std::make_signed_t<T>;
+				auto a_signed = Signed(a);
+				auto grade = Grade(a_signed);
+				return Pow(-1, (grade * (grade + 1) / 2)) == -1;
+			}
+			
 			
 			template<class A, class B>
 			struct BitProduct : public brigand::bitxor_<A, B>

@@ -161,10 +161,22 @@ int main(int argc, const char * argv[])
 	using Vec = E2::Vec;
 	auto v1 = Vec(0.5f, 0.5f);
 	auto v2 = Vec(-0.5f, 0.5f);
-	std::cout << v1 << "\n";
-	std::cout << v2 << "\n";
-	std::cout << (v1 * v2) << "\n";
-	std::cout << (v1 ^ v2) << "\n";
-	std::cout << (v1 <= v2) << "\n";
+	
+//	std::cout << pretty_demangle(typeid(v1).name()) << "\n";
+//	
+//	std::cout << v1 << "\n";
+//	std::cout << v2 << "\n";
+//	std::cout << (v1 * v2) << "\n";
+//	std::cout << (v1 ^ v2) << "\n";
+//	std::cout << (v1 <= v2) << "\n";
+	std::cout << ~v1 << "\n";
+//	std::cout << ~(v1 * v2) << "\n";
+	
+//	std::cout << space::blade::detail::InvoluteHasSignFlip(0b01) << "\n";
+//	std::cout << space::blade::detail::InvoluteHasSignFlip(0b10) << "\n";
+//	std::cout << space::blade::detail::InvoluteHasSignFlip(0b11) << "\n";
+//	std::cout << space::blade::detail::InvoluteHasSignFlip(0b110) << "\n";
+//	std::cout << space::blade::detail::InvoluteHasSignFlip(0) << "\n";
+	
 	return 0;
 }

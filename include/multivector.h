@@ -3,6 +3,7 @@
 
 #include "basis.h"
 #include "product.h"
+#include "unary.h"
 #include "brigand/algorithms/for_each.hpp"
 #include "brigand/functions/bitwise/bitxor.hpp"
 #include <array>
@@ -29,20 +30,25 @@ namespace space
         : values{v...}
         {}
 		
+		auto operator ~() const
+		{
+			return unary::Reverse(*this);
+		}
+		
 		template<class MultivectorB>
-		auto operator * (const MultivectorB &b)
+		auto operator * (const MultivectorB &b) const
 		{
 			return product::Gp(*this, b);
 		}
 		
 		template<class MultivectorB>
-		auto operator ^ (const MultivectorB &b)
+		auto operator ^ (const MultivectorB &b) const
 		{
 			return product::Op(*this, b);
 		}
 		
 		template<class MultivectorB>
-		auto operator <= (const MultivectorB &b)
+		auto operator <= (const MultivectorB &b) const
 		{
 			return product::Ip(*this, b);
 		}
