@@ -156,14 +156,15 @@ static_assert(std::is_same<
 	brigand::list<brigand::uint16_t<1>, brigand::uint16_t<2>, brigand::uint16_t<4>>
 >::value, "Vector Basis error");
 
+
 int main(int argc, const char * argv[])
 {
 	using Vec = E2::Vec;
 	auto v1 = Vec(0.5f, 0.5f);
 	auto v2 = Vec(-0.5f, 0.5f);
 	
-//	std::cout << pretty_demangle(typeid(v1).name()) << "\n";
-//	
+	std::cout << pretty_demangle(typeid(E2::PseudoScalarBasis).name()) << "\n";
+//
 //	std::cout << v1 << "\n";
 //	std::cout << v2 << "\n";
 //	std::cout << (v1 * v2) << "\n";

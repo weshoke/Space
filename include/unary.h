@@ -38,6 +38,26 @@ namespace space
 					return blade::detail::ReverseHasSignFlip(Blade::value) ? T(-1) : T(1);
 				}
 			};
+			
+			template<class T>
+			struct Involute
+			{
+				template<class Blade>
+				static constexpr auto Sign(Blade)
+				{
+					return blade::detail::InvoluteHasSignFlip(Blade::value) ? T(-1) : T(1);
+				}
+			};
+			
+			template<class T>
+			struct Conjugate
+			{
+				template<class Blade>
+				static constexpr auto Sign(Blade)
+				{
+					return blade::detail::ConjugateHasSignFlip(Blade::value) ? T(-1) : T(1);
+				}
+			};
 		}
 	
 		template<
@@ -48,6 +68,16 @@ namespace space
 		{
 			using Scalar = typename Algebra::Scalar;
 			return detail::UnaryOp(op::Reverse<Scalar>{}, m);
+		}
+		
+		template<
+			class Algebra,
+			template<class...> class Multivector,
+			class Basis>
+		constexpr auto Conjugate(const Multivector<Algebra, Basis>& m)
+		{
+			using Scalar = typename Algebra::Scalar;
+			return detail::UnaryOp(op::Conjugate<Scalar>{}, m);
 		}
 	}
 }

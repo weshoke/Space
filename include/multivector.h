@@ -35,6 +35,18 @@ namespace space
 			return unary::Reverse(*this);
 		}
 		
+		auto operator !() const {
+			auto tmp = ~(*this);
+			auto v = ((*this) * tmp)[0];
+			return (v == 0) ? tmp : tmp / v;
+		}
+		
+		template<class MultivectorB>
+		auto operator / (const MultivectorB& b) const
+		{
+			return *this * !b;
+		}
+		
 		template<class MultivectorB>
 		auto operator * (const MultivectorB &b) const
 		{
@@ -51,6 +63,16 @@ namespace space
 		auto operator <= (const MultivectorB &b) const
 		{
 			return product::Ip(*this, b);
+		}
+		
+		auto Dual() const
+		{
+			return (*this) * Algebra::Pss(-1);
+		}
+		
+		auto Undual() const
+		{
+			return (*this) * Algebra::Pss(1);
 		}
 		
 		auto& operator[] (const int32_t idx)
@@ -100,16 +122,8 @@ namespace space
 		std::array<Scalar, Size::value> values;
 	};
 
-//		// conjugate
-//		// involute
-//		// invert
-//		// reverse
-//		// div
-//		// add
-//		// sub
-//		// operator[](basis)
-//		// dual
-//		// undual
+		// add
+		// sub
 }
 
 #endif

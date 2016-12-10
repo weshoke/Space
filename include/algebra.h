@@ -17,7 +17,14 @@ namespace space
 		using Multivector = Multivector<Algebra, Basis>;
 
 		using VectorBasis = basis::Vectors<Algebra>;
+		using PseudoScalarBasis = basis::PseudoScalar<Algebra>;
+		
 		using Vec = Multivector<VectorBasis>;
+		using PseudoScalar = Multivector<PseudoScalarBasis>;
+		
+		
+		// Aliases
+		using Pss = PseudoScalar;
 	};
 }
 

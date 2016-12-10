@@ -94,20 +94,6 @@ namespace space
 		template<class Pair>
 		using BitProduct = detail::BitProduct<brigand::front<Pair>, brigand::back<Pair>>;
 	}
-
-	
-////		/// Whether reversion causes a sign flip
-////		constexpr bool reverse(type a){
-////		return cpow( -1, (grade(a) * (grade(a)-1) / 2.0) ) == -1;
-////		}
-////		/// Whether involution causes a sign flip
-////		constexpr bool involute(type a){
-////		return cpow( -1, grade(a) ) == -1;
-////		}
-////		/// Whether conjugation causes a sign flip
-////		constexpr bool conjugate(type a){
-////		return cpow( -1,(grade(a) * (grade(a)+1) / 2.0) ) == -1;   
-////		}
 }
 
 #endif

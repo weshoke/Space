@@ -23,6 +23,18 @@ namespace space
 					brigand::shift_left<brigand::uint16_t<1>, brigand::_1>>;
 			};
 			
+			template<class T>
+			static constexpr T AllBits(T dim, T mask = 0)
+			{
+				return dim == T{0} ? mask : AllBits(dim - 1, mask << 1 | 0b1);
+			}
+			
+			template<class Algebra>
+			struct PseudoScalar
+			{
+				using type = brigand::list<brigand::uint16_t<AllBits(Algebra::Dim)>>;
+			};
+			
 			template<class B1, class B2>
 			struct BitProduct
 			{
@@ -44,6 +56,9 @@ namespace space
 		// Generate the vector basis
 		template<class Algebra>
 		using Vectors = typename detail::Vectors<Algebra>::type;
+		
+		template<class Algebra>
+		using PseudoScalar = typename detail::PseudoScalar<Algebra>::type;
 
 		// Generate the basis pairs for a product from input basis lists
 		template<class B1, class B2>
