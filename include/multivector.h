@@ -3,6 +3,7 @@
 
 #include "basis.h"
 #include "product.h"
+#include "sum.h"
 #include "unary.h"
 #include "brigand/algorithms/for_each.hpp"
 #include "brigand/functions/bitwise/bitxor.hpp"
@@ -29,6 +30,11 @@ namespace space
         Multivector(const Values&... v)
         : values{v...}
         {}
+		
+		auto operator -() const
+		{
+			return unary::Negate(*this);
+		}
 		
 		auto operator ~() const
 		{
@@ -63,6 +69,18 @@ namespace space
 		auto operator <= (const MultivectorB &b) const
 		{
 			return product::Ip(*this, b);
+		}
+		
+		template<class MultivectorB>
+		auto operator + (const MultivectorB &b) const
+		{
+			return sum::Add(*this, b);
+		}
+		
+		template<class MultivectorB>
+		auto operator - (const MultivectorB &b) const
+		{
+			return sum::Add(*this, -b);
 		}
 		
 		auto Dual() const

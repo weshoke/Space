@@ -88,8 +88,10 @@ namespace space
 		}
 		
 		template<class V>
-		struct Blade : std::integral_constant<typename V::value_type, V::value>
-		{};
+		struct Blade
+		{
+			using type = std::integral_constant<typename V::value_type, V::value>;
+		};
 
 		template<class Pair>
 		using BitProduct = detail::BitProduct<brigand::front<Pair>, brigand::back<Pair>>;

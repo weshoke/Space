@@ -3,8 +3,9 @@
 
 #include "blade.h"
 #include "basis.h"
-
-extern std::string pretty_demangle(const char* name);
+#include "brigand/algorithms/count.hpp"
+#include "brigand/sequences/size.hpp"
+#include "brigand/types/integer.hpp"
 
 namespace space
 {
@@ -29,6 +30,16 @@ namespace space
 	
 		namespace op
 		{
+			template<class T>
+			struct Negate
+			{
+				template<class Blade>
+				static constexpr auto Sign(Blade)
+				{
+					return T(-1);
+				}
+			};
+		
 			template<class T>
 			struct Reverse
 			{
@@ -59,6 +70,16 @@ namespace space
 				}
 			};
 		}
+		
+		template<
+			class Algebra,
+			template<class...> class Multivector,
+			class Basis>
+		constexpr auto Negate(const Multivector<Algebra, Basis>& m)
+		{
+			using Scalar = typename Algebra::Scalar;
+			return detail::UnaryOp(op::Negate<Scalar>{}, m);
+		}
 	
 		template<
 			class Algebra,
@@ -68,6 +89,16 @@ namespace space
 		{
 			using Scalar = typename Algebra::Scalar;
 			return detail::UnaryOp(op::Reverse<Scalar>{}, m);
+		}
+		
+		template<
+			class Algebra,
+			template<class...> class Multivector,
+			class Basis>
+		constexpr auto Involute(const Multivector<Algebra, Basis>& m)
+		{
+			using Scalar = typename Algebra::Scalar;
+			return detail::UnaryOp(op::Involute<Scalar>{}, m);
 		}
 		
 		template<

@@ -11,7 +11,6 @@
 #include "brigand/functions/lambda/bind.hpp"
 #include "brigand/functions/logical/not.hpp"
 
-
 namespace space
 {
 	namespace product
@@ -30,7 +29,6 @@ namespace space
 				>;
 				using OrderedProducts = brigand::sort<Products>;
 				using OrderedBlades = brigand::transform<OrderedProducts, blade::Blade<brigand::_1>>;
-				using ProductBasis = brigand::unique<OrderedBlades>;
 				using ProductLists = brigand::group<
 					OrderedProducts,
 					brigand::bind<
@@ -80,18 +78,23 @@ namespace space
 				class BasisB>
 			constexpr auto MultivectorProduct(ProductLists<Lists...>, const Multivector<Algebra, BasisA>& a, const Multivector<Algebra, BasisB>& b)
 			{
-				using ProductBasis = brigand::transform<ProductLists<Lists...>,
+				using ProductBasis = brigand::transform<
+					ProductLists<Lists...>,
 					brigand::bind<
-						blade::Blade,
+						brigand::type_from,
 						brigand::bind<
-							brigand::front,
-							brigand::_1
+							blade::Blade,
+							brigand::bind<
+								brigand::front,
+								brigand::_1
+							>
 						>
 					>
 				>;
 				return Multivector<Algebra, ProductBasis>(
 					BasisProduct(Lists{}, a, b)...
 				);
+				
 			}
 		}
 

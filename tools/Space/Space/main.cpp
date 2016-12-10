@@ -8,6 +8,7 @@
 #include "algebra.h"
 #include "metric.h"
 #include "product.h"
+#include "sum.h"
 
 std::string demangle(const char* name) {
     int status = -4; // some arbitrary value to eliminate the compiler warning
@@ -162,16 +163,28 @@ int main(int argc, const char * argv[])
 	using Vec = E2::Vec;
 	auto v1 = Vec(0.5f, 0.5f);
 	auto v2 = Vec(-0.5f, 0.5f);
+	auto b1 = (v1 * v2);
 	
-	std::cout << pretty_demangle(typeid(E2::PseudoScalarBasis).name()) << "\n";
+//	std::cout << pretty_demangle(typeid(decltype(v1)).name()) << "\n";
+//	std::cout << pretty_demangle(typeid(decltype(b1)).name()) << "\n";
+	
+	
+//	using X = typename space::sum::detail::BitSum<
+//		E2::VectorBasis,
+//		E2::VectorBasis
+//	>::type;
+//	std::cout << pretty_demangle(typeid(X).name()) << "\n";
 //
 //	std::cout << v1 << "\n";
 //	std::cout << v2 << "\n";
 //	std::cout << (v1 * v2) << "\n";
 //	std::cout << (v1 ^ v2) << "\n";
 //	std::cout << (v1 <= v2) << "\n";
-	std::cout << ~v1 << "\n";
-//	std::cout << ~(v1 * v2) << "\n";
+//	std::cout << ~v1 << "\n";
+	std::cout << (v1 + b1) << "\n";
+//	std::cout << (v1 - v2) << "\n";
+	
+	
 	
 //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b01) << "\n";
 //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b10) << "\n";
