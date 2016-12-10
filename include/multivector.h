@@ -27,6 +27,7 @@ namespace space
 		: values{}
 		{}
 		
+		// Explicit??
 		template <class... Values>
         Multivector(const Values&... v)
         : values{v...}
@@ -54,10 +55,20 @@ namespace space
 			return *this * !b;
 		}
 		
+		auto operator / (const typename Algebra::ScalarValue& b) const
+		{
+			return *this * (ScalarValue(1) / b);
+		}
+		
 		template<class MultivectorB>
 		auto operator * (const MultivectorB &b) const
 		{
 			return product::Gp(*this, b);
+		}
+		
+		auto operator * (const typename Algebra::ScalarValue& b) const
+		{
+			return *this * typename Algebra::S(b);
 		}
 		
 		template<class MultivectorB>
@@ -107,7 +118,13 @@ namespace space
 		auto Normalized() const
 		{
 			auto v = std::sqrt(std::abs(Weight()));
-			return v == ScalarValue(0) ? Multivector() : *this;
+			return v == ScalarValue(0) ? Multivector() : (*this / v);
+		}
+		
+		template<class MultivectorB>
+		auto Spin(const MultivectorB &b) const
+		{
+			return b * (*this) * ~b;
 		}
 		
 		auto& operator[] (const int32_t idx)

@@ -127,15 +127,6 @@ namespace space
 		template<
 			class Algebra,
 			template<class...> class Multivector,
-			class BasisA>
-		constexpr auto Gp(const Multivector<Algebra, BasisA>& a, const typename Algebra::ScalarValue& b)
-		{
-			return Gp(a, typename Algebra::S(b));
-		}
-		
-		template<
-			class Algebra,
-			template<class...> class Multivector,
 			class BasisA,
 			class BasisB>
 		constexpr auto Op(const Multivector<Algebra, BasisA>& a, const Multivector<Algebra, BasisB>& b)

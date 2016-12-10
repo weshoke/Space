@@ -161,10 +161,9 @@ static_assert(std::is_same<
 int main(int argc, const char * argv[])
 {
 	using Vec = E2::Vec;
-	auto v1 = Vec(0.5f, 0.5f);
-	auto v2 = Vec(-0.5f, 0.5f);
-	auto b1 = (v1 * v2);
-	auto vv = b1 * 0.5f;
+	auto v1 = Vec(1.f, 0.f);
+	auto v2 = Vec(1.f, 1.f).Normalized();
+	auto r = v1 * v2;
 	
 //	std::cout << pretty_demangle(typeid(decltype(v1)).name()) << "\n";
 //	std::cout << pretty_demangle(typeid(decltype(b1)).name()) << "\n";
@@ -176,8 +175,10 @@ int main(int argc, const char * argv[])
 //	>::type;
 //	std::cout << pretty_demangle(typeid(X).name()) << "\n";
 //
-	std::cout << b1 << "\n";
-	std::cout << vv << "\n";
+	std::cout << v1 << "\n";
+	std::cout << v2 << "\n";
+	std::cout << r << "\n";
+	std::cout << v1.Spin(r) << "\n";
 //	std::cout << (v1 * v2) << "\n";
 //	std::cout << (v1 ^ v2) << "\n";
 //	std::cout << (v1 <= v2) << "\n";
