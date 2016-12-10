@@ -83,9 +83,9 @@ namespace space
 				class B>
 			constexpr auto BasisSum(SumList<Summands...>, const A& a, const B &b)
 			{
-				using Scalar = typename A::Scalar;
+				using ScalarValue = typename A::ScalarValue;
 				// In C++17 can use parameter pack expansion fold
-				auto res = Scalar{0};
+				auto res = ScalarValue{0};
 				(void)std::initializer_list<int>{((res += BladeSum(Summands{}, a, b)), void(), 0)...};
 				return res;
 			}

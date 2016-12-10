@@ -52,8 +52,8 @@ namespace space
 			constexpr auto BladeProduct(BitProduct, const Multivector<Algebra, BasisA>& a, const Multivector<Algebra, BasisB>& b)
 			{
 				using A = Multivector<Algebra, BasisA>;
-				using Scalar = typename A::Scalar;
-				const auto s = BitProduct::HasSignFlip() ? Scalar(-1) : Scalar(1);
+				using ScalarValue = typename A::ScalarValue;
+				const auto s = BitProduct::HasSignFlip() ? ScalarValue(-1) : ScalarValue(1);
 				return s * a[BitProduct::IndexA(BasisA{})] * b[BitProduct::IndexB(BasisB{})];
 			}
 			
@@ -63,9 +63,9 @@ namespace space
 				class B>
 			constexpr auto BasisProduct(ProductList<Products...>, const A& a, const B &b)
 			{
-				using Scalar = typename A::Scalar;
+				using ScalarValue = typename A::ScalarValue;
 				// In C++17 can use parameter pack expansion fold
-				auto res = Scalar{0};
+				auto res = ScalarValue{0};
 				(void)std::initializer_list<int>{((res += BladeProduct(Products{}, a, b)), void(), 0)...};
 				return res;
 			}
@@ -122,6 +122,15 @@ namespace space
 		{
 			using ProductLists = typename detail::BitProduct<BasisA, BasisB, op::Gp<brigand::_1>>::type;
 			return detail::MultivectorProduct(ProductLists{}, a, b);
+		}
+		
+		template<
+			class Algebra,
+			template<class...> class Multivector,
+			class BasisA>
+		constexpr auto Gp(const Multivector<Algebra, BasisA>& a, const typename Algebra::ScalarValue& b)
+		{
+			return Gp(a, typename Algebra::S(b));
 		}
 		
 		template<

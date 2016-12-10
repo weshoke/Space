@@ -8,6 +8,7 @@
 #include "brigand/algorithms/for_each.hpp"
 #include "brigand/functions/bitwise/bitxor.hpp"
 #include <array>
+#include <cmath>
 
 namespace space
 {
@@ -19,7 +20,7 @@ namespace space
 	{
 		using Algebra = Algebra_;
 		using Basis = Basis_;
-		using Scalar = typename Algebra::Scalar;
+		using ScalarValue = typename Algebra::ScalarValue;
 		using Size = basis::Size<Basis>;
 	
 		Multivector()
@@ -93,6 +94,22 @@ namespace space
 			return (*this) * Algebra::Pss(1);
 		}
 		
+		auto Weight() const
+		{
+			return (*this <= *this)[0];
+		}
+		
+		auto Norm() const
+		{
+			return std::sqrt(std::max(ScalarValue(0), Weight()));
+		}
+		
+		auto Normalized() const
+		{
+			auto v = std::sqrt(std::abs(Weight()));
+			return v == ScalarValue(0) ? Multivector() : *this;
+		}
+		
 		auto& operator[] (const int32_t idx)
 		{
 			return values[idx];
@@ -137,11 +154,8 @@ namespace space
 			return os;
 		}
 		
-		std::array<Scalar, Size::value> values;
+		std::array<ScalarValue, Size::value> values;
 	};
-
-		// add
-		// sub
 }
 
 #endif

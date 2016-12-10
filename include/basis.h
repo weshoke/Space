@@ -16,6 +16,12 @@ namespace space
 		namespace detail
 		{
 			template<class Algebra>
+			struct Scalar
+			{
+				using type = brigand::list<brigand::uint16_t<0>>;
+			};
+		
+			template<class Algebra>
 			struct Vectors
 			{
 				using type = brigand::transform<
@@ -53,7 +59,9 @@ namespace space
 		template<class Basis>
 		using Size = brigand::size<Basis>;
 		
-		// Generate the vector basis
+		template<class Algebra>
+		using Scalar = typename detail::Scalar<Algebra>::type;
+		
 		template<class Algebra>
 		using Vectors = typename detail::Vectors<Algebra>::type;
 		

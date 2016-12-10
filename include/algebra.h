@@ -6,24 +6,28 @@
 
 namespace space
 {
-	template<class Metric_, class Scalar_>
+	template<class Metric_, class ScalarValue_>
 	struct Algebra
 	{
 		using Metric = Metric_;
-		using Scalar = Scalar_;
+		using ScalarValue = ScalarValue_;
 		static constexpr auto Dim = Metric::Dim;
 	
 		template<class Basis>
 		using Multivector = Multivector<Algebra, Basis>;
 
+		
+		using ScalarBasis = basis::Scalar<Algebra>;
 		using VectorBasis = basis::Vectors<Algebra>;
 		using PseudoScalarBasis = basis::PseudoScalar<Algebra>;
 		
+		using Scalar = Multivector<ScalarBasis>;
 		using Vec = Multivector<VectorBasis>;
 		using PseudoScalar = Multivector<PseudoScalarBasis>;
 		
 		
 		// Aliases
+		using S = Scalar;
 		using Pss = PseudoScalar;
 	};
 }

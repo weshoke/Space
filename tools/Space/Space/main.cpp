@@ -164,6 +164,7 @@ int main(int argc, const char * argv[])
 	auto v1 = Vec(0.5f, 0.5f);
 	auto v2 = Vec(-0.5f, 0.5f);
 	auto b1 = (v1 * v2);
+	auto vv = b1 * 0.5f;
 	
 //	std::cout << pretty_demangle(typeid(decltype(v1)).name()) << "\n";
 //	std::cout << pretty_demangle(typeid(decltype(b1)).name()) << "\n";
@@ -175,13 +176,13 @@ int main(int argc, const char * argv[])
 //	>::type;
 //	std::cout << pretty_demangle(typeid(X).name()) << "\n";
 //
-//	std::cout << v1 << "\n";
-//	std::cout << v2 << "\n";
+	std::cout << b1 << "\n";
+	std::cout << vv << "\n";
 //	std::cout << (v1 * v2) << "\n";
 //	std::cout << (v1 ^ v2) << "\n";
 //	std::cout << (v1 <= v2) << "\n";
 //	std::cout << ~v1 << "\n";
-	std::cout << (v1 + b1) << "\n";
+//	std::cout << (v1 + b1) << "\n";
 //	std::cout << (v1 - v2) << "\n";
 	
 	

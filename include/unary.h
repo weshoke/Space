@@ -77,8 +77,8 @@ namespace space
 			class Basis>
 		constexpr auto Negate(const Multivector<Algebra, Basis>& m)
 		{
-			using Scalar = typename Algebra::Scalar;
-			return detail::UnaryOp(op::Negate<Scalar>{}, m);
+			using ScalarValue = typename Algebra::ScalarValue;
+			return detail::UnaryOp(op::Negate<ScalarValue>{}, m);
 		}
 	
 		template<
@@ -87,8 +87,8 @@ namespace space
 			class Basis>
 		constexpr auto Reverse(const Multivector<Algebra, Basis>& m)
 		{
-			using Scalar = typename Algebra::Scalar;
-			return detail::UnaryOp(op::Reverse<Scalar>{}, m);
+			using ScalarValue = typename Algebra::ScalarValue;
+			return detail::UnaryOp(op::Reverse<ScalarValue>{}, m);
 		}
 		
 		template<
@@ -97,8 +97,8 @@ namespace space
 			class Basis>
 		constexpr auto Involute(const Multivector<Algebra, Basis>& m)
 		{
-			using Scalar = typename Algebra::Scalar;
-			return detail::UnaryOp(op::Involute<Scalar>{}, m);
+			using ScalarValue = typename Algebra::ScalarValue;
+			return detail::UnaryOp(op::Involute<ScalarValue>{}, m);
 		}
 		
 		template<
@@ -107,8 +107,8 @@ namespace space
 			class Basis>
 		constexpr auto Conjugate(const Multivector<Algebra, Basis>& m)
 		{
-			using Scalar = typename Algebra::Scalar;
-			return detail::UnaryOp(op::Conjugate<Scalar>{}, m);
+			using ScalarValue = typename Algebra::ScalarValue;
+			return detail::UnaryOp(op::Conjugate<ScalarValue>{}, m);
 		}
 	}
 }
