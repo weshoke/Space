@@ -4,7 +4,12 @@
 #include "blade.h"
 #include "brigand/algorithms/index_of.hpp"
 #include "brigand/algorithms/product.hpp"
+#include "brigand/algorithms/remove.hpp"
+#include "brigand/algorithms/sort.hpp"
+#include "brigand/algorithms/transform.hpp"
+#include "brigand/algorithms/unique.hpp"
 #include "brigand/functions/bitwise/shift_left.hpp"
+#include "brigand/functions/comparison/equal_to.hpp"
 #include "brigand/sequences/make_sequence.hpp"
 #include "brigand/sequences/size.hpp"
 #include <type_traits>
@@ -12,6 +17,12 @@
 namespace space {
     namespace basis {
         namespace detail {
+            template <class B1, class B2>
+            struct BitProduct {
+                using type = brigand::transform<brigand::product<B1, B2>,
+                                                brigand::bind<blade::BitProduct, brigand::_1>>;
+            };
+
             template <class Algebra>
             struct Scalar {
                 using type = brigand::list<brigand::uint16_t<0>>;
@@ -33,12 +44,6 @@ namespace space {
             template <class Algebra>
             struct PseudoScalar {
                 using type = brigand::list<brigand::uint16_t<AllBits(Algebra::Dim)>>;
-            };
-
-            template <class B1, class B2>
-            struct BitProduct {
-                using type = brigand::transform<brigand::product<B1, B2>,
-                                                brigand::bind<blade::BitProduct, brigand::_1>>;
             };
         }
 

@@ -159,11 +159,16 @@ static_assert(
 int main(int argc, const char* argv[])
 {
     using Vec = E2::Vec;
-    auto v1 = Vec(1.f, 0.f);
-    auto v2 = Vec(1.f, 1.f).Normalized();
-    auto r = v2 * v1;
+    //    auto v1 = Vec(1.f, 0.f);
+    //    auto v2 = Vec(1.f, 1.f).Normalized();
+    //    auto r = v2 * v1;
 
-    //	std::cout << pretty_demangle(typeid(decltype(v1)).name()) << "\n";
+    std::cout << pretty_demangle(typeid(typename E2::BasisVectors).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(space::basis::DimBasis<E3, 1>).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(typename space::detail::DimBasis<E3, 2>::type).name())
+    //<< "\n";
+    //	std::cout << pretty_demangle(typeid(typename space::detail::DimBasis<E3, 3>::type).name())
+    //<< "\n";
     //	std::cout << pretty_demangle(typeid(decltype(b1)).name()) << "\n";
 
     //	using X = typename space::sum::detail::BitSum<
@@ -172,13 +177,14 @@ int main(int argc, const char* argv[])
     //	>::type;
     //	std::cout << pretty_demangle(typeid(X).name()) << "\n";
     //
-    std::cout << v1 << "\n";
-    std::cout << v2 << "\n";
-    std::cout << r << "\n";
-    std::cout << v1.Spin(r) << "\n";
+    //    std::cout << v1 << "\n";
+    //    std::cout << v2 << "\n";
+    //    std::cout << r << "\n";
+    //    std::cout << v1.Spin(r) << "\n";
+    //	std::cout << (v1 ^ v2) << "\n";
     //	std::cout << (v1 * v2) << "\n";
     //	std::cout << (v1 ^ v2) << "\n";
-    //	std::cout << (v1 <= v2) << "\n";
+    //    	std::cout << (v1 <= v2) << "\n";
     //	std::cout << ~v1 << "\n";
     //	std::cout << (v1 + b1) << "\n";
     //	std::cout << (v1 - v2) << "\n";
