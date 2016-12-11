@@ -1,84 +1,81 @@
-#include <cstdint>
-#include <array>
-#include <utility>
-#include <iostream>
-#include <cxxabi.h>
-#include <sstream>
-#include "blade.h"
 #include "algebra.h"
+#include "blade.h"
 #include "metric.h"
 #include "product.h"
 #include "sum.h"
+#include <cxxabi.h>
+#include <array>
+#include <cstdint>
+#include <iostream>
+#include <sstream>
+#include <utility>
 
-std::string demangle(const char* name) {
-    int status = -4; // some arbitrary value to eliminate the compiler warning
+std::string demangle(const char* name)
+{
+    int status = -4;  // some arbitrary value to eliminate the compiler warning
     // enable c++11 by passing the flag -std=c++11 to g++
-    std::unique_ptr<char, void(*)(void*)> res {
-        abi::__cxa_demangle(name, NULL, NULL, &status),
-        std::free
-    };
-    return (status == 0) ? res.get() : name ;
+    std::unique_ptr<char, void (*)(void*)> res{abi::__cxa_demangle(name, NULL, NULL, &status),
+                                               std::free};
+    return (status == 0) ? res.get() : name;
 }
 
 std::string pretty_demangle(const char* name)
 {
-	auto ss = std::stringstream();
-	auto d_name = demangle(name);
-	auto it = d_name.begin();
-	auto ite = d_name.end();
-	auto lvl = 0;
-	const auto indent = [&]()
-	{
-		for(auto i = 0; i < lvl; ++i)
-		{
-			ss << "  ";
-		}
-	};
-	while(it != ite)
-	{
-		switch(*it)
-		{
-			case '<':
-				ss << *it;
-				ss << "\n";
-				++lvl;
-				indent();
-				break;
-				
-			case '>':
-				ss << "\n";
-				--lvl;
-				indent();
-				ss << *it;
-				break;
-			
-			case ',':
-				ss << "\n";
-				indent();
-				ss << *it;
-				break;
-				
-			default:
-				ss << *it;
-				break;
-		}
-		++it;
-	}
-	return ss.str();
+    auto ss = std::stringstream();
+    auto d_name = demangle(name);
+    auto it = d_name.begin();
+    auto ite = d_name.end();
+    auto lvl = 0;
+    const auto indent = [&]() {
+        for (auto i = 0; i < lvl; ++i) {
+            ss << "  ";
+        }
+    };
+    while (it != ite) {
+        switch (*it) {
+            case '<':
+                ss << *it;
+                ss << "\n";
+                ++lvl;
+                indent();
+                break;
+
+            case '>':
+                ss << "\n";
+                --lvl;
+                indent();
+                ss << *it;
+                break;
+
+            case ',':
+                ss << "\n";
+                indent();
+                ss << *it;
+                break;
+
+            default:
+                ss << *it;
+                break;
+        }
+        ++it;
+    }
+    return ss.str();
 }
 //
-//namespace space
+// namespace space
 //{
 ////	static constexpr auto Dim = uint16_t{2};
 //
-//	
-//	
+//
+//
 //	template <class A, class B>
-//	struct HasInner : std::integral_constant < bool, Bits<typename A::value_type>::HasInner(A::value, B::value)> {};
-//	
+//	struct HasInner : std::integral_constant < bool, Bits<typename
+//A::value_type>::HasInner(A::value, B::value)> {};
+//
 //	template <class A, class B>
-//	struct HasOuter : std::integral_constant < bool, Bits<typename A::value_type>::HasOuter(A::value, B::value)> {};
-//	
+//	struct HasOuter : std::integral_constant < bool, Bits<typename
+//A::value_type>::HasOuter(A::value, B::value)> {};
+//
 //
 //
 //	template<class Metric, class T>
@@ -87,23 +84,23 @@ std::string pretty_demangle(const char* name)
 //		static constexpr auto Dim = Metric::Dim;
 //		using Bits = typename Metric::Bits;
 //		using BitsType = typename Bits::Type;
-//		
+//
 //		using Scalar = T;
-//	
+//
 //		template<class Basis>
 //		using Multivector = Multivector<Algebra, Basis>;
-//		
+//
 //		using dimensions = brigand::make_sequence<brigand::uint16_t<0>, Metric::Dim>;
-//		
+//
 //		// TODO: tuple<Basis0, Basis1, ..., Basis[Dim - 1]>
-//		using VecBasis = brigand::transform<dimensions, brigand::shift_left<brigand::uint16_t<1>, brigand::_1>>;
+//		using VecBasis = brigand::transform<dimensions, brigand::shift_left<brigand::uint16_t<1>,
+//brigand::_1>>;
 //		using Vec = Multivector<VecBasis>;
 //	};
 //}
 //
-//using A = space::Algebra<space::Metric<2>, float>;
-//using Vec = A::Vec;
-
+// using A = space::Algebra<space::Metric<2>, float>;
+// using Vec = A::Vec;
 
 static_assert(space::blade::detail::Grade(0) == 0, "Grade error");
 static_assert(space::blade::detail::Grade(0b1) == 1, "Grade error");
@@ -131,68 +128,66 @@ static_assert(space::blade::detail::HasSignFlip(0b10, 0b11) == true, "HasSignFli
 static_assert(space::blade::detail::HasSignFlip(0b11, 0b01) == true, "HasSignFlip error");
 static_assert(space::blade::detail::HasSignFlip(0b11, 0b10) == false, "HasSignFlip error");
 
-
 static_assert(
-	space::blade::detail::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b01>>::value == 0b00,
-	"BitProduct error");
+    space::blade::detail::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b01>>::value ==
+        0b00,
+    "BitProduct error");
 static_assert(
-	space::blade::detail::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b10>>::value == 0b11,
-	"BitProduct error");
+    space::blade::detail::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b10>>::value ==
+        0b11,
+    "BitProduct error");
 static_assert(
-	space::blade::detail::BitProduct<brigand::uint16_t<0b10>, brigand::uint16_t<0b01>>::value == 0b11,
-	"BitProduct error");
+    space::blade::detail::BitProduct<brigand::uint16_t<0b10>, brigand::uint16_t<0b01>>::value ==
+        0b11,
+    "BitProduct error");
 static_assert(
-	space::blade::detail::BitProduct<brigand::uint16_t<0b101>, brigand::uint16_t<0b01>>::value == 0b100,
-	"BitProduct error");
-
+    space::blade::detail::BitProduct<brigand::uint16_t<0b101>, brigand::uint16_t<0b01>>::value ==
+        0b100,
+    "BitProduct error");
 
 using E2 = space::Algebra<space::Metric<2>, float>;
 using E3 = space::Algebra<space::Metric<3>, float>;
-static_assert(std::is_same<
-	typename E2::VectorBasis,
-	brigand::list<brigand::uint16_t<1>, brigand::uint16_t<2>>
->::value, "Vector Basis error");
-static_assert(std::is_same<
-	typename E3::VectorBasis,
-	brigand::list<brigand::uint16_t<1>, brigand::uint16_t<2>, brigand::uint16_t<4>>
->::value, "Vector Basis error");
+static_assert(std::is_same<typename E2::VectorBasis,
+                           brigand::list<brigand::uint16_t<1>, brigand::uint16_t<2>>>::value,
+              "Vector Basis error");
+static_assert(
+    std::is_same<
+        typename E3::VectorBasis,
+        brigand::list<brigand::uint16_t<1>, brigand::uint16_t<2>, brigand::uint16_t<4>>>::value,
+    "Vector Basis error");
 
-
-int main(int argc, const char * argv[])
+int main(int argc, const char* argv[])
 {
-	using Vec = E2::Vec;
-	auto v1 = Vec(1.f, 0.f);
-	auto v2 = Vec(1.f, 1.f).Normalized();
-	auto r = v1 * v2;
-	
-//	std::cout << pretty_demangle(typeid(decltype(v1)).name()) << "\n";
-//	std::cout << pretty_demangle(typeid(decltype(b1)).name()) << "\n";
-	
-	
-//	using X = typename space::sum::detail::BitSum<
-//		E2::VectorBasis,
-//		E2::VectorBasis
-//	>::type;
-//	std::cout << pretty_demangle(typeid(X).name()) << "\n";
-//
-	std::cout << v1 << "\n";
-	std::cout << v2 << "\n";
-	std::cout << r << "\n";
-	std::cout << v1.Spin(r) << "\n";
-//	std::cout << (v1 * v2) << "\n";
-//	std::cout << (v1 ^ v2) << "\n";
-//	std::cout << (v1 <= v2) << "\n";
-//	std::cout << ~v1 << "\n";
-//	std::cout << (v1 + b1) << "\n";
-//	std::cout << (v1 - v2) << "\n";
-	
-	
-	
-//	std::cout << space::blade::detail::InvoluteHasSignFlip(0b01) << "\n";
-//	std::cout << space::blade::detail::InvoluteHasSignFlip(0b10) << "\n";
-//	std::cout << space::blade::detail::InvoluteHasSignFlip(0b11) << "\n";
-//	std::cout << space::blade::detail::InvoluteHasSignFlip(0b110) << "\n";
-//	std::cout << space::blade::detail::InvoluteHasSignFlip(0) << "\n";
-	
-	return 0;
+    using Vec = E2::Vec;
+    auto v1 = Vec(1.f, 0.f);
+    auto v2 = Vec(1.f, 1.f).Normalized();
+    auto r = v1 * v2;
+
+    //	std::cout << pretty_demangle(typeid(decltype(v1)).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(decltype(b1)).name()) << "\n";
+
+    //	using X = typename space::sum::detail::BitSum<
+    //		E2::VectorBasis,
+    //		E2::VectorBasis
+    //	>::type;
+    //	std::cout << pretty_demangle(typeid(X).name()) << "\n";
+    //
+    std::cout << v1 << "\n";
+    std::cout << v2 << "\n";
+    std::cout << r << "\n";
+    std::cout << v1.Spin(r) << "\n";
+    //	std::cout << (v1 * v2) << "\n";
+    //	std::cout << (v1 ^ v2) << "\n";
+    //	std::cout << (v1 <= v2) << "\n";
+    //	std::cout << ~v1 << "\n";
+    //	std::cout << (v1 + b1) << "\n";
+    //	std::cout << (v1 - v2) << "\n";
+
+    //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b01) << "\n";
+    //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b10) << "\n";
+    //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b11) << "\n";
+    //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b110) << "\n";
+    //	std::cout << space::blade::detail::InvoluteHasSignFlip(0) << "\n";
+
+    return 0;
 }
