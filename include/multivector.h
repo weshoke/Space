@@ -9,6 +9,7 @@
 #include "unary.h"
 #include <array>
 #include <cmath>
+#include <ostream>
 
 namespace space {
     // Blades are the individual dimensions in a Clifford algebra

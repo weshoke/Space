@@ -70,11 +70,11 @@ std::string pretty_demangle(const char* name)
 //
 //	template <class A, class B>
 //	struct HasInner : std::integral_constant < bool, Bits<typename
-//A::value_type>::HasInner(A::value, B::value)> {};
+// A::value_type>::HasInner(A::value, B::value)> {};
 //
 //	template <class A, class B>
 //	struct HasOuter : std::integral_constant < bool, Bits<typename
-//A::value_type>::HasOuter(A::value, B::value)> {};
+// A::value_type>::HasOuter(A::value, B::value)> {};
 //
 //
 //
@@ -94,7 +94,7 @@ std::string pretty_demangle(const char* name)
 //
 //		// TODO: tuple<Basis0, Basis1, ..., Basis[Dim - 1]>
 //		using VecBasis = brigand::transform<dimensions, brigand::shift_left<brigand::uint16_t<1>,
-//brigand::_1>>;
+// brigand::_1>>;
 //		using Vec = Multivector<VecBasis>;
 //	};
 //}
@@ -161,7 +161,7 @@ int main(int argc, const char* argv[])
     using Vec = E2::Vec;
     auto v1 = Vec(1.f, 0.f);
     auto v2 = Vec(1.f, 1.f).Normalized();
-    auto r = v1 * v2;
+    auto r = v2 * v1;
 
     //	std::cout << pretty_demangle(typeid(decltype(v1)).name()) << "\n";
     //	std::cout << pretty_demangle(typeid(decltype(b1)).name()) << "\n";
