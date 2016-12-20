@@ -5,6 +5,7 @@
 #include "basis/xform.h"
 #include "brigand/sequences/list.hpp"
 #include "brigand/types/integer.hpp"
+#include "metric/xform.h"
 
 namespace space {
     namespace detail {
@@ -15,6 +16,7 @@ namespace space {
             static constexpr auto Dim = N + M;
             using Xform = Xform_;
             // using BasisSpan = basis::span::Span<N_, M_, brigand::uint16_t<Dim>>;
+            using Diagonal = space::Diagonal<Metric>;
         };
     }
 

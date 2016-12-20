@@ -3,7 +3,6 @@
 
 #include "blade.h"
 #include "brigand/algorithms/flatten.hpp"
-#include "metric/xform.h"
 #include "product.h"
 
 namespace space {
@@ -132,32 +131,6 @@ namespace space {
                             brigand::
                                 bind<blade::ProductScale, brigand::pin<Metric>, brigand::_1>>>>>;
 
-                //				template<class Metric, class BladeLists>
-                //				using Simplify = brigand::transform<
-                //					BladeLists,
-                //					brigand::bind<
-                //						brigand::transform,
-                //						brigand::_1,
-                //						brigand::defer<
-                //							brigand::bind<
-                //								blade::WeightedBlade,
-                //								brigand::bind<
-                //									brigand::type_from,
-                //									brigand::bind<
-                //										blade::Blade,
-                //										brigand::_1
-                //									>
-                //								>,
-                //								brigand::bind<
-                //									blade::ProductScale,
-                //									brigand::pin<Metric>,
-                //									brigand::_1
-                //								>
-                //							>
-                //						>
-                //					>
-                //				>;
-
                 template <class ProductList>
                 struct ProductListSum {
                     using WeightSum =
@@ -179,114 +152,28 @@ namespace space {
                                       brigand::bind<ProductListSum, brigand::_1>>>;
                 };
 
-                //				template <class Metric, class A, class B>
-                //				static constexpr auto xform()
-                //				{
-                //					using DiagonalA = FromConformal<A>;
-                //					using DiagonalB = FromConformal<B>;
-                //					using ProductLists = product::BitProduct<Diagonal<Metric>, DiagonalA,
-                //DiagonalB, product::op::Gp<brigand::_1>>;
-                //					return ProductLists{};
-                //				}
-
-                //			template<class Metric_, class A, class Weight>
-                //			struct WeightedBlade : public A
-                //			{
-                //				// Remove the need for this
-                //				using Metric = Metric_;
-                //			};
-                //
-                //			template<class Blade, class Source>
-                //			struct DerivedBlade : public Blade {};
-
-                //			template<class Product>
-                //			struct Weight;
-                //
-                //			template<class A, class B>
-                //			struct Weight<BitProduct<A, B>>
-                //			{
-                //				using Product = BitProduct<A, B>;
-                //				using type = std::ratio<Product::HasSignFlip() ? 1 : -1>;
-                //			};
-                //
-                //			// TODO: ideally these classes should live inside the metric as they depend
-                //on it
-                //			template<class Metric, class A, class WeightA, class B, class WeightB>
-                //			struct Weight<BitProduct<WeightedBlade<Metric, A, WeightA>,
-                //WeightedBlade<Metric, B, WeightB>>>
-                //			{
-                //				using BitType = typename A::value_type;
-                //				using Product = BitProduct<WeightedBlade<Metric, A, WeightA>,
-                //WeightedBlade<Metric, B, WeightB>>;
-                //				static constexpr auto Sign = MetricSign(A::value, B::value,
-                //BitType(Metric::N), BitType(Metric::M)) * (Product::HasSignFlip() ? -1 : 1);
-                //				using Scale = std::ratio<Sign>;
-                //				using type = std::ratio_multiply<Scale, std::ratio_multiply<WeightA,
-                //WeightB>>;
-                //			};
-                //
-                //			template<class ProductList>
-                //			struct ProductListSum
-                //			{
-                //				using WeightSum = brigand::fold<
-                //					ProductList,
-                //					std::ratio<0, 1>,
-                //					brigand::bind<
-                //						std::ratio_add,
-                //						brigand::_1,
-                //						brigand::bind<
-                //							brigand::type_from,
-                //							brigand::bind<
-                //								Weight,
-                //								brigand::_2
-                //							>
-                //						>
-                //					>
-                //				>;
-                //				using Elem = brigand::front<ProductList>;
-                //				using B = typename Elem::Lhs;
-                //				using Metric = typename B::Metric;
-                //				using Blade = std::integral_constant<typename Elem::value_type,
-                //Elem::value>;
-                //				using type = DerivedBlade<WeightedBlade<Metric, Blade, WeightSum>,
-                //ProductList>;
-                //			};
-                //
-                //
-                //			template<class Blade, class Scale>
-                //			struct ScaleWeightedBlade;
-                //
-                //			template <template<class ...> class Blade, class Metric, class A, class
-                //Weight, class Scale>
-                //			struct ScaleWeightedBlade<Blade<Metric, A, Weight>, Scale>
-                //			{
-                //				using NewWeight = std::ratio_multiply<Weight, Scale>;
-                //				using type = WeightedBlade<Metric, A, NewWeight>;
-                //			};
-                //
-                //			template <class Blade>
-                //			struct WeightedBladeToConformal;
-                //
-                //			// product results should be paired with the product
-                //			// inherit from Blade, extra template parameter of product
-                //			template <template<class ...> class Blade, class Metric, class A, class
-                //Weight>
-                //			struct WeightedBladeToConformal<Blade<Metric, A, Weight>>
-                //			{
-                //				using ConformalBlades = typename ToConformal<A, Metric>::type;
-                //				using ReWeighted = brigand::transform<
-                //					ConformalBlades,
-                //					brigand::bind<
-                //						brigand::type_from,
-                //						brigand::bind<
-                //							ScaleWeightedBlade,
-                //							brigand::_1,
-                //							brigand::pin<Weight>
-                //						>
-                //					>
-                //				>;
-                //				using type = ReWeighted;
-                //			};
+                template <class Metric, class A, class B>
+                static constexpr auto xform()
+                {
+                    using DiagonalA = typename FromConformal<A>::type;
+                    using DiagonalB = typename FromConformal<B>::type;
+                    using ProductLists = product::BitProduct<typename Metric::Diagonal,
+                                                             DiagonalA,
+                                                             DiagonalB,
+                                                             product::op::Gp<brigand::_1>>;
+                    using Q_ = ToWeightedBlade<Metric, ProductLists>;
+                    using Q = typename Simplify<Q_>::type;
+                    using R = typename ToConformalList<Q>::type;
+                    using S = brigand::flatten<R>;
+                    using T = typename product::detail::GroupBlades<S>::type;
+                    using U = typename Simplify<T>::type;
+                    using V =
+                        brigand::remove_if<U,
+                                           brigand::bind<std::ratio_equal,
+                                                         brigand::bind<blade::Weight, brigand::_1>,
+                                                         brigand::pin<std::ratio<0>>>>;
+                    return V{};
+                }
             };
         }
     }

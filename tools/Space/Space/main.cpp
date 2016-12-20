@@ -123,9 +123,15 @@ std::string pretty_demangle(const char* name)
 
 int main(int argc, const char* argv[])
 {
-    // using ME2 = space::Metric<2>;
+    using ME2 = space::Metric<2>;
+    using E2 = space::Algebra<ME2, float>;
+    using B1 = brigand::uint16_t<1>;
+    using B2 = brigand::uint16_t<2>;
+    using P = typename space::blade::detail::BitProduct<ME2, B1, B2>::type;
+    std::cout << pretty_demangle(typeid(P).name()) << "\n";
+
     // using VecBasis = brigand::at_c<typename ME2::BasisSpan, 1>;
-    // using E2 = space::Algebra<space::Metric<2>, float>;
+
     //
     // using BL1 = brigand::front<VecBasis>;
     // using BL2 = brigand::back<VecBasis>;
@@ -133,24 +139,26 @@ int main(int argc, const char* argv[])
     //
     // std::cout << pretty_demangle(typeid(typename X::type).name()) << "\n";
 
-    using X = space::basis::xform::Conformal<2, 3>;
-    using C2 = space::Metric<3, 1, X>;
-    using A = brigand::uint16_t<0b0101>;
-    using B = brigand::uint16_t<0b1010>;
-    using DiagonalA = typename X::FromConformal<A>::type;
-    using DiagonalB = typename X::FromConformal<B>::type;
-    using ProductLists = space::product::
-        BitProduct<space::Diagonal<C2>, DiagonalA, DiagonalB, space::product::op::Gp<brigand::_1>>;
-    using Q_ = X::ToWeightedBlade<C2, ProductLists>;
-    using Q = typename X::Simplify<Q_>::type;
-    using R = typename X::ToConformalList<Q>::type;
-    using S = brigand::flatten<R>;
-    using T = typename space::product::detail::GroupBlades<S>::type;
-    using U = typename X::Simplify<T>::type;
-    using V = brigand::remove_if<U,
-                                 brigand::bind<std::ratio_equal,
-                                               brigand::bind<space::blade::Weight, brigand::_1>,
-                                               brigand::pin<std::ratio<0>>>>;
+    //    using X = space::basis::xform::Conformal<2, 3>;
+    //    using C2 = space::Metric<3, 1, X>;
+    //    using A = brigand::uint16_t<0b0101>;
+    //    using B = brigand::uint16_t<0b1010>;
+    //    using DiagonalA = typename X::FromConformal<A>::type;
+    //    using DiagonalB = typename X::FromConformal<B>::type;
+    //    using ProductLists = space::product::
+    //        BitProduct<space::Diagonal<C2>, DiagonalA, DiagonalB,
+    //        space::product::op::Gp<brigand::_1>>;
+    //    using Q_ = X::ToWeightedBlade<C2, ProductLists>;
+    //    using Q = typename X::Simplify<Q_>::type;
+    //    using R = typename X::ToConformalList<Q>::type;
+    //    using S = brigand::flatten<R>;
+    //    using T = typename space::product::detail::GroupBlades<S>::type;
+    //    using U = typename X::Simplify<T>::type;
+    //    using V = brigand::remove_if<U,
+    //                                 brigand::bind<std::ratio_equal,
+    //                                               brigand::bind<space::blade::Weight,
+    //                                               brigand::_1>,
+    //                                               brigand::pin<std::ratio<0>>>>;
 
     // Group
     // Sum
@@ -158,16 +166,17 @@ int main(int argc, const char* argv[])
     //  std::cout << pretty_demangle(typeid(X).name()) << "\n";
     //  std::cout << pretty_demangle(typeid(DiagonalA).name()) << "\n";
     // 	std::cout << pretty_demangle(typeid(DiagonalB).name()) << "\n";
-    std::cout << "\n\n";
-    std::cout << pretty_demangle(typeid(ProductLists).name()) << "\n";
-    std::cout << pretty_demangle(typeid(Q_).name()) << "\n";
-    std::cout << pretty_demangle(typeid(Q).name()) << "\n";
-    std::cout << pretty_demangle(typeid(R).name()) << "\n";
-    std::cout << pretty_demangle(typeid(S).name()) << "\n";
-    std::cout << pretty_demangle(typeid(T).name()) << "\n";
-    std::cout << pretty_demangle(typeid(U).name()) << "\n";
-    std::cout << pretty_demangle(typeid(V).name()) << "\n";
-    std::cout << A::value << " " << B::value << "\n";
+    //    std::cout << "\n\n";
+    //    std::cout << pretty_demangle(typeid(ProductLists).name()) << "\n";
+    //    std::cout << pretty_demangle(typeid(Q_).name()) << "\n";
+    //    std::cout << pretty_demangle(typeid(Q).name()) << "\n";
+    //    std::cout << pretty_demangle(typeid(R).name()) << "\n";
+    //    std::cout << pretty_demangle(typeid(S).name()) << "\n";
+    //    std::cout << pretty_demangle(typeid(T).name()) << "\n";
+    //    std::cout << pretty_demangle(typeid(U).name()) << "\n";
+    //    std::cout << pretty_demangle(typeid(V).name()) << "\n";
+    //    std::cout << A::value << " " << B::value << "\n";
+    //	std::cout << pretty_demangle(typeid(decltype(X::xform<C2, A, B>())).name()) << "\n";
     // std::cout << pretty_demangle(typeid(space::basis::span::Span<C2,
     // brigand::uint16_t<C2::Dim>>).name()) << "\n";
     //	std::cout << C2::N << "\n";
@@ -175,7 +184,7 @@ int main(int argc, const char* argv[])
     //	using X = space::basis::BitProduct<ME2, VecBasis, VecBasis>;
     //	using Y = space::blade::BitProduct<ME2, brigand::list<BL1, BL2>>;
     //	using Z = typename space::product::detail::BitProduct<ME2, VecBasis, VecBasis,
-    //space::product::op::Gp<brigand::_1>>::type;
+    // space::product::op::Gp<brigand::_1>>::type;
     //	using Z = typename space::basis::detail::BitProduct2<ME2, VecBasis, VecBasis>::type;
     //	using A =  brigand::remove_if<
     //		Z, brigand::bind<brigand::not_,
