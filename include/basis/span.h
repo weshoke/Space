@@ -30,9 +30,7 @@ namespace space {
                     using ProductLists = product::BitProduct<Metric, PrevBasis, VectorBasis, Op>;
                     using ProductBasis = brigand::transform<
                         ProductLists,
-                        brigand::bind<brigand::type_from,
-                                      brigand::bind<blade::Blade,
-                                                    brigand::bind<brigand::front, brigand::_1>>>>;
+                        brigand::bind<blade::Blade, brigand::bind<brigand::front, brigand::_1>>>;
                     using type = ProductBasis;
                 };
 

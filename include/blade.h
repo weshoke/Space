@@ -106,6 +106,11 @@ namespace space {
                 using type = std::ratio_multiply<WeightA, WeightB>;
             };
 
+            template <class V>
+            struct Blade {
+                using type = std::integral_constant<typename V::value_type, V::value>;
+            };
+
             template <class Metric, class A, class B>
             struct ProductScale {
                 using IntValue = typename std::make_signed<typename A::value_type>::type;
@@ -195,9 +200,7 @@ namespace space {
         }
 
         template <class V>
-        struct Blade {
-            using type = std::integral_constant<typename V::value_type, V::value>;
-        };
+        using Blade = typename detail::Blade<V>::type;
 
         template <class Metric, class Pair>
         using BitProduct =

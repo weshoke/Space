@@ -35,7 +35,7 @@ namespace space {
                 using Summands = brigand::join<brigand::list<Lhs, Rhs>>;
                 using OrderedSummands = brigand::sort<Summands>;
                 using OrderedBlades =
-                    brigand::transform<OrderedSummands, blade::Blade<brigand::_1>>;
+                    brigand::transform<OrderedSummands, brigand::bind<blade::Blade, brigand::_1>>;
                 using SumBasis = brigand::unique<OrderedBlades>;
                 using SummandLists =
                     brigand::group<OrderedSummands,
@@ -75,9 +75,7 @@ namespace space {
             {
                 using SumBasis = brigand::transform<
                     SumLists<Lists...>,
-                    brigand::bind<
-                        brigand::type_from,
-                        brigand::bind<blade::Blade, brigand::bind<brigand::front, brigand::_1>>>>;
+                    brigand::bind<blade::Blade, brigand::bind<brigand::front, brigand::_1>>>;
 
                 return Multivector<Algebra, SumBasis>(BasisSum(Lists{}, a, b)...);
             }

@@ -18,14 +18,14 @@ namespace space {
             struct GroupBlades {
                 using Ordered = brigand::sort<List>;
                 // Convert the list elements into a fundamental blade representation
-                using Blades = brigand::transform<Ordered, blade::Blade<brigand::_1>>;
+                using Blades =
+                    brigand::transform<Ordered, brigand::bind<blade::Blade, brigand::_1>>;
                 // Group the list elements by their index in the blade list
-                using Grouped = brigand::group<
-                    Ordered,
-                    brigand::bind<basis::BladeIndex,
-                                  brigand::pin<Blades>,
-                                  brigand::bind<brigand::type_from,
-                                                brigand::bind<blade::Blade, brigand::_1>>>>;
+                using Grouped =
+                    brigand::group<Ordered,
+                                   brigand::bind<basis::BladeIndex,
+                                                 brigand::pin<Blades>,
+                                                 brigand::bind<blade::Blade, brigand::_1>>>;
                 using type = Grouped;
             };
 
@@ -65,9 +65,7 @@ namespace space {
             {
                 using ProductBasis = brigand::transform<
                     ProductLists<Lists...>,
-                    brigand::bind<
-                        brigand::type_from,
-                        brigand::bind<blade::Blade, brigand::bind<brigand::front, brigand::_1>>>>;
+                    brigand::bind<blade::Blade, brigand::bind<brigand::front, brigand::_1>>>;
                 return Multivector<Algebra, ProductBasis>(BasisProduct(Lists{}, a, b)...);
             }
         }
