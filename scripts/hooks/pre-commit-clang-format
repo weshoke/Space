@@ -46,16 +46,12 @@ then
 
     if test "$CLANG_FORMAT_MAJOR_VERSION" -lt "3"
     then
-        echo "ERROR: clang-format version is ${CLANG_FORMAT_VERSION_STR}"
-        echo "Please install clang version 3.8.0 or greater"
-        exit 1
-    fi
-
-    if test "$CLANG_FORMAT_MINOR_VERSION" -lt "8"
-    then
-        echo "ERROR: clang-format version is ${CLANG_FORMAT_VERSION_STR}"
-        echo "Please install clang version 3.8.0 or greater"
-        exit 1
+        if test "$CLANG_FORMAT_MINOR_VERSION" -lt "8"
+        then
+            echo "ERROR: clang-format version is ${CLANG_FORMAT_VERSION_STR}"
+            echo "Please install clang version 3.8.0 or greater"
+            exit 1
+        fi
     fi
 fi
 

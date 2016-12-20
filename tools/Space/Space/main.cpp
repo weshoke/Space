@@ -61,109 +61,287 @@ std::string pretty_demangle(const char* name)
     }
     return ss.str();
 }
-//
-// namespace space
-//{
-////	static constexpr auto Dim = uint16_t{2};
-//
-//
-//
-//	template <class A, class B>
-//	struct HasInner : std::integral_constant < bool, Bits<typename
-// A::value_type>::HasInner(A::value, B::value)> {};
-//
-//	template <class A, class B>
-//	struct HasOuter : std::integral_constant < bool, Bits<typename
-// A::value_type>::HasOuter(A::value, B::value)> {};
-//
-//
-//
-//	template<class Metric, class T>
-//	struct Algebra
-//	{
-//		static constexpr auto Dim = Metric::Dim;
-//		using Bits = typename Metric::Bits;
-//		using BitsType = typename Bits::Type;
-//
-//		using Scalar = T;
-//
-//		template<class Basis>
-//		using Multivector = Multivector<Algebra, Basis>;
-//
-//		using dimensions = brigand::make_sequence<brigand::uint16_t<0>, Metric::Dim>;
-//
-//		// TODO: tuple<Basis0, Basis1, ..., Basis[Dim - 1]>
-//		using VecBasis = brigand::transform<dimensions, brigand::shift_left<brigand::uint16_t<1>,
-// brigand::_1>>;
-//		using Vec = Multivector<VecBasis>;
-//	};
-//}
-//
-// using A = space::Algebra<space::Metric<2>, float>;
-// using Vec = A::Vec;
 
-static_assert(space::blade::detail::Grade(0) == 0, "Grade error");
-static_assert(space::blade::detail::Grade(0b1) == 1, "Grade error");
-static_assert(space::blade::detail::Grade(0b10) == 1, "Grade error");
-static_assert(space::blade::detail::Grade(0b11) == 2, "Grade error");
-static_assert(space::blade::detail::Grade(0b101) == 2, "Grade error");
-static_assert(space::blade::detail::Grade(0b1000) == 1, "Grade error");
-static_assert(space::blade::detail::Grade(0b1011) == 3, "Grade error");
-
-static_assert(space::blade::detail::HasInner(0b01, 0b01) == true, "HasInner error");
-static_assert(space::blade::detail::HasInner(0b01, 0b10) == false, "HasInner error");
-static_assert(space::blade::detail::HasInner(0b01, 0b11) == true, "HasInner error");
-static_assert(space::blade::detail::HasInner(0b11, 0b10) == false, "HasInner error");
-
-static_assert(space::blade::detail::HasOuter(0b01, 0b01) == false, "HasOuter error");
-static_assert(space::blade::detail::HasOuter(0b01, 0b10) == true, "HasOuter error");
-// TODO: is this correct?
-static_assert(space::blade::detail::HasOuter(0b01, 0b11) == false, "HasOuter error");
-static_assert(space::blade::detail::HasOuter(0b11, 0b10) == false, "HasOuter error");
-
-static_assert(space::blade::detail::HasSignFlip(0b01, 0b10) == false, "HasSignFlip error");
-static_assert(space::blade::detail::HasSignFlip(0b10, 0b01) == true, "HasSignFlip error");
-static_assert(space::blade::detail::HasSignFlip(0b01, 0b11) == false, "HasSignFlip error");
-static_assert(space::blade::detail::HasSignFlip(0b10, 0b11) == true, "HasSignFlip error");
-static_assert(space::blade::detail::HasSignFlip(0b11, 0b01) == true, "HasSignFlip error");
-static_assert(space::blade::detail::HasSignFlip(0b11, 0b10) == false, "HasSignFlip error");
-
-static_assert(
-    space::blade::detail::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b01>>::value ==
-        0b00,
-    "BitProduct error");
-static_assert(
-    space::blade::detail::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b10>>::value ==
-        0b11,
-    "BitProduct error");
-static_assert(
-    space::blade::detail::BitProduct<brigand::uint16_t<0b10>, brigand::uint16_t<0b01>>::value ==
-        0b11,
-    "BitProduct error");
-static_assert(
-    space::blade::detail::BitProduct<brigand::uint16_t<0b101>, brigand::uint16_t<0b01>>::value ==
-        0b100,
-    "BitProduct error");
-
-using E2 = space::Algebra<space::Metric<2>, float>;
-using E3 = space::Algebra<space::Metric<3>, float>;
-static_assert(std::is_same<typename E2::VectorBasis,
-                           brigand::list<brigand::uint16_t<1>, brigand::uint16_t<2>>>::value,
-              "Vector Basis error");
-static_assert(
-    std::is_same<
-        typename E3::VectorBasis,
-        brigand::list<brigand::uint16_t<1>, brigand::uint16_t<2>, brigand::uint16_t<4>>>::value,
-    "Vector Basis error");
+// static_assert(space::blade::detail::Grade(0) == 0, "Grade error");
+// static_assert(space::blade::detail::Grade(0b1) == 1, "Grade error");
+// static_assert(space::blade::detail::Grade(0b10) == 1, "Grade error");
+// static_assert(space::blade::detail::Grade(0b11) == 2, "Grade error");
+// static_assert(space::blade::detail::Grade(0b101) == 2, "Grade error");
+// static_assert(space::blade::detail::Grade(0b1000) == 1, "Grade error");
+// static_assert(space::blade::detail::Grade(0b1011) == 3, "Grade error");
+//
+// static_assert(space::blade::detail::HasInner(0b01, 0b01) == true, "HasInner error");
+// static_assert(space::blade::detail::HasInner(0b01, 0b10) == false, "HasInner error");
+// static_assert(space::blade::detail::HasInner(0b01, 0b11) == true, "HasInner error");
+// static_assert(space::blade::detail::HasInner(0b11, 0b10) == false, "HasInner error");
+//
+// static_assert(space::blade::detail::HasOuter(0b01, 0b01) == false, "HasOuter error");
+// static_assert(space::blade::detail::HasOuter(0b01, 0b10) == true, "HasOuter error");
+//// TODO: is this correct?
+// static_assert(space::blade::detail::HasOuter(0b01, 0b11) == false, "HasOuter error");
+// static_assert(space::blade::detail::HasOuter(0b11, 0b10) == false, "HasOuter error");
+//
+// static_assert(space::blade::detail::HasSignFlip(0b01, 0b10) == false, "HasSignFlip error");
+// static_assert(space::blade::detail::HasSignFlip(0b10, 0b01) == true, "HasSignFlip error");
+// static_assert(space::blade::detail::HasSignFlip(0b01, 0b11) == false, "HasSignFlip error");
+// static_assert(space::blade::detail::HasSignFlip(0b10, 0b11) == true, "HasSignFlip error");
+// static_assert(space::blade::detail::HasSignFlip(0b11, 0b01) == true, "HasSignFlip error");
+// static_assert(space::blade::detail::HasSignFlip(0b11, 0b10) == false, "HasSignFlip error");
+//
+// static_assert(
+//    space::blade::detail::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b01>>::value ==
+//        0b00,
+//    "BitProduct error");
+// static_assert(
+//    space::blade::detail::BitProduct<brigand::uint16_t<0b01>, brigand::uint16_t<0b10>>::value ==
+//        0b11,
+//    "BitProduct error");
+// static_assert(
+//    space::blade::detail::BitProduct<brigand::uint16_t<0b10>, brigand::uint16_t<0b01>>::value ==
+//        0b11,
+//    "BitProduct error");
+// static_assert(
+//    space::blade::detail::BitProduct<brigand::uint16_t<0b101>, brigand::uint16_t<0b01>>::value ==
+//        0b100,
+//    "BitProduct error");
+//
+// using E1 = space::Algebra<space::Metric<1>, float>;
+// using E2 = space::Algebra<space::Metric<2>, float>;
+// using E3 = space::Algebra<space::Metric<3>, float>;
+// using E4 = space::Algebra<space::Metric<4>, float>;
+// static_assert(std::is_same<typename E2::VectorBasis,
+//                           brigand::list<brigand::uint16_t<1>, brigand::uint16_t<2>>>::value,
+//              "Vector Basis error");
+// static_assert(
+//    std::is_same<
+//        typename E3::VectorBasis,
+//        brigand::list<brigand::uint16_t<1>, brigand::uint16_t<2>, brigand::uint16_t<4>>>::value,
+//    "Vector Basis error");
+//
+//
+// using MC2 = space::Metric<3, 1>;
 
 int main(int argc, const char* argv[])
 {
-    using Vec = E2::Vec;
-    //    auto v1 = Vec(1.f, 0.f);
-    //    auto v2 = Vec(1.f, 1.f).Normalized();
-    //    auto r = v2 * v1;
+    // using ME2 = space::Metric<2>;
+    // using VecBasis = brigand::at_c<typename ME2::BasisSpan, 1>;
+    // using E2 = space::Algebra<space::Metric<2>, float>;
+    //
+    // using BL1 = brigand::front<VecBasis>;
+    // using BL2 = brigand::back<VecBasis>;
+    // using X = space::blade::detail::BitProduct<ME2, BL1, BL2>;
+    //
+    // std::cout << pretty_demangle(typeid(typename X::type).name()) << "\n";
 
-    std::cout << pretty_demangle(typeid(typename E2::BasisVectors).name()) << "\n";
+    using X = space::basis::xform::Conformal<2, 3>;
+    using C2 = space::Metric<3, 1, X>;
+    using A = brigand::uint16_t<0b0101>;
+    using B = brigand::uint16_t<0b1010>;
+    using DiagonalA = typename X::FromConformal<A>::type;
+    using DiagonalB = typename X::FromConformal<B>::type;
+    using ProductLists = space::product::
+        BitProduct<space::Diagonal<C2>, DiagonalA, DiagonalB, space::product::op::Gp<brigand::_1>>;
+    using Q_ = X::ToWeightedBlade<C2, ProductLists>;
+    using Q = typename X::Simplify<Q_>::type;
+    using R = typename X::ToConformalList<Q>::type;
+    using S = brigand::flatten<R>;
+    using T = typename space::product::detail::GroupBlades<S>::type;
+    using U = typename X::Simplify<T>::type;
+    using V = brigand::remove_if<U,
+                                 brigand::bind<std::ratio_equal,
+                                               brigand::bind<space::blade::Weight, brigand::_1>,
+                                               brigand::pin<std::ratio<0>>>>;
+
+    // Group
+    // Sum
+    //
+    //  std::cout << pretty_demangle(typeid(X).name()) << "\n";
+    //  std::cout << pretty_demangle(typeid(DiagonalA).name()) << "\n";
+    // 	std::cout << pretty_demangle(typeid(DiagonalB).name()) << "\n";
+    std::cout << "\n\n";
+    std::cout << pretty_demangle(typeid(ProductLists).name()) << "\n";
+    std::cout << pretty_demangle(typeid(Q_).name()) << "\n";
+    std::cout << pretty_demangle(typeid(Q).name()) << "\n";
+    std::cout << pretty_demangle(typeid(R).name()) << "\n";
+    std::cout << pretty_demangle(typeid(S).name()) << "\n";
+    std::cout << pretty_demangle(typeid(T).name()) << "\n";
+    std::cout << pretty_demangle(typeid(U).name()) << "\n";
+    std::cout << pretty_demangle(typeid(V).name()) << "\n";
+    std::cout << A::value << " " << B::value << "\n";
+    // std::cout << pretty_demangle(typeid(space::basis::span::Span<C2,
+    // brigand::uint16_t<C2::Dim>>).name()) << "\n";
+    //	std::cout << C2::N << "\n";
+
+    //	using X = space::basis::BitProduct<ME2, VecBasis, VecBasis>;
+    //	using Y = space::blade::BitProduct<ME2, brigand::list<BL1, BL2>>;
+    //	using Z = typename space::product::detail::BitProduct<ME2, VecBasis, VecBasis,
+    //space::product::op::Gp<brigand::_1>>::type;
+    //	using Z = typename space::basis::detail::BitProduct2<ME2, VecBasis, VecBasis>::type;
+    //	using A =  brigand::remove_if<
+    //		Z, brigand::bind<brigand::not_,
+    //			space::product::op::Gp<brigand::_1>
+    //		>>;
+    //	using B = brigand::sort<A>;
+    //	using C = brigand::transform<B, space::blade::Blade<brigand::_1>>;
+    //	using D = brigand::detail::group<
+    //		B,
+    //		brigand::bind<
+    //			space::basis::BladeIndex,
+    //			brigand::pin<C>,
+    //			brigand::bind<
+    //				brigand::type_from,
+    //				brigand::bind<
+    //					space::blade::Blade,
+    //					brigand::_1
+    //				>>>>;
+    //
+    //	using E = brigand::front<B>;
+    //	using F = space::blade::Blade<E>;
+
+    //	template <class Metric, class B1, class B2>
+    //            struct BitProduct {
+    //                using type = brigand::transform<brigand::product<B1, B2>,
+    //                                                brigand::bind<
+    //													blade::BitProduct,
+    //													//brigand::pin<Metric>,
+    //													brigand::_1>>;
+    //            };
+
+    // std::cout << pretty_demangle(typeid(E2).name()) << "\n";
+    // std::cout << pretty_demangle(typeid(typename E2::MultivectorSpan).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(BL1).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(BL2).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(Y).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(Z).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(A).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(B).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(C).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(typename D::type).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(E).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(F).name()) << "\n";
+
+    //    using Vec = E2::Vec;
+    //        auto v1 = Vec(1.f, 0.f);
+    //        auto v2 = Vec(1.f, 1.f).Normalized();
+    //        auto r = v2 * v1;
+    //
+    //	using B1 = brigand::uint16_t<0b1001>;
+    //	using B2 = brigand::uint16_t<0b0101>;
+    //	using C1 = typename space::blade::detail::FromConformal<B1, MC2>::type;
+    //	using C2 = typename space::blade::detail::FromConformal<B2, MC2>::type;
+    //	// Product of input blades along with source blades
+    //	using P = space::product::detail::BitProduct<C1, C2, space::product::op::Gp<brigand::_1>>;
+    //	using P_ = typename P::type;
+    //	using PP = brigand::transform<
+    //		P_,
+    //		brigand::bind<
+    //			brigand::type_from,
+    //			brigand::bind<
+    //				space::blade::detail::ProductListSum,
+    //				brigand::_1
+    //			>
+    //		>
+    //	>;
+    ////	using PR = brigand::transform<
+    ////		PP,
+    ////		brigand::bind<
+    ////			brigand::type_from,
+    ////			brigand::bind<
+    ////				space::blade::detail::WeightedBladeToConformal,
+    ////				brigand::_1
+    ////			>
+    ////		>
+    ////	>;
+    //	// Apply ToConformal to each blade and multiply by weight
+    //	// Group and sum
+    //
+    //
+    //	std::cout << pretty_demangle(typeid(PP).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(PR).name()) << "\n";
+
+    //	using R = brigand::transform<P,
+    //		brigand::bind<
+    //			brigand::fold,
+    //			brigand::_1,
+    //			brigand::pin<std::ratio<0, 0>>,
+    //
+    //		>
+    //	>;
+    // reduce groups (sum weights with sign(metric))
+    // filter zeros
+    // pop result back into conformal space
+
+    //	using PList = brigand::front<typename P::type>;
+    //	using WList = brigand::transform<
+    //		PList,
+    //		brigand::bind<
+    //			brigand::type_from,
+    //			brigand::bind<
+    //				space::blade::detail::Weight,
+    //				brigand::_1
+    //			>
+    //		>
+    //	>;
+    //	using FF = brigand::remove_if<
+    //		typename P::type,
+    //		brigand::bind<
+    //			std::ratio_equal,
+    //			std::ratio<0>,
+    //			brigand::bind<
+    //				brigand::fold,
+    //				brigand::_1,
+    //				brigand::pin<std::ratio<0, 1>>,
+    //				brigand::defer<
+    //					brigand::bind<
+    //						std::ratio_add,
+    //						brigand::_1,
+    //						brigand::bind<
+    //							brigand::type_from,
+    //							brigand::bind<
+    //								space::blade::detail::Weight,
+    //								brigand::_2
+    //							>
+    //						>
+    //					>
+    //				>
+    //			>
+    //		>
+    //	>;
+    //	std::cout << pretty_demangle(typeid(FF).name()) << "\n";
+    //
+    //	using W = brigand::transform<
+    //		typename P::type,
+    //		brigand::bind<
+    //			brigand::fold,
+    //			brigand::_1,
+    //			brigand::pin<std::ratio<0, 1>>,
+    //			brigand::defer<
+    //				brigand::bind<
+    //					std::ratio_add,
+    //					brigand::_1,
+    //					brigand::bind<
+    //						brigand::type_from,
+    //						brigand::bind<
+    //							space::blade::detail::Weight,
+    //							brigand::_2
+    //						>
+    //					>
+    //				>
+    //			>
+    //		>
+    //	>;
+    //	std::cout << pretty_demangle(typeid(W).name()) << "\n";
+    //	if(true) return 0;
+
+    //	std::cout << pretty_demangle(typeid(C1).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(C2).name()) << "\n";
+    //	std::cout << pretty_demangle(typeid(typename P::type).name()) << "\n";
+
+    //	std::cout << space::blade::detail::MetricSign(0b1111, 0b1111, 3, 1) << "\n";
+    //	std::cout << space::blade::detail::MetricSign(0b1111, 0b1111, 2, 2) << "\n";
+    //	std::cout << space::blade::detail::MetricSign(0b1111, 0b1000, 2, 2) << "\n";
+
+    //    std::cout << pretty_demangle(typeid(typename E2::BasisVectors).name()) << "\n";
     //	std::cout << pretty_demangle(typeid(space::basis::DimBasis<E3, 1>).name()) << "\n";
     //	std::cout << pretty_demangle(typeid(typename space::detail::DimBasis<E3, 2>::type).name())
     //<< "\n";
@@ -177,17 +355,16 @@ int main(int argc, const char* argv[])
     //	>::type;
     //	std::cout << pretty_demangle(typeid(X).name()) << "\n";
     //
-    //    std::cout << v1 << "\n";
-    //    std::cout << v2 << "\n";
-    //    std::cout << r << "\n";
-    //    std::cout << v1.Spin(r) << "\n";
-    //	std::cout << (v1 ^ v2) << "\n";
-    //	std::cout << (v1 * v2) << "\n";
-    //	std::cout << (v1 ^ v2) << "\n";
-    //    	std::cout << (v1 <= v2) << "\n";
-    //	std::cout << ~v1 << "\n";
-    //	std::cout << (v1 + b1) << "\n";
-    //	std::cout << (v1 - v2) << "\n";
+    //        std::cout << v1 << "\n";
+    //        std::cout << v2 << "\n";
+    //        std::cout << r << "\n";
+    //        std::cout << v1.Spin(r) << "\n";
+    //    	std::cout << (v1 ^ v2) << "\n";
+    //    	std::cout << (v1 * v2) << "\n";
+    //    	std::cout << (v1 ^ v2) << "\n";
+    //        	std::cout << (v1 <= v2) << "\n";
+    //    	std::cout << ~v1 << "\n";
+    //    	std::cout << (v1 - v2) << "\n";
 
     //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b01) << "\n";
     //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b10) << "\n";

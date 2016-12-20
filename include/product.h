@@ -14,34 +14,32 @@
 namespace space {
     namespace product {
         namespace detail {
-            template <class B1, class B2, class Op>
-            struct BitProduct {
-                using Products =
-                    brigand::remove_if<basis::BitProduct<B1, B2>, brigand::bind<brigand::not_, Op>>;
-                using OrderedProducts = brigand::sort<Products>;
-                using OrderedBlades =
-                    brigand::transform<OrderedProducts, blade::Blade<brigand::_1>>;
-                using ProductLists =
-                    brigand::group<OrderedProducts,
-                                   brigand::bind<basis::BladeIndex,
-                                                 brigand::pin<OrderedBlades>,
-                                                 brigand::bind<blade::Blade, brigand::_1>>>;
-                using type = ProductLists;
+            template <class List>
+            struct GroupBlades {
+                using Ordered = brigand::sort<List>;
+                // Convert the list elements into a fundamental blade representation
+                using Blades = brigand::transform<Ordered, blade::Blade<brigand::_1>>;
+                // Group the list elements by their index in the blade list
+                using Grouped = brigand::group<
+                    Ordered,
+                    brigand::bind<basis::BladeIndex,
+                                  brigand::pin<Blades>,
+                                  brigand::bind<brigand::type_from,
+                                                brigand::bind<blade::Blade, brigand::_1>>>>;
+                using type = Grouped;
             };
 
-            template <class BitProduct,
-                      class Algebra,
-                      template <class...> class Multivector,
-                      class BasisA,
-                      class BasisB>
-            constexpr auto BladeProduct(BitProduct,
-                                        const Multivector<Algebra, BasisA>& a,
-                                        const Multivector<Algebra, BasisB>& b)
+            template <class Metric, class B1, class B2, class Op>
+            struct BitProduct {
+                using Products = brigand::remove_if<basis::BitProduct<Metric, B1, B2>,
+                                                    brigand::bind<brigand::not_, Op>>;
+                using type = typename GroupBlades<Products>::type;
+            };
+
+            template <class BitProduct, class A, class B>
+            constexpr auto BladeProduct(BitProduct, const A& a, const B& b)
             {
-                using A = Multivector<Algebra, BasisA>;
-                using ScalarValue = typename A::ScalarValue;
-                const auto s = BitProduct::HasSignFlip() ? ScalarValue(-1) : ScalarValue(1);
-                return s * a[BitProduct::IndexA(BasisA{})] * b[BitProduct::IndexB(BasisB{})];
+                return BitProduct::Apply(a, b);
             }
 
             template <template <class...> class ProductList, class... Products, class A, class B>
@@ -88,12 +86,16 @@ namespace space {
             };
         }
 
+        // Add metric template param
+        template <class Metric, class BasisA, class BasisB, class Op>
+        using BitProduct = typename detail::BitProduct<Metric, BasisA, BasisB, Op>::type;
+
         template <class Algebra, template <class...> class Multivector, class BasisA, class BasisB>
         constexpr auto Gp(const Multivector<Algebra, BasisA>& a,
                           const Multivector<Algebra, BasisB>& b)
         {
-            using ProductLists =
-                typename detail::BitProduct<BasisA, BasisB, op::Gp<brigand::_1>>::type;
+            using Metric = typename Algebra::Metric;
+            using ProductLists = BitProduct<Metric, BasisA, BasisB, op::Gp<brigand::_1>>;
             return detail::MultivectorProduct(ProductLists{}, a, b);
         }
 
@@ -101,8 +103,8 @@ namespace space {
         constexpr auto Op(const Multivector<Algebra, BasisA>& a,
                           const Multivector<Algebra, BasisB>& b)
         {
-            using ProductLists =
-                typename detail::BitProduct<BasisA, BasisB, op::Op<brigand::_1>>::type;
+            using Metric = typename Algebra::Metric;
+            using ProductLists = BitProduct<Metric, BasisA, BasisB, op::Op<brigand::_1>>;
             return detail::MultivectorProduct(ProductLists{}, a, b);
         }
 
@@ -110,8 +112,8 @@ namespace space {
         constexpr auto Ip(const Multivector<Algebra, BasisA>& a,
                           const Multivector<Algebra, BasisB>& b)
         {
-            using ProductLists =
-                typename detail::BitProduct<BasisA, BasisB, op::Ip<brigand::_1>>::type;
+            using Metric = typename Algebra::Metric;
+            using ProductLists = BitProduct<Metric, BasisA, BasisB, op::Ip<brigand::_1>>;
             return detail::MultivectorProduct(ProductLists{}, a, b);
         }
     }
