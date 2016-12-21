@@ -20,11 +20,10 @@ namespace space {
         namespace detail {
             template <class Metric, class B1, class B2>
             struct BitProduct {
-                using type = brigand::transform<
+                using Products = brigand::transform<
                     brigand::product<B1, B2>,
-                    brigand::bind<
-                        brigand::flatten,
-                        brigand::bind<blade::BitProduct, brigand::pin<Metric>, brigand::_1>>>;
+                    brigand::bind<blade::BitProduct, brigand::pin<Metric>, brigand::_1>>;
+                using type = brigand::flatten<Products>;
             };
 
             template <class T>

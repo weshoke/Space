@@ -129,14 +129,14 @@ int main(int argc, const char* argv[])
     using B2 = brigand::uint16_t<2>;
     using P = typename space::blade::detail::BitProduct<ME2, B1, B2>::type;
 
-    //	using MV1 = space::Multivector<E2, brigand::list<B1>>;
-    //	using MV2 = space::Multivector<E2, brigand::list<B2>>;
-    //	auto mv1 = MV1(1.f);
-    //	auto mv2 = MV2(2.f);
-    //	auto res = P::Apply(mv1, mv2);
+    using MV1 = space::Multivector<E2, brigand::list<B1>>;
+    using MV2 = space::Multivector<E2, brigand::list<B1, B2>>;
+    auto mv1 = MV1(1.f);
+    auto mv2 = MV2(2.f, 0.5f);
+    auto res = brigand::front<P>::Apply(mv1, mv2);
 
     std::cout << pretty_demangle(typeid(P).name()) << "\n";
-    //	std::cout << res << "\n";
+    std::cout << res << "\n";
 
     // using VecBasis = brigand::at_c<typename ME2::BasisSpan, 1>;
 
