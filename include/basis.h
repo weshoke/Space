@@ -2,6 +2,7 @@
 #define SPACE_BASIS_H
 
 #include "blade.h"
+#include "brigand/algorithms/flatten.hpp"
 #include "brigand/algorithms/index_of.hpp"
 #include "brigand/algorithms/product.hpp"
 #include "brigand/algorithms/remove.hpp"
@@ -21,7 +22,9 @@ namespace space {
             struct BitProduct {
                 using type = brigand::transform<
                     brigand::product<B1, B2>,
-                    brigand::bind<blade::BitProduct, brigand::pin<Metric>, brigand::_1>>;
+                    brigand::bind<
+                        brigand::flatten,
+                        brigand::bind<blade::BitProduct, brigand::pin<Metric>, brigand::_1>>>;
             };
 
             template <class T>

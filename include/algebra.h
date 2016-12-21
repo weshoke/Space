@@ -2,6 +2,7 @@
 #define SPACE_ALGEBRA_H
 
 #include "basis.h"
+#include "basis/span.h"
 #include "multivector.h"
 #include "product.h"
 
@@ -19,7 +20,8 @@ namespace space {
         using ScalarValue = ScalarValue_;
 
         // List of multivectors for each grade
-        using MultivectorSpan = detail::MultivectorSpan<Algebra, typename Metric::BasisSpan>;
+        using BasisSpan = basis::span::Span<Metric, brigand::uint16_t<Metric::Dim>>;
+        using MultivectorSpan = detail::MultivectorSpan<Algebra, BasisSpan>;
         // Named generic multivectors
         using Scalar = brigand::front<MultivectorSpan>;
         using Vec = brigand::at_c<MultivectorSpan, 1>;

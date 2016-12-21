@@ -22,8 +22,8 @@ namespace space {
             using BladeA = typename Blade<A>::type;
             using BladeB = typename Blade<B>::type;
 
-            static constexpr bool HasOuter() { return HasOuter(A::value, B::value); }
-            static constexpr bool HasInner() { return HasInner(A::value, B::value); }
+            static constexpr bool HasOuter() { return blade::HasOuter(A::value, B::value); }
+            static constexpr bool HasInner() { return blade::HasInner(A::value, B::value); }
             template <class MultivectorA, class MultivectorB>
             static constexpr auto Apply(const MultivectorA& a, const MultivectorB& b)
             {

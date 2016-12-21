@@ -10,10 +10,9 @@ namespace space {
         namespace xform {
             struct Identity {
                 template <class Metric, class A, class B>
-                static constexpr auto xform()
-                {
-                    return blade::Product<Metric, A, B>{};
-                }
+                struct Apply {
+                    using type = brigand::list<blade::Product<Metric, A, B>>;
+                };
             };
 
             template <uint16_t EpIdx, uint16_t Emidx>

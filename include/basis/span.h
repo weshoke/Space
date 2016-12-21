@@ -56,7 +56,6 @@ namespace space {
                         brigand::bind<
                             brigand::type_from,
                             brigand::bind<BasisSpan_, brigand::pin<DiagonalMetric>, brigand::_1>>>;
-                    // using type = brigand::list<>;
                 };
             }
 

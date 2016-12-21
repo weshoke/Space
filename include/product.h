@@ -10,6 +10,7 @@
 #include "brigand/functions/bitwise/bitxor.hpp"
 #include "brigand/functions/lambda/bind.hpp"
 #include "brigand/functions/logical/not.hpp"
+#include <initializer_list>
 
 namespace space {
     namespace product {
