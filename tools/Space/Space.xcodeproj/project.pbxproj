@@ -26,6 +26,14 @@
 		A802F34A1DF4F6F10038AAED /* product.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = product.hpp; sourceTree = "<group>"; };
 		A827EFB41DF6A5F600C2BBAC /* group.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = group.hpp; sourceTree = "<group>"; };
 		A874769C1DEB727000F4696C /* unique.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = unique.hpp; sourceTree = "<group>"; };
+		A88CB6E31E090F320011A00B /* predicates.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = predicates.h; sourceTree = "<group>"; };
+		A88CB6E51E0913720011A00B /* weight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = weight.h; sourceTree = "<group>"; };
+		A88CB6E71E09157B0011A00B /* scale.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scale.h; sourceTree = "<group>"; };
+		A88CB6E81E099C470011A00B /* bit_product.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bit_product.h; sourceTree = "<group>"; };
+		A88CB6E91E099DCB0011A00B /* blade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = blade.h; sourceTree = "<group>"; };
+		A88CB6EA1E0A17B50011A00B /* product.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = product.h; sourceTree = "<group>"; };
+		A88CB6EB1E0A1AD20011A00B /* derived_blade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = derived_blade.h; sourceTree = "<group>"; };
+		A88CB6EC1E0A1ADA0011A00B /* weighted_blade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = weighted_blade.h; sourceTree = "<group>"; };
 		A8BC81451E027818005A06A5 /* span.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = span.h; sourceTree = "<group>"; };
 		A8BC81461E027818005A06A5 /* xform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xform.h; sourceTree = "<group>"; };
 		A8DDCF741DE8E72D00F7F876 /* Space */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Space; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,6 +170,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A88CB6E21E090F320011A00B /* blade */ = {
+			isa = PBXGroup;
+			children = (
+				A88CB6E91E099DCB0011A00B /* blade.h */,
+				A88CB6EB1E0A1AD20011A00B /* derived_blade.h */,
+				A88CB6E31E090F320011A00B /* predicates.h */,
+				A88CB6E61E09157B0011A00B /* product */,
+				A88CB6E51E0913720011A00B /* weight.h */,
+				A88CB6EC1E0A1ADA0011A00B /* weighted_blade.h */,
+			);
+			path = blade;
+			sourceTree = "<group>";
+		};
+		A88CB6E61E09157B0011A00B /* product */ = {
+			isa = PBXGroup;
+			children = (
+				A88CB6E81E099C470011A00B /* bit_product.h */,
+				A88CB6EA1E0A17B50011A00B /* product.h */,
+				A88CB6E71E09157B0011A00B /* scale.h */,
+			);
+			path = product;
+			sourceTree = "<group>";
+		};
 		A8BC81441E027818005A06A5 /* basis */ = {
 			isa = PBXGroup;
 			children = (
@@ -436,6 +467,7 @@
 				A8E6EF831DF872C100C8F391 /* algebra.h */,
 				A8BC81441E027818005A06A5 /* basis */,
 				A8E6EF821DF80D0300C8F391 /* basis.h */,
+				A88CB6E21E090F320011A00B /* blade */,
 				A8E6EF801DF8081000C8F391 /* blade.h */,
 				A8E6216D1E02F82E00A91FC3 /* metric */,
 				A8E6EF841DF872C100C8F391 /* metric.h */,

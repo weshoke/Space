@@ -38,7 +38,7 @@ namespace space {
                 template <class Blade>
                 static constexpr auto Sign(Blade)
                 {
-                    return blade::detail::ReverseHasSignFlip(Blade::value) ? T(-1) : T(1);
+                    return blade::ReverseHasSignFlip(Blade::value) ? T(-1) : T(1);
                 }
             };
 
@@ -47,7 +47,7 @@ namespace space {
                 template <class Blade>
                 static constexpr auto Sign(Blade)
                 {
-                    return blade::detail::InvoluteHasSignFlip(Blade::value) ? T(-1) : T(1);
+                    return blade::InvoluteHasSignFlip(Blade::value) ? T(-1) : T(1);
                 }
             };
 
@@ -56,7 +56,7 @@ namespace space {
                 template <class Blade>
                 static constexpr auto Sign(Blade)
                 {
-                    return blade::detail::ConjugateHasSignFlip(Blade::value) ? T(-1) : T(1);
+                    return blade::ConjugateHasSignFlip(Blade::value) ? T(-1) : T(1);
                 }
             };
         }

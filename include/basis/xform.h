@@ -12,7 +12,7 @@ namespace space {
                 template <class Metric, class A, class B>
                 static constexpr auto xform()
                 {
-                    return blade::detail::ProductBlade<A, B>{};
+                    return blade::Product<Metric, A, B>{};
                 }
             };
 
