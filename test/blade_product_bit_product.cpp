@@ -5,12 +5,11 @@
 #include "metric.h"
 
 template <class Metric, uint16_t B1, uint16_t B2>
-using BitProductBlade = brigand::front<
-    space::blade::BitProduct<Metric, brigand::list<brigand::uint16_t<B1>, brigand::uint16_t<B2>>>>;
-
-template <class Metric, uint16_t B1, uint16_t B2>
 using BitProduct =
     space::blade::BitProduct<Metric, brigand::list<brigand::uint16_t<B1>, brigand::uint16_t<B2>>>;
+
+template <class Metric, uint16_t B1, uint16_t B2>
+using BitProductBlade = brigand::front<BitProduct<Metric, B1, B2>>;
 
 using ME3 = space::Metric<3, 0>;
 static_assert(BitProductBlade<ME3, 0b01, 0b01>::value == 0b00, "BitProduct error");
