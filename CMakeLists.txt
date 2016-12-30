@@ -1,9 +1,15 @@
 cmake_minimum_required(VERSION 3.7.1)
+project(space)
 
-# Added for all targets in this file
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/vendor/brigand)
-SET(CMAKE_CXX_FLAGS "-std=c++14")
+set(CMAKE_VERBOSE_MAKEFILE on)
 
-project (space)
-add_executable(space ${CMAKE_CURRENT_SOURCE_DIR}/tools/Space/Space/main.cpp)
+set(DEBUG_COMPILER_OPTIONS "-std=c++1y")
+set(RELEASE_COMPILER_OPTIONS "-std=c++1y" "-O3")
+
+add_executable(space
+    tools/Space/Space/main.cpp)
+target_compile_options(space PUBLIC ${DEBUG_COMPILER_OPTIONS})
+target_include_directories(space PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(space PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/brigand)
+
+add_subdirectory(test)

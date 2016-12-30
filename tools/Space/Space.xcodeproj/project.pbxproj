@@ -24,6 +24,8 @@
 
 /* Begin PBXFileReference section */
 		A802F34A1DF4F6F10038AAED /* product.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = product.hpp; sourceTree = "<group>"; };
+		A8263B871E0A6C41007F0485 /* conformal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = conformal.h; sourceTree = "<group>"; };
+		A8263B881E0A6C41007F0485 /* identity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = identity.h; sourceTree = "<group>"; };
 		A827EFB41DF6A5F600C2BBAC /* group.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = group.hpp; sourceTree = "<group>"; };
 		A874769C1DEB727000F4696C /* unique.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = unique.hpp; sourceTree = "<group>"; };
 		A88CB6E31E090F320011A00B /* predicates.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = predicates.h; sourceTree = "<group>"; };
@@ -170,6 +172,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A8263B861E0A6C41007F0485 /* xform */ = {
+			isa = PBXGroup;
+			children = (
+				A8263B871E0A6C41007F0485 /* conformal.h */,
+				A8263B881E0A6C41007F0485 /* identity.h */,
+			);
+			path = xform;
+			sourceTree = "<group>";
+		};
 		A88CB6E21E090F320011A00B /* blade */ = {
 			isa = PBXGroup;
 			children = (
@@ -197,6 +208,7 @@
 			isa = PBXGroup;
 			children = (
 				A8BC81451E027818005A06A5 /* span.h */,
+				A8263B861E0A6C41007F0485 /* xform */,
 				A8BC81461E027818005A06A5 /* xform.h */,
 			);
 			path = basis;

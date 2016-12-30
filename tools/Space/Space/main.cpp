@@ -135,8 +135,15 @@ int main(int argc, const char* argv[])
     auto mv2 = MV2(2.f, 0.5f);
     auto res = brigand::front<P>::Apply(mv1, mv2);
 
-    std::cout << pretty_demangle(typeid(P).name()) << "\n";
-    std::cout << res << "\n";
+    using xx = brigand::front<
+        space::blade::BitProduct<ME2,
+                                 brigand::list<brigand::uint16_t<0b10>, brigand::uint16_t<0b01>>>>;
+    using yy = space::blade::Weight<xx>;
+
+    std::cout << pretty_demangle(typeid(xx).name()) << "\n";
+    std::cout << pretty_demangle(typeid(yy).name()) << "\n";
+    std::cout << "C: " << xx::Scale<float>() << "\n";
+    //    std::cout << res << "\n";
 
     // using VecBasis = brigand::at_c<typename ME2::BasisSpan, 1>;
 

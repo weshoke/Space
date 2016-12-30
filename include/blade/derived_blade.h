@@ -18,12 +18,18 @@ namespace space {
         }
 
         template <class Res, class A, class B>
-        struct DerivedBlade : public A {
+        struct DerivedBlade : public Res {
             using BladeA = typename Blade<A>::type;
             using BladeB = typename Blade<B>::type;
 
             static constexpr bool HasOuter() { return blade::HasOuter(A::value, B::value); }
             static constexpr bool HasInner() { return blade::HasInner(A::value, B::value); }
+            template <class T>
+            static constexpr T Scale()
+            {
+                return detail::Value<T, Weight<Res>>();
+            }
+
             template <class MultivectorA, class MultivectorB>
             static constexpr auto Apply(const MultivectorA& a, const MultivectorB& b)
             {
@@ -33,7 +39,7 @@ namespace space {
                 using IndexA = brigand::index_of<BasisA, BladeA>;
                 using IndexB = brigand::index_of<BasisB, BladeB>;
                 using S = Weight<Res>;
-                return detail::Value<ScalarValue, S>() * a[IndexA::value] * b[IndexB::value];
+                return Scale<ScalarValue>() * a[IndexA::value] * b[IndexB::value];
             }
         };
     }
