@@ -1,4 +1,5 @@
 #include "algebra.h"
+#include "basis/xform/conformal.h"
 #include "blade.h"
 #include "metric.h"
 #include "product.h"
@@ -123,26 +124,33 @@ std::string pretty_demangle(const char* name)
 
 int main(int argc, const char* argv[])
 {
-    using ME2 = space::Metric<2>;
-    using E2 = space::Algebra<ME2, float>;
-    using B1 = brigand::uint16_t<1>;
-    using B2 = brigand::uint16_t<2>;
-    using P = typename space::blade::detail::BitProduct<ME2, B1, B2>::type;
+    using MC2 = space::Metric<3, 1, space::basis::xform::Conformal<2, 3>>;
+    using B1 = brigand::uint16_t<0b01>;
+    using B2 = brigand::uint16_t<0b10>;
+    using P = typename space::blade::detail::BitProduct<MC2, B1, B2>::type;
+    std::cout << pretty_demangle(typeid(P).name()) << "\n";
 
-    using MV1 = space::Multivector<E2, brigand::list<B1>>;
-    using MV2 = space::Multivector<E2, brigand::list<B1, B2>>;
-    auto mv1 = MV1(1.f);
-    auto mv2 = MV2(2.f, 0.5f);
-    auto res = brigand::front<P>::Apply(mv1, mv2);
-
-    using xx = brigand::front<
-        space::blade::BitProduct<ME2,
-                                 brigand::list<brigand::uint16_t<0b10>, brigand::uint16_t<0b01>>>>;
-    using yy = space::blade::Weight<xx>;
-
-    std::cout << pretty_demangle(typeid(xx).name()) << "\n";
-    std::cout << pretty_demangle(typeid(yy).name()) << "\n";
-    std::cout << "C: " << xx::Scale<float>() << "\n";
+    // using ME2 = space::Metric<2>;
+    // using E2 = space::Algebra<ME2, float>;
+    // using B1 = brigand::uint16_t<1>;
+    // using B2 = brigand::uint16_t<2>;
+    // using P = typename space::blade::detail::BitProduct<ME2, B1, B2>::type;
+    //
+    // using MV1 = space::Multivector<E2, brigand::list<B1>>;
+    // using MV2 = space::Multivector<E2, brigand::list<B1, B2>>;
+    // auto mv1 = MV1(1.f);
+    // auto mv2 = MV2(2.f, 0.5f);
+    // auto res = brigand::front<P>::Apply(mv1, mv2);
+    //
+    // using xx = brigand::front<
+    //     space::blade::BitProduct<ME2,
+    //                              brigand::list<brigand::uint16_t<0b10>,
+    //                              brigand::uint16_t<0b01>>>>;
+    // using yy = space::blade::Weight<xx>;
+    //
+    // std::cout << pretty_demangle(typeid(xx).name()) << "\n";
+    // std::cout << pretty_demangle(typeid(yy).name()) << "\n";
+    // std::cout << "C: " << xx::Scale<float>() << "\n";
     //    std::cout << res << "\n";
 
     // using VecBasis = brigand::at_c<typename ME2::BasisSpan, 1>;
