@@ -134,11 +134,7 @@ namespace space {
                     brigand::bind<
                         brigand::transform,
                         brigand::_1,
-                        //    brigand::pin<brigand::uint16_t<1>>>>;
                         brigand::defer<brigand::bind<blade::WeightedBlade,
-                                                     // brigand::bind<blade::Blade, brigand::_1>,
-                                                     // std::ratio<1>
-                                                     // >>>>;
                                                      brigand::bind<blade::Blade, brigand::_1>,
                                                      brigand::bind<blade::ProductScale,
                                                                    brigand::pin<Metric>,
