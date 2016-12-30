@@ -61,6 +61,15 @@ namespace space {
                 using Sign_ = std::ratio<Sign<Int>(A::value, B::value)>;
                 using type = std::ratio_multiply<Scale_, std::ratio_multiply<MetricSign_, Sign_>>;
             };
+
+            template <class Metric,
+                      template <class...> class DerivedBlade,
+                      class Res,
+                      class A,
+                      class B>
+            struct ProductScale<Metric, DerivedBlade<Res, A, B>> {
+                using type = typename ProductScale<Metric, brigand::list<A, B>>::type;
+            };
         }
 
         template <class Metric, class Product>
