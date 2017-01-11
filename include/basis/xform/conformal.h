@@ -1,6 +1,7 @@
 #ifndef BASIS_XFORM_CONFORMAL_H
 #define BASIS_XFORM_CONFORMAL_H
 
+#include "blade/derived_blade.h"
 #include "blade/weight.h"
 #include "blade/weighted_blade.h"
 #include "brigand/algorithms/fold.hpp"
@@ -107,6 +108,7 @@ namespace space {
                         brigand::list<blade::WeightedBlade<
                             std::integral_constant<typename A::value_type, A::value>,
                             blade::Weight<A>>>>::type;
+                    // using type = A;
                 };
 
                 template <class List>
@@ -161,15 +163,12 @@ namespace space {
                                       brigand::bind<ProductListSum, brigand::_1>>>;
                 };
 
-                template <class Metric, class A, class B>
+                template <class Metric, class A, class B, class Op>
                 struct Apply {
                     using DiagonalA = typename FromConformal<A>::type;
                     using DiagonalB = typename FromConformal<B>::type;
-                    using ProductLists = product::BitProduct<typename Metric::Diagonal,
-                                                             DiagonalA,
-                                                             DiagonalB,
-                                                             product::op::Gp<brigand::_1>>;
-
+                    using ProductLists =
+                        product::BitProduct<typename Metric::Diagonal, DiagonalA, DiagonalB, Op>;
                     using Q_ = ToWeightedBlade2<Metric, ProductLists>;
                     using Q = typename Simplify<Q_>::type;
                     using R = typename ToConformalList<Q>::type;

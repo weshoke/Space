@@ -7,23 +7,25 @@
 namespace space {
     namespace blade {
         namespace detail {
-            template <class Metric, class A, class B>
+            template <class Metric, class A, class B, class Op>
             struct BitProduct;
 
             template <template <class...> class Metric,
                       class A,
                       class B,
+                      class Op,
                       class N,
                       class M,
                       class Xform>
-            struct BitProduct<Metric<N, M, Xform>, A, B> {
-                using type = typename Xform::template Apply<Metric<N, M, Xform>, A, B>::type;
+            struct BitProduct<Metric<N, M, Xform>, A, B, Op> {
+                // using type = B;
+                using type = typename Xform::template Apply<Metric<N, M, Xform>, A, B, Op>::type;
             };
         }
 
-        template <class Metric, class Pair>
-        using BitProduct =
-            typename detail::BitProduct<Metric, brigand::front<Pair>, brigand::back<Pair>>::type;
+        template <class Metric, class Pair, class Op>
+        using BitProduct = typename detail::
+            BitProduct<Metric, brigand::front<Pair>, brigand::back<Pair>, Op>::type;
     }
 }
 

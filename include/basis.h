@@ -18,11 +18,13 @@
 namespace space {
     namespace basis {
         namespace detail {
-            template <class Metric, class B1, class B2>
+            template <class Metric, class B1, class B2, class Op>
             struct BitProduct {
-                using Products = brigand::transform<
-                    brigand::product<B1, B2>,
-                    brigand::bind<blade::BitProduct, brigand::pin<Metric>, brigand::_1>>;
+                using Products = brigand::transform<brigand::product<B1, B2>,
+                                                    brigand::bind<blade::BitProduct,
+                                                                  brigand::pin<Metric>,
+                                                                  brigand::_1,
+                                                                  brigand::pin<Op>>>;
                 using type = brigand::flatten<Products>;
             };
 
@@ -39,8 +41,8 @@ namespace space {
         template <class Basis>
         using Size = brigand::size<Basis>;
 
-        template <class Metric, class B1, class B2>
-        using BitProduct = typename detail::BitProduct<Metric, B1, B2>::type;
+        template <class Metric, class B1, class B2, class Op>
+        using BitProduct = typename detail::BitProduct<Metric, B1, B2, Op>::type;
     }
 }
 

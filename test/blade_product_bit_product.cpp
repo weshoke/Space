@@ -4,9 +4,10 @@
 #include "blade/weight.h"
 #include "metric.h"
 
+using Gp = brigand::bind<space::product::op::Gp, brigand::_1>;
 template <class Metric, uint16_t B1, uint16_t B2>
-using BitProduct =
-    space::blade::BitProduct<Metric, brigand::list<brigand::uint16_t<B1>, brigand::uint16_t<B2>>>;
+using BitProduct = space::blade::
+    BitProduct<Metric, brigand::list<brigand::uint16_t<B1>, brigand::uint16_t<B2>>, Gp>;
 
 template <class Metric, uint16_t B1, uint16_t B2>
 using BitProductBlade = brigand::front<BitProduct<Metric, B1, B2>>;

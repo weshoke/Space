@@ -124,24 +124,70 @@ std::string pretty_demangle(const char* name)
 
 template <class Metric, uint16_t B1, uint16_t B2>
 using BitProductBlade =
-    space::blade::BitProduct<Metric, brigand::list<brigand::uint16_t<B1>, brigand::uint16_t<B2>>>;
+    space::blade::BitProduct<Metric,
+                             brigand::list<brigand::uint16_t<B1>, brigand::uint16_t<B2>>,
+                             brigand::bind<space::product::op::Gp, brigand::_1>>;
+
+template <class Metric, uint16_t B1, uint16_t B2>
+using BitProductBladeOp =
+    space::blade::BitProduct<Metric,
+                             brigand::list<brigand::uint16_t<B1>, brigand::uint16_t<B2>>,
+                             brigand::bind<space::product::op::Op, brigand::_1>>;
 
 template <class Metric, class BasisA, class BasisB>
-using ProductLists = space::product::detail::
-    BitProduct<Metric, BasisA, BasisB, brigand::bind<space::product::op::Gp, brigand::_1>>;
+using ProductLists = typename space::product::detail::
+    BitProduct<Metric, BasisA, BasisB, brigand::bind<space::product::op::Gp, brigand::_1>>::type;
+
+template <class Metric, class BasisA, class BasisB>
+using ProductListsOp = typename space::product::detail::
+    BitProduct<Metric, BasisA, BasisB, brigand::bind<space::product::op::Op, brigand::_1>>::type;
 
 int main(int argc, const char* argv[])
 {
-    // using xform = space::basis::xform::Conformal<2, 3>;
-    // using MC2 = space::Metric<3, 1, xform>;
+    using xform = space::basis::xform::Conformal<2, 3>;
+    using MC2 = space::Metric<3, 1, xform>;
     using e1 = brigand::uint16_t<0b0001>;
     using e2 = brigand::uint16_t<0b0010>;
     using ori = brigand::uint16_t<0b0100>;
     using e1_inf = brigand::uint16_t<0b1001>;
     using e2_ori = brigand::uint16_t<0b0110>;
     using ori_inf = brigand::uint16_t<0b1100>;
-    // using B2 = brigand::uint16_t<0b1010>;
-    // // using P = typename space::blade::detail::BitProduct<MC2, B1, B2>::type;
+
+    // using X = ProductListsOp<MC2, brigand::list<e1>, brigand::list<e2>>;
+    // using X = ProductListsOp<MC2, brigand::list<e1, e2>, brigand::list<e2>>;
+    // using X = ProductListsOp<MC2, brigand::list<e1, e2>, brigand::list<e2, ori>>;
+    // using X = ProductListsOp<MC2, brigand::list<e1_inf>, brigand::list<ori_inf>>;
+    // using X = xform::template Apply<MC2, e1_inf, ori_inf, brigand::bind<
+    //     space::product::op::Op,
+    //     brigand::_1
+    // >>;
+    using X = ProductListsOp<MC2, brigand::list<e1, e1_inf>, brigand::list<e2_ori, ori_inf>>;
+    // e1 ^ (e2 * 0.5 * (em + ep))
+    // 0.5 * (e1 ^ (e2 * em + e2 * ep))
+    // 0.5 * (e1 e2 em + e1 e2 ep)
+    // 0.5 * e1 e2 (2 * ori)
+    // using X = ProductListsOp<MC2, brigand::list<e1>, brigand::list<e2_ori>>;
+    // using X = ProductLists<MC2, brigand::list<e1_inf>, brigand::list<e2_ori>>;
+    // using X = BitProductBlade<MC2, 0b1001, 0b0110>;
+    // using Y = brigand::at_c<X, 0>;
+    // using a = brigand::at_c<Y, 0>;
+    // using b = brigand::at_c<Y, 0>;
+    // std::cout << pretty_demangle(typeid(L).name()) << "\n";
+    // std::cout << pretty_demangle(typeid(M).name()) << "\n";
+    // std::cout << pretty_demangle(typeid(M2).name()) << "\n";
+    // std::cout << "X>>>>\n";
+    std::cout << pretty_demangle(typeid(X).name()) << "\n";
+    // std::cout << pretty_demangle(typeid(Y).name()) << "\n";
+    // std::cout << pretty_demangle(typeid(a).name()) << "\n";
+    // std::cout << pretty_demangle(typeid(b).name()) << "\n";
+    // std::cout << a::HasOuter() << "\n";
+    // std::cout << b::HasOuter() << "\n";
+    // std::cout << pretty_demangle(typeid(typename X::type_).name()) << "\n";
+    // std::cout << Y::HasOuter() << "\n";
+    // std::cout << Y::Scale<float>() << "\n";
+
+    // // using B2 = brigand::uint16_t<0b1010>;
+    // using P = typename space::blade::detail::BitProduct<MC2, e1, e1>::type;
     // using T = xform::template Apply<MC2, B1, B2>::ProductLists;
     // using Q_ = xform::template Apply<MC2, B1, B2>::Q_;
     // using Q = xform::template Apply<MC2, B1, B2>::Q;
@@ -151,19 +197,19 @@ int main(int argc, const char* argv[])
     // std::cout << pretty_demangle(typeid(R).name()) << "\n";
     // std::cout << pretty_demangle(typeid(P).name()) << "\n";
 
-    using MC2 = space::Metric<3, 1, space::basis::xform::Conformal<2, 3>>;
+    // using MC2 = space::Metric<3, 1, space::basis::xform::Conformal<2, 3>>;
     // using A1 = BitProductBlade<MC2, 0b101, 0b01>;
     // using A2 = BitProductBlade<MC2, 0b0101, 0b0001>;
     // std::cout << pretty_demangle(typeid(A1).name()) << "\n";
     // std::cout << pretty_demangle(typeid(A2).name()) << "\n";
     // std::cout << brigand::size<A2>::value << "\n";
 
-    using L1 = brigand::list<e1, e1_inf>;
-    using L2 = brigand::list<e2_ori, ori_inf>;
-    using GG = typename ProductLists<MC2, L1, L2>::type;
+    // using L1 = brigand::list<e1, e1_inf>;
+    // using L2 = brigand::list<e2_ori, ori_inf>;
+    // using GG = typename ProductLists<MC2, L1, L2>::type;
     // using HH = typename space::basis::detail::BitProduct<MC2, L1, L2>::Products;
     // using II = brigand::product<L1, L2>;
-    std::cout << pretty_demangle(typeid(GG).name()) << "\n";
+    // std::cout << pretty_demangle(typeid(GG).name()) << "\n";
     // std::cout << pretty_demangle(typeid(HH).name()) << "\n";
     // std::cout << pretty_demangle(typeid(II).name()) << "\n";
 

@@ -32,8 +32,7 @@ namespace space {
 
             template <class Metric, class B1, class B2, class Op>
             struct BitProduct {
-                using Products = brigand::remove_if<basis::BitProduct<Metric, B1, B2>,
-                                                    brigand::bind<brigand::not_, Op>>;
+                using Products = basis::BitProduct<Metric, B1, B2, Op>;
                 using type = typename GroupBlades<Products>::type;
             };
 
@@ -85,7 +84,6 @@ namespace space {
             };
         }
 
-        // Add metric template param
         template <class Metric, class BasisA, class BasisB, class Op>
         using BitProduct = typename detail::BitProduct<Metric, BasisA, BasisB, Op>::type;
 
