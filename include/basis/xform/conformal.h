@@ -180,7 +180,12 @@ namespace space {
                                            brigand::bind<std::ratio_equal,
                                                          brigand::bind<blade::Weight, brigand::_1>,
                                                          brigand::pin<std::ratio<0>>>>;
-                    using type = V;
+                    using W = brigand::transform<V,
+                                                 brigand::bind<blade::DerivedBlade,
+                                                               brigand::_1,
+                                                               brigand::pin<A>,
+                                                               brigand::pin<B>>>;
+                    using type = W;
                 };
             };
         }

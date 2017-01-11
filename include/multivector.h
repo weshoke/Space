@@ -122,7 +122,7 @@ namespace space {
                 else {
                     os << "e";
                     // TODO: metaprogram this
-                    for (auto j = 0u; j < Algebra::Dim; ++j) {
+                    for (auto j = 0u; j < Algebra::Metric::Dim; ++j) {
                         if (T::value & (1 << j)) {
                             os << (j + 1);
                         }

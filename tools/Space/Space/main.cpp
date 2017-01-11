@@ -146,12 +146,20 @@ int main(int argc, const char* argv[])
 {
     using xform = space::basis::xform::Conformal<2, 3>;
     using MC2 = space::Metric<3, 1, xform>;
+    using C2 = space::Algebra<MC2, float>;
     using e1 = brigand::uint16_t<0b0001>;
     using e2 = brigand::uint16_t<0b0010>;
     using ori = brigand::uint16_t<0b0100>;
     using e1_inf = brigand::uint16_t<0b1001>;
     using e2_ori = brigand::uint16_t<0b0110>;
     using ori_inf = brigand::uint16_t<0b1100>;
+
+    using MV1 = space::Multivector<C2, brigand::list<e1, e2>>;
+    // using MV2 = space::Multivector<C2, brigand::list<e1, e2>>;
+    auto mv1 = MV1(1.f, 0.f);
+    auto mv2 = MV1(1.f, 1.f);
+    auto x = mv1 * mv2;
+    std::cout << x << "\n";
 
     // using X = ProductListsOp<MC2, brigand::list<e1>, brigand::list<e2>>;
     // using X = ProductListsOp<MC2, brigand::list<e1, e2>, brigand::list<e2>>;
@@ -161,7 +169,7 @@ int main(int argc, const char* argv[])
     //     space::product::op::Op,
     //     brigand::_1
     // >>;
-    using X = ProductListsOp<MC2, brigand::list<e1, e1_inf>, brigand::list<e2_ori, ori_inf>>;
+    // using X = ProductListsOp<MC2, brigand::list<e1, e1_inf>, brigand::list<e2_ori, ori_inf>>;
     // e1 ^ (e2 * 0.5 * (em + ep))
     // 0.5 * (e1 ^ (e2 * em + e2 * ep))
     // 0.5 * (e1 e2 em + e1 e2 ep)
@@ -176,7 +184,7 @@ int main(int argc, const char* argv[])
     // std::cout << pretty_demangle(typeid(M).name()) << "\n";
     // std::cout << pretty_demangle(typeid(M2).name()) << "\n";
     // std::cout << "X>>>>\n";
-    std::cout << pretty_demangle(typeid(X).name()) << "\n";
+    // std::cout << pretty_demangle(typeid(X).name()) << "\n";
     // std::cout << pretty_demangle(typeid(Y).name()) << "\n";
     // std::cout << pretty_demangle(typeid(a).name()) << "\n";
     // std::cout << pretty_demangle(typeid(b).name()) << "\n";
