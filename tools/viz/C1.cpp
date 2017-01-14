@@ -81,7 +81,7 @@ class C1 : public entry::AppI {
             bgfx::makeRef(s_cubeTriStrip, sizeof(s_cubeTriStrip)));
 
         // Create program from shaders.
-        m_program = loadProgram("vs_cubes", "fs_cubes");
+        m_program = LoadProgram("vs_cubes", "fs_cubes");
     }
 
     virtual int shutdown() BX_OVERRIDE

@@ -4,100 +4,79 @@
 #include <bx/string.h>
 #include <iostream>
 
-static const bgfx::Memory* loadMem(bx::FileReaderI* _reader, const char* _filePath)
+static const bgfx::Memory* loadMem(bx::FileReaderI* reader, const std::string& file_path)
 {
-    if (bx::open(_reader, _filePath)) {
-        uint32_t size = (uint32_t)bx::getSize(_reader);
+    if (bx::open(reader, file_path.data())) {
+        uint32_t size = (uint32_t)bx::getSize(reader);
         const bgfx::Memory* mem = bgfx::alloc(size + 1);
-        bx::read(_reader, mem->data, size);
-        bx::close(_reader);
+        bx::read(reader, mem->data, size);
+        bx::close(reader);
         mem->data[mem->size - 1] = '\0';
         return mem;
     }
 
-    DBG("Failed to load %s.", _filePath);
+    DBG("Failed to load %s.", file_path.data());
     return NULL;
 }
 
-static void* loadMem(bx::FileReaderI* _reader,
-                     bx::AllocatorI* _allocator,
-                     const char* _filePath,
-                     uint32_t* _size)
+std::string ShaderPath(bgfx::RendererType::Enum rendered_type)
 {
-    if (bx::open(_reader, _filePath)) {
-        uint32_t size = (uint32_t)bx::getSize(_reader);
-        void* data = BX_ALLOC(_allocator, size);
-        bx::read(_reader, data, size);
-        bx::close(_reader);
-
-        if (NULL != _size) {
-            *_size = size;
-        }
-        return data;
-    }
-
-    DBG("Failed to load %s.", _filePath);
-    return NULL;
-}
-static bgfx::ShaderHandle loadShader(bx::FileReaderI* _reader, const char* _name)
-{
-    char filePath[512];
-
-    const char* shaderPath = "???";
-
-    switch (bgfx::getRendererType()) {
+    switch (rendered_type) {
         case bgfx::RendererType::Noop:
         case bgfx::RendererType::Direct3D9:
-            shaderPath = "shaders/dx9/";
-            break;
+            return "shaders/dx9/";
+
         case bgfx::RendererType::Direct3D11:
         case bgfx::RendererType::Direct3D12:
-            shaderPath = "shaders/dx11/";
-            break;
-        case bgfx::RendererType::Gnm:
-            shaderPath = "shaders/pssl/";
-            break;
-        case bgfx::RendererType::Metal:
-            shaderPath = "shaders/metal/";
-            break;
-        case bgfx::RendererType::OpenGL:
-            shaderPath = "../tools/viz/shaders/glsl/";
-            break;
-        case bgfx::RendererType::OpenGLES:
-            shaderPath = "shaders/essl/";
-            break;
-        case bgfx::RendererType::Vulkan:
-            shaderPath = "shaders/spirv/";
-            break;
+            return "shaders/dx11/";
 
+        case bgfx::RendererType::Gnm:
+            return "shaders/pssl/";
+
+        case bgfx::RendererType::Metal:
+            return "shaders/metal/";
+
+        case bgfx::RendererType::OpenGL:
+            return "../tools/viz/shaders/glsl/";
+
+        case bgfx::RendererType::OpenGLES:
+            return "shaders/essl/";
+
+        case bgfx::RendererType::Vulkan:
+            return "shaders/spirv/";
+
+        // TODO: assert
         case bgfx::RendererType::Count:
             BX_CHECK(false, "You should not be here!");
             break;
     }
-
-    strcpy(filePath, shaderPath);
-    strcat(filePath, _name);
-    strcat(filePath, ".bin");
-    return bgfx::createShader(loadMem(_reader, filePath));
+    return "<unknown renderer type>";
 }
 
-bgfx::ShaderHandle loadShader(const char* _name)
+static bgfx::ShaderHandle LoadShader(bx::FileReaderI* reader, const std::string& name)
 {
-    return loadShader(entry::getFileReader(), _name);
+    auto file_path = ShaderPath(bgfx::getRendererType()) + name + ".bin";
+    return bgfx::createShader(loadMem(reader, file_path));
 }
 
-bgfx::ProgramHandle loadProgram(bx::FileReaderI* _reader, const char* _vsName, const char* _fsName)
+bgfx::ShaderHandle LoadShader(const std::string& name)
 {
-    bgfx::ShaderHandle vsh = loadShader(_reader, _vsName);
+    return LoadShader(entry::getFileReader(), name);
+}
+
+bgfx::ProgramHandle LoadProgram(bx::FileReaderI* reader,
+                                const std::string& vs_name,
+                                const std::string& fs_name)
+{
+    bgfx::ShaderHandle vsh = LoadShader(reader, vs_name);
     bgfx::ShaderHandle fsh = BGFX_INVALID_HANDLE;
-    if (NULL != _fsName) {
-        fsh = loadShader(_reader, _fsName);
+    if (!fs_name.empty()) {
+        fsh = LoadShader(reader, fs_name);
     }
-
     return bgfx::createProgram(vsh, fsh, true /* destroy shaders when program is destroyed */);
 }
 
-bgfx::ProgramHandle loadProgram(const char* _vsName, const char* _fsName)
+bgfx::ProgramHandle LoadProgram(const std::string& vs_name, const std::string& fs_name)
 {
-    return loadProgram(entry::getFileReader(), _vsName, _fsName);
+    return LoadProgram(entry::getFileReader(), vs_name, fs_name);
 }

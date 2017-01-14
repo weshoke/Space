@@ -1,4 +1,5 @@
 #include <bgfx/bgfx.h>
+#include <string>
 
-bgfx::ShaderHandle loadShader(const char* _name);
-bgfx::ProgramHandle loadProgram(const char* _vsName, const char* _fsName);
+bgfx::ShaderHandle LoadShader(const std::string& name);
+bgfx::ProgramHandle LoadProgram(const std::string& vs_name, const std::string& fs_name);
