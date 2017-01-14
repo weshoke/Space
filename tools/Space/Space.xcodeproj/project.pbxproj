@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A8DDCF781DE8E72D00F7F876 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DDCF771DE8E72D00F7F876 /* main.cpp */; };
+		A8E04DE61E28733100C86B50 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8E04DE51E28733100C86B50 /* OpenGL.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -150,6 +151,7 @@
 		A8DDCFF81DE8E76C00F7F876 /* type.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = type.hpp; sourceTree = "<group>"; };
 		A8DDCFF91DE8E76C00F7F876 /* voidp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = voidp.hpp; sourceTree = "<group>"; };
 		A8DDCFFA1DE8E76C00F7F876 /* types.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = types.hpp; sourceTree = "<group>"; };
+		A8E04DE51E28733100C86B50 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		A8E440E61DFB18FB0057DA10 /* unary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unary.h; sourceTree = "<group>"; };
 		A8E440E71DFC76320057DA10 /* sum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sum.h; sourceTree = "<group>"; };
 		A8E6216E1E02F82E00A91FC3 /* xform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xform.h; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8E04DE61E28733100C86B50 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,6 +220,7 @@
 		A8DDCF6B1DE8E72D00F7F876 = {
 			isa = PBXGroup;
 			children = (
+				A8E04DE51E28733100C86B50 /* OpenGL.framework */,
 				A8E6EF7E1DF8074B00C8F391 /* include */,
 				A8DDCF761DE8E72D00F7F876 /* Space */,
 				A8DDCF7E1DE8E75D00F7F876 /* vendor */,

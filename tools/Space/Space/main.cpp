@@ -4,6 +4,7 @@
 #include "metric.h"
 #include "product.h"
 #include "sum.h"
+#include <OpenGL/gl.h>
 #include <cxxabi.h>
 #include <array>
 #include <cstdint>
@@ -150,16 +151,22 @@ int main(int argc, const char* argv[])
     using e1 = brigand::uint16_t<0b0001>;
     using e2 = brigand::uint16_t<0b0010>;
     using ori = brigand::uint16_t<0b0100>;
+    using inf = brigand::uint16_t<0b1000>;
     using e1_inf = brigand::uint16_t<0b1001>;
     using e2_ori = brigand::uint16_t<0b0110>;
     using ori_inf = brigand::uint16_t<0b1100>;
 
-    using MV1 = space::Multivector<C2, brigand::list<e1, e2>>;
+    using PT = space::Multivector<C2, brigand::list<e1, e2, ori, inf>>;
     // using MV2 = space::Multivector<C2, brigand::list<e1, e2>>;
-    auto mv1 = MV1(1.f, 0.f);
-    auto mv2 = MV1(1.f, 1.f);
-    auto x = mv1 * mv2;
-    std::cout << x << "\n";
+    auto p1 = PT(1.f, 0.f, 1.f, 0.5f);
+    auto p2 = PT(0.f, 1.f, 1.f, 0.5f);
+    auto p3 = PT(1.f, 1.f, 1.f, 1.f);
+    auto c = p1 ^ p2 ^ p3;
+    // auto x = mv1 * mv2;
+    std::cout << p1 << "\n";
+    std::cout << p2 << "\n";
+    std::cout << p3 << "\n";
+    std::cout << c << "\n";
 
     // using X = ProductListsOp<MC2, brigand::list<e1>, brigand::list<e2>>;
     // using X = ProductListsOp<MC2, brigand::list<e1, e2>, brigand::list<e2>>;
@@ -494,6 +501,8 @@ int main(int argc, const char* argv[])
     //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b11) << "\n";
     //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b110) << "\n";
     //	std::cout << space::blade::detail::InvoluteHasSignFlip(0) << "\n";
+
+    std::cout << GL_LINES << "\n";
 
     return 0;
 }
