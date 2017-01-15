@@ -12,6 +12,7 @@ static const bgfx::Memory* loadMem(bx::FileReaderI* reader, const std::string& f
         bx::read(reader, mem->data, size);
         bx::close(reader);
         mem->data[mem->size - 1] = '\0';
+        std::cout << (mem->data + 4 * 9) << "\n";
         return mem;
     }
 
@@ -37,7 +38,7 @@ std::string ShaderPath(bgfx::RendererType::Enum rendered_type)
             return "shaders/metal/";
 
         case bgfx::RendererType::OpenGL:
-            return "../tools/viz/shaders/glsl/";
+            return "shaders/";
 
         case bgfx::RendererType::OpenGLES:
             return "shaders/essl/";

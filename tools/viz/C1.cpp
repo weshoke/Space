@@ -4,10 +4,10 @@
 #include <bgfx/bgfx.h>
 
 struct PosColorVertex {
-    float m_x;
-    float m_y;
-    float m_z;
-    uint32_t m_abgr;
+    float x;
+    float y;
+    float z;
+    uint32_t abgr;
 
     static void init()
     {
@@ -70,26 +70,28 @@ class C1 : public entry::AppI {
         PosColorVertex::init();
 
         // Create static vertex buffer.
-        m_vbh = bgfx::createVertexBuffer(
+        vbh_ = bgfx::createVertexBuffer(
             // Static data can be passed with bgfx::makeRef
             bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices)),
             PosColorVertex::ms_decl);
 
         // Create static index buffer.
-        m_ibh = bgfx::createIndexBuffer(
+        ibh_ = bgfx::createIndexBuffer(
             // Static data can be passed with bgfx::makeRef
             bgfx::makeRef(s_cubeTriStrip, sizeof(s_cubeTriStrip)));
 
         // Create program from shaders.
-        m_program = LoadProgram("vs_cubes", "fs_cubes");
+        program_ = LoadProgram("vs_cubes", "fs_cubes");
+
+        time_offset_ = 0;
     }
 
     virtual int shutdown() BX_OVERRIDE
     {
         // Cleanup.
-        bgfx::destroyIndexBuffer(m_ibh);
-        bgfx::destroyVertexBuffer(m_vbh);
-        bgfx::destroyProgram(m_program);
+        bgfx::destroyIndexBuffer(ibh_);
+        bgfx::destroyVertexBuffer(vbh_);
+        bgfx::destroyProgram(program_);
 
         // Shutdown bgfx.
         bgfx::shutdown();
@@ -125,8 +127,8 @@ class C1 : public entry::AppI {
             bgfx::setViewRect(0, 0, 0, uint16_t(width_), uint16_t(height_));
 
             // Submit 11x11 cubes.
-            m_timeOffset += 1;
-            auto time = float(m_timeOffset) * 0.05f;
+            time_offset_ += 1;
+            auto time = float(time_offset_) * 0.05f;
             for (uint32_t yy = 0; yy < 11; ++yy) {
                 for (uint32_t xx = 0; xx < 11; ++xx) {
                     float mtx[16];
@@ -139,14 +141,14 @@ class C1 : public entry::AppI {
                     bgfx::setTransform(mtx);
 
                     // Set vertex and index buffer.
-                    bgfx::setVertexBuffer(m_vbh);
-                    bgfx::setIndexBuffer(m_ibh);
+                    bgfx::setVertexBuffer(vbh_);
+                    bgfx::setIndexBuffer(ibh_);
 
                     // Set render states.
                     bgfx::setState(0 | BGFX_STATE_DEFAULT | BGFX_STATE_PT_TRISTRIP);
 
                     // Submit primitive for rendering to view 0.
-                    bgfx::submit(0, m_program);
+                    bgfx::submit(0, program_);
                 }
             }
 
@@ -165,10 +167,10 @@ class C1 : public entry::AppI {
     uint32_t debug_;
     uint32_t reset_;
 
-    bgfx::VertexBufferHandle m_vbh;
-    bgfx::IndexBufferHandle m_ibh;
-    bgfx::ProgramHandle m_program;
-    int64_t m_timeOffset;
+    bgfx::VertexBufferHandle vbh_;
+    bgfx::IndexBufferHandle ibh_;
+    bgfx::ProgramHandle program_;
+    int64_t time_offset_;
 };
 
 ENTRY_IMPLEMENT_MAIN(C1);
