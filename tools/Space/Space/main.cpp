@@ -1,4 +1,5 @@
-#include "algebra.h"
+#include "algebra/E3.h"
+#include "algebra/algebra.h"
 #include "basis/xform/conformal.h"
 #include "blade.h"
 #include "metric.h"
@@ -143,30 +144,40 @@ template <class Metric, class BasisA, class BasisB>
 using ProductListsOp = typename space::product::detail::
     BitProduct<Metric, BasisA, BasisB, brigand::bind<space::product::op::Op, brigand::_1>>::type;
 
+using E3f = space::algebra::E3<float>;
+
 int main(int argc, const char* argv[])
 {
-    using xform = space::basis::xform::Conformal<2, 3>;
-    using MC2 = space::Metric<3, 1, xform>;
-    using C2 = space::Algebra<MC2, float>;
-    using e1 = brigand::uint16_t<0b0001>;
-    using e2 = brigand::uint16_t<0b0010>;
-    using ori = brigand::uint16_t<0b0100>;
-    using inf = brigand::uint16_t<0b1000>;
-    using e1_inf = brigand::uint16_t<0b1001>;
-    using e2_ori = brigand::uint16_t<0b0110>;
-    using ori_inf = brigand::uint16_t<0b1100>;
+    // std::cout << pretty_demangle(typeid(E3f).name()) << "\n";
+    std::cout << pretty_demangle(typeid(typename E3f::Quat).name()) << "\n";
 
-    using PT = space::Multivector<C2, brigand::list<e1, e2, ori, inf>>;
-    // using MV2 = space::Multivector<C2, brigand::list<e1, e2>>;
-    auto p1 = PT(1.f, 0.f, 1.f, 0.5f);
-    auto p2 = PT(0.f, 1.f, 1.f, 0.5f);
-    auto p3 = PT(1.f, 1.f, 1.f, 1.f);
-    auto c = p1 ^ p2 ^ p3;
-    // auto x = mv1 * mv2;
-    std::cout << p1 << "\n";
-    std::cout << p2 << "\n";
-    std::cout << p3 << "\n";
-    std::cout << c << "\n";
+    using Vec = typename E3f::Vec;
+    auto v1 = Vec(0.f, 1.f, 0.f);
+    auto v2 = Vec(1.f, 1.f, 0.f);
+    std::cout << (v1 * v2) << "\n";
+
+    // using xform = space::basis::xform::Conformal<2, 3>;
+    // using MC2 = space::Metric<3, 1, xform>;
+    // using C2 = space::Algebra<MC2, float>;
+    // using e1 = brigand::uint16_t<0b0001>;
+    // using e2 = brigand::uint16_t<0b0010>;
+    // using ori = brigand::uint16_t<0b0100>;
+    // using inf = brigand::uint16_t<0b1000>;
+    // using e1_inf = brigand::uint16_t<0b1001>;
+    // using e2_ori = brigand::uint16_t<0b0110>;
+    // using ori_inf = brigand::uint16_t<0b1100>;
+    //
+    // using PT = space::Multivector<C2, brigand::list<e1, e2, ori, inf>>;
+    // // using MV2 = space::Multivector<C2, brigand::list<e1, e2>>;
+    // auto p1 = PT(1.f, 0.f, 1.f, 0.5f);
+    // auto p2 = PT(0.f, 1.f, 1.f, 0.5f);
+    // auto p3 = PT(1.f, 1.f, 1.f, 1.f);
+    // auto c = p1 ^ p2 ^ p3;
+    // // auto x = mv1 * mv2;
+    // std::cout << p1 << "\n";
+    // std::cout << p2 << "\n";
+    // std::cout << p3 << "\n";
+    // std::cout << c << "\n";
 
     // using X = ProductListsOp<MC2, brigand::list<e1>, brigand::list<e2>>;
     // using X = ProductListsOp<MC2, brigand::list<e1, e2>, brigand::list<e2>>;
@@ -501,8 +512,6 @@ int main(int argc, const char* argv[])
     //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b11) << "\n";
     //	std::cout << space::blade::detail::InvoluteHasSignFlip(0b110) << "\n";
     //	std::cout << space::blade::detail::InvoluteHasSignFlip(0) << "\n";
-
-    std::cout << GL_LINES << "\n";
 
     return 0;
 }

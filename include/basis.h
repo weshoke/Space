@@ -33,6 +33,13 @@ namespace space {
             {
                 return dim == T{0} ? mask : AllBits(dim - 1, mask << 1 | 0b1);
             }
+
+            template <class ProductLists>
+            struct Basis {
+                using type = brigand::transform<
+                    ProductLists,
+                    brigand::bind<blade::Blade, brigand::bind<brigand::front, brigand::_1>>>;
+            };
         }
 
         template <class Basis, class Blade>
@@ -43,6 +50,9 @@ namespace space {
 
         template <class Metric, class B1, class B2, class Op>
         using BitProduct = typename detail::BitProduct<Metric, B1, B2, Op>::type;
+
+        template <class ProductLists>
+        using Basis = typename detail::Basis<ProductLists>::type;
     }
 }
 

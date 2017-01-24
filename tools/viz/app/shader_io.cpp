@@ -12,7 +12,7 @@ static const bgfx::Memory* loadMem(bx::FileReaderI* reader, const std::string& f
         bx::read(reader, mem->data, size);
         bx::close(reader);
         mem->data[mem->size - 1] = '\0';
-        std::cout << (mem->data + 4 * 9) << "\n";
+        // std::cout << (mem->data + 2 * 9) << "\n";
         return mem;
     }
 

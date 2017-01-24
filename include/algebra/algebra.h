@@ -1,5 +1,5 @@
-#ifndef SPACE_ALGEBRA_H
-#define SPACE_ALGEBRA_H
+#ifndef SPACE_ALGEBRA_ALGEBRA_H
+#define SPACE_ALGEBRA_ALGEBRA_H
 
 #include "basis.h"
 #include "basis/span.h"
@@ -22,13 +22,15 @@ namespace space {
         // List of multivectors for each grade
         using BasisSpan = basis::span::Span<Metric, brigand::uint16_t<Metric::Dim>>;
         using MultivectorSpan = detail::MultivectorSpan<Algebra, BasisSpan>;
+
         // Named generic multivectors
         using Scalar = brigand::front<MultivectorSpan>;
-        using Vec = brigand::at_c<MultivectorSpan, 1>;
+        using Vector = brigand::at_c<MultivectorSpan, 1>;
         using PseudoScalar = brigand::back<MultivectorSpan>;
 
         // Aliases
         using S = Scalar;
+        using Vec = Vector;
         using Pss = PseudoScalar;
     };
 }

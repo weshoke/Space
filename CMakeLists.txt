@@ -173,19 +173,19 @@ function(compile_shaders _name)
 endfunction()
 
 set_source_files_properties(
-    tools/viz/shaders/source/vs_cubes.sc
+    tools/viz/shaders/source/vs_color.sc
     PROPERTIES
         VERTEX_SHADER TRUE
         VARYING_DEF tools/viz/shaders/source/varying.def.sc)
 set_source_files_properties(
-    tools/viz/shaders/source/fs_cubes.sc
+    tools/viz/shaders/source/fs_color.sc
     PROPERTIES
         VERTEX_SHADER FALSE
         VARYING_DEF tools/viz/shaders/source/varying.def.sc)
 
 compile_shaders(shaders
-    tools/viz/shaders/source/vs_cubes.sc
-    tools/viz/shaders/source/fs_cubes.sc
+    tools/viz/shaders/source/vs_color.sc
+    tools/viz/shaders/source/fs_color.sc
 )
 
 add_executable(C1

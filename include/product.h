@@ -63,9 +63,7 @@ namespace space {
                                               const Multivector<Algebra, BasisA>& a,
                                               const Multivector<Algebra, BasisB>& b)
             {
-                using ProductBasis = brigand::transform<
-                    ProductLists<Lists...>,
-                    brigand::bind<blade::Blade, brigand::bind<brigand::front, brigand::_1>>>;
+                using ProductBasis = basis::Basis<ProductLists<Lists...>>;
                 return Multivector<Algebra, ProductBasis>(BasisProduct(Lists{}, a, b)...);
             }
         }
@@ -86,6 +84,13 @@ namespace space {
 
         template <class Metric, class BasisA, class BasisB, class Op>
         using BitProduct = typename detail::BitProduct<Metric, BasisA, BasisB, Op>::type;
+
+        template <class Metric, class BasisA, class BasisB, class Op>
+        using ProductBasis = basis::Basis<BitProduct<Metric, BasisA, BasisB, Op>>;
+
+        template <class Metric, class BasisA, class BasisB>
+        using ProductBasisGp = basis::Basis<
+            BitProduct<Metric, BasisA, BasisB, brigand::bind<space::product::op::Gp, brigand::_1>>>;
 
         template <class Algebra, template <class...> class Multivector, class BasisA, class BasisB>
         constexpr auto Gp(const Multivector<Algebra, BasisA>& a,

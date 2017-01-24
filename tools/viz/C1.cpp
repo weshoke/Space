@@ -2,19 +2,16 @@
 #include "app/shader_io.h"
 #include "common.h"
 #include <bgfx/bgfx.h>
+#include <array>
 
 struct PosColorVertex {
     float x;
     float y;
     float z;
-    uint32_t abgr;
 
     static void init()
     {
-        ms_decl.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-            .end();
+        ms_decl.begin().add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float).end();
     };
 
     static bgfx::VertexDecl ms_decl;
@@ -23,14 +20,14 @@ struct PosColorVertex {
 bgfx::VertexDecl PosColorVertex::ms_decl;
 
 static PosColorVertex s_cubeVertices[] = {
-    {-1.0f, 1.0f, 1.0f, 0xff000000},
-    {1.0f, 1.0f, 1.0f, 0xff0000ff},
-    {-1.0f, -1.0f, 1.0f, 0xff00ff00},
-    {1.0f, -1.0f, 1.0f, 0xff00ffff},
-    {-1.0f, 1.0f, -1.0f, 0xffff0000},
-    {1.0f, 1.0f, -1.0f, 0xffff00ff},
-    {-1.0f, -1.0f, -1.0f, 0xffffff00},
-    {1.0f, -1.0f, -1.0f, 0xffffffff},
+    {-1.0f, 1.0f, 1.0f},
+    {1.0f, 1.0f, 1.0f},
+    {-1.0f, -1.0f, 1.0f},
+    {1.0f, -1.0f, 1.0f},
+    {-1.0f, 1.0f, -1.0f},
+    {1.0f, 1.0f, -1.0f},
+    {-1.0f, -1.0f, -1.0f},
+    {1.0f, -1.0f, -1.0f},
 };
 
 static const uint16_t s_cubeTriList[] = {
@@ -81,7 +78,8 @@ class C1 : public entry::AppI {
             bgfx::makeRef(s_cubeTriStrip, sizeof(s_cubeTriStrip)));
 
         // Create program from shaders.
-        program_ = LoadProgram("vs_cubes", "fs_cubes");
+        program_ = LoadProgram("vs_color", "fs_color");
+        color_ = bgfx::createUniform("u_color", bgfx::UniformType::Vec4);
 
         time_offset_ = 0;
     }
@@ -92,6 +90,7 @@ class C1 : public entry::AppI {
         bgfx::destroyIndexBuffer(ibh_);
         bgfx::destroyVertexBuffer(vbh_);
         bgfx::destroyProgram(program_);
+        bgfx::destroyUniform(color_);
 
         // Shutdown bgfx.
         bgfx::shutdown();
@@ -126,6 +125,9 @@ class C1 : public entry::AppI {
             // Set view 0 default viewport.
             bgfx::setViewRect(0, 0, 0, uint16_t(width_), uint16_t(height_));
 
+            auto color = std::array<float, 4>{1.f, 1.f, 1.f, 1.f};
+            bgfx::setUniform(color_, color.data());
+
             // Submit 11x11 cubes.
             time_offset_ += 1;
             auto time = float(time_offset_) * 0.05f;
@@ -145,7 +147,7 @@ class C1 : public entry::AppI {
                     bgfx::setIndexBuffer(ibh_);
 
                     // Set render states.
-                    bgfx::setState(0 | BGFX_STATE_DEFAULT | BGFX_STATE_PT_TRISTRIP);
+                    bgfx::setState(BGFX_STATE_DEFAULT | BGFX_STATE_PT_TRISTRIP);
 
                     // Submit primitive for rendering to view 0.
                     bgfx::submit(0, program_);
@@ -170,6 +172,7 @@ class C1 : public entry::AppI {
     bgfx::VertexBufferHandle vbh_;
     bgfx::IndexBufferHandle ibh_;
     bgfx::ProgramHandle program_;
+    bgfx::UniformHandle color_;
     int64_t time_offset_;
 };
 

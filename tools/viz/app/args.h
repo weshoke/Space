@@ -1,5 +1,5 @@
-#ifndef SPACE_VIZ_APP_H
-#define SPACE_VIZ_APP_H
+#ifndef SPACE_VIZ_APP_ARGS_H
+#define SPACE_VIZ_APP_ARGS_H
 
 #include <bgfx/bgfx.h>
 
