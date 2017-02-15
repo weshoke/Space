@@ -135,6 +135,8 @@ namespace space {
             return os;
         }
 
+        auto Data() { return values.data(); }
+        auto Data() const { return values.data(); }
         std::array<ScalarValue, Size::value> values;
     };
 }

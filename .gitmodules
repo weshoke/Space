@@ -7,3 +7,6 @@
 [submodule "vendor/bx"]
 	path = vendor/bx
 	url = https://github.com/bkaradzic/bx
+[submodule "vendor/glfw"]
+	path = vendor/glfw
+	url = https://github.com/glfw/glfw.git

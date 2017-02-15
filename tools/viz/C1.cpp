@@ -1,179 +1,86 @@
-#include "app/args.h"
-#include "app/shader_io.h"
-#include "common.h"
-#include <bgfx/bgfx.h>
-#include <array>
+#include "app/app.h"
+#include "draw/color.h"
+#include "draw/draw.h"
+#include "draw/pipeline.h"
+#include "draw/renderable.h"
+#include "draw/renderable_factory.h"
+#include "linmath.h"
 
-struct PosColorVertex {
-    float x;
-    float y;
-    float z;
+static const char* vertex_shader_text =
+    "#version 410\n"
+    "uniform mat4 MVP;\n"
+    "in vec2 pos;\n"
+    "void main()\n"
+    "{\n"
+    "    gl_Position = MVP * vec4(pos, 0.0, 1.0);\n"
+    "}\n";
 
-    static void init()
+static const char* fragment_shader_text =
+    "#version 410\n"
+    "uniform vec4 color;\n"
+    "out vec4 pixel;\n"
+    "void main()\n"
+    "{\n"
+    "    pixel = color;\n"
+    "}\n";
+
+class C1 {
+   public:
+    using App = app::App<C1>;
+
+    C1() {}
+    void Init(App* app)
     {
-        ms_decl.begin().add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float).end();
-    };
+        std::cout << glGetString(GL_VERSION) << "\n";
+        viz::draw::Context::Get().RegisterProgram(
+            "color", vertex_shader_text, fragment_shader_text);
 
-    static bgfx::VertexDecl ms_decl;
-};
-
-bgfx::VertexDecl PosColorVertex::ms_decl;
-
-static PosColorVertex s_cubeVertices[] = {
-    {-1.0f, 1.0f, 1.0f},
-    {1.0f, 1.0f, 1.0f},
-    {-1.0f, -1.0f, 1.0f},
-    {1.0f, -1.0f, 1.0f},
-    {-1.0f, 1.0f, -1.0f},
-    {1.0f, 1.0f, -1.0f},
-    {-1.0f, -1.0f, -1.0f},
-    {1.0f, -1.0f, -1.0f},
-};
-
-static const uint16_t s_cubeTriList[] = {
-    0, 1, 2,           // 0
-    1, 3, 2, 4, 6, 5,  // 2
-    5, 6, 7, 0, 2, 4,  // 4
-    4, 2, 6, 1, 5, 3,  // 6
-    5, 7, 3, 0, 4, 1,  // 8
-    4, 5, 1, 2, 3, 6,  // 10
-    6, 3, 7,
-};
-
-static const uint16_t s_cubeTriStrip[] = {
-    0, 1, 2, 3, 7, 1, 5, 0, 4, 2, 6, 7, 4, 5,
-};
-
-class C1 : public entry::AppI {
-    void init(int _argc, char** _argv) BX_OVERRIDE
-    {
-        Args args(_argc, _argv);
-
-        width_ = 1280;
-        height_ = 720;
-        debug_ = BGFX_DEBUG_TEXT;
-        reset_ = BGFX_RESET_VSYNC;
-
-        bgfx::init(args.m_type, args.m_pciId);
-        bgfx::reset(width_, height_, reset_);
-
-        // Enable debug text.
-        bgfx::setDebug(debug_);
-
-        // Set view 0 clear state.
-        bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
-
-        // Create vertex stream declaration.
-        PosColorVertex::init();
-
-        // Create static vertex buffer.
-        vbh_ = bgfx::createVertexBuffer(
-            // Static data can be passed with bgfx::makeRef
-            bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices)),
-            PosColorVertex::ms_decl);
-
-        // Create static index buffer.
-        ibh_ = bgfx::createIndexBuffer(
-            // Static data can be passed with bgfx::makeRef
-            bgfx::makeRef(s_cubeTriStrip, sizeof(s_cubeTriStrip)));
-
-        // Create program from shaders.
-        program_ = LoadProgram("vs_color", "fs_color");
-        color_ = bgfx::createUniform("u_color", bgfx::UniformType::Vec4);
-
-        time_offset_ = 0;
+        auto verts = std::vector<viz::draw::Vec2>{viz::draw::Vec2(-0.6f, -0.4f),
+                                                  viz::draw::Vec2(0.6f, -0.4f),
+                                                  viz::draw::Vec2(0.0f, 0.6f)};
+        auto pipeline = viz::draw::Pipeline::Create("color", verts);
+        renderables_.emplace_back(std::make_shared<viz::draw::ExplicitRenderable>(
+            std::move(pipeline), GL_TRIANGLES, viz::draw::Colors::grass));
+        renderables_.emplace_back(viz::draw::Create(
+            viz::draw::LineSegment(viz::draw::Vec3(-1.f, 0.f, 0.f), viz::draw::Vec3(1.f, 0.f, 0.f)),
+            viz::draw::Colors::black));
     }
 
-    virtual int shutdown() BX_OVERRIDE
+    void Key(App* app, int32_t key, int32_t scancode, int32_t action, int32_t mods)
     {
-        // Cleanup.
-        bgfx::destroyIndexBuffer(ibh_);
-        bgfx::destroyVertexBuffer(vbh_);
-        bgfx::destroyProgram(program_);
-        bgfx::destroyUniform(color_);
-
-        // Shutdown bgfx.
-        bgfx::shutdown();
-        return 0;
+        // std::cout << "KEY\n";
     }
 
-    bool update() BX_OVERRIDE
+    void Mouse(App* app, int32_t button, int32_t action, int32_t mods)
     {
-        if (!entry::processEvents(width_, height_, debug_, reset_)) {
-            // Set view 0 default viewport.
-            bgfx::setViewRect(0, 0, 0, uint16_t(width_), uint16_t(height_));
+        // std::cout << "Mouse\n";
+    }
 
-            // This dummy draw call is here to make sure that view 0 is cleared
-            // if no other draw calls are submitted to view 0.
-            bgfx::touch(0);
+    void Cursor(App* app, double xpos, double ypos)
+    {
+        // std::cout << "Mouse: " << xpos << "," << ypos << "\n";
+    }
 
-            bgfx::dbgTextClear();
-            bgfx::dbgTextPrintf(0, 1, 0x4f, "bgfx/examples/01-cube");
-            bgfx::dbgTextPrintf(0, 2, 0x6f, "Description: Rendering simple static mesh.");
-            // bgfx::dbgTextPrintf(0, 3, 0x0f, "Frame: % 7.3f[ms]", double(frameTime)*toMs);
+    void Draw(App* app)
+    {
+        auto window_size = app->WindowSize();
+        glViewport(0, 0, window_size[0], window_size[1]);
+        glClearColor(0.93f, 0.93f, 0.93f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-            float at[3] = {0.0f, 0.0f, 0.0f};
-            float eye[3] = {0.0f, 0.0f, -35.0f};
+        auto ratio = float(window_size[0]) / float(window_size[1]);
 
-            float view[16];
-            bx::mtxLookAt(view, eye, at);
-
-            float proj[16];
-            bx::mtxProj(proj, 60.0f, float(width_) / float(height_), 0.1f, 100.0f);
-            bgfx::setViewTransform(0, view, proj);
-
-            // Set view 0 default viewport.
-            bgfx::setViewRect(0, 0, 0, uint16_t(width_), uint16_t(height_));
-
-            auto color = std::array<float, 4>{1.f, 1.f, 1.f, 1.f};
-            bgfx::setUniform(color_, color.data());
-
-            // Submit 11x11 cubes.
-            time_offset_ += 1;
-            auto time = float(time_offset_) * 0.05f;
-            for (uint32_t yy = 0; yy < 11; ++yy) {
-                for (uint32_t xx = 0; xx < 11; ++xx) {
-                    float mtx[16];
-                    bx::mtxRotateXY(mtx, time + xx * 0.21f, time + yy * 0.37f);
-                    mtx[12] = -15.0f + float(xx) * 3.0f;
-                    mtx[13] = -15.0f + float(yy) * 3.0f;
-                    mtx[14] = 0.0f;
-
-                    // Set model matrix for rendering.
-                    bgfx::setTransform(mtx);
-
-                    // Set vertex and index buffer.
-                    bgfx::setVertexBuffer(vbh_);
-                    bgfx::setIndexBuffer(ibh_);
-
-                    // Set render states.
-                    bgfx::setState(BGFX_STATE_DEFAULT | BGFX_STATE_PT_TRISTRIP);
-
-                    // Submit primitive for rendering to view 0.
-                    bgfx::submit(0, program_);
-                }
-            }
-
-            // Advance to next frame. Rendering thread will be kicked to
-            // process submitted rendering primitives.
-            bgfx::frame();
-
-            return true;
+        mat4x4 m, p;
+        mat4x4_identity(m);
+        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        viz::draw::Context::Get().ModelViewMatrix(m);
+        viz::draw::Context::Get().ProjectionMatrix(p);
+        for (auto& renderable : renderables_) {
+            renderable->Draw();
         }
-
-        return false;
     }
 
-    uint32_t width_;
-    uint32_t height_;
-    uint32_t debug_;
-    uint32_t reset_;
-
-    bgfx::VertexBufferHandle vbh_;
-    bgfx::IndexBufferHandle ibh_;
-    bgfx::ProgramHandle program_;
-    bgfx::UniformHandle color_;
-    int64_t time_offset_;
+    std::vector<viz::draw::Renderable::Ref> renderables_;
 };
 
-ENTRY_IMPLEMENT_MAIN(C1);
+int main(void) { return C1::App::Create(C1(), "C1", 640, 480)->Run(); }

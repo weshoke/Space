@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7.1)
 set(CMAKE_VERBOSE_MAKEFILE on)
 project(space)
 
-set(DEBUG_COMPILER_OPTIONS "-std=c++1y")
+set(DEBUG_COMPILER_OPTIONS "-std=c++1y" "-g")
 set(RELEASE_COMPILER_OPTIONS "-std=c++1y" "-O3")
 
 set(CMAKE_OSX_SYSROOT /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk)
@@ -188,22 +188,39 @@ compile_shaders(shaders
     tools/viz/shaders/source/fs_color.sc
 )
 
+add_subdirectory(vendor/glfw)
+
+add_library(glad STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/deps/glad.c)
+target_include_directories(glad PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/deps)
+
 add_executable(C1
     tools/viz/C1.cpp
-    tools/viz/app/args.cpp
-    tools/viz/app/shader_io.cpp
-    $<TARGET_OBJECTS:bgfx_entry>)
+    tools/viz/draw/color.cpp
+    tools/viz/draw/draw.cpp
+    tools/viz/draw/mesh.h
+    tools/viz/draw/pipeline.h
+    tools/viz/draw/primitives.cpp
+    tools/viz/draw/renderable.cpp
+    tools/viz/draw/renderable_factory.cpp
+    tools/viz/draw/renderable_factory.h
+    tools/viz/gl/primitives.cpp
+)
 target_compile_options(C1 PUBLIC ${DEBUG_COMPILER_OPTIONS})
 
 target_include_directories(C1 PUBLIC
-    ${BGFX_ENTRY_INCLUDES}
-    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/brigand)
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/brigand
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/viz
+)
 
 target_link_libraries(C1
     ${COCOA_LIBRARY}
     ${OPENGL_LIBRARY}
-    bx
-    bgfx)
+    glfw
+    glad
+)
 
 
 message(STATUS ${TESTING})
