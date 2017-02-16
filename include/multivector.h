@@ -34,6 +34,22 @@ namespace space {
         {
         }
 
+        Multivector(std::array<ScalarValue, Size::value> v)
+        : values(v)
+        {
+        }
+
+        Multivector(const Multivector& src)
+        : values(src.values)
+        {
+        }
+
+        Multivector& operator=(const Multivector& src)
+        {
+            values = src.values;
+            return *this;
+        }
+
         auto operator-() const { return unary::Negate(*this); }
         auto operator~() const { return unary::Reverse(*this); }
         auto operator!() const
@@ -83,14 +99,36 @@ namespace space {
             return sum::Add(*this, b);
         }
 
+        friend auto operator+(ScalarValue v, const Multivector& mv)
+        {
+            using S = typename Algebra::S;
+            return S{v} + mv;
+        }
+
         template <class MultivectorB>
         auto operator-(const MultivectorB& b) const
         {
             return sum::Add(*this, -b);
         }
 
-        auto Dual() const { return (*this) * Algebra::Pss(-1); }
-        auto Undual() const { return (*this) * Algebra::Pss(1); }
+        friend auto operator-(ScalarValue v, const Multivector& mv)
+        {
+            using S = typename Algebra::S;
+            return S{v} - mv;
+        }
+
+        auto Dual() const
+        {
+            using Pss = typename Algebra::Pss;
+            return (*this) * Pss(ScalarValue{-1});
+        }
+
+        auto Undual() const
+        {
+            using Pss = typename Algebra::Pss;
+            return (*this) * Pss(ScalarValue{1});
+        }
+
         auto Weight() const { return (*this <= *this)[0]; }
         auto Norm() const { return std::sqrt(std::max(ScalarValue(0), Weight())); }
         auto Normalized() const
@@ -102,7 +140,13 @@ namespace space {
         template <class MultivectorB>
         auto Spin(const MultivectorB& b) const
         {
-            return b * (*this) * ~b;
+            return (b * (*this) * ~b).template Cast<Multivector>();
+        }
+
+        template <class MultivectorB>
+        MultivectorB Cast() const
+        {
+            return unary::Cast<MultivectorB>(*this);
         }
 
         auto& operator[](const int32_t idx) { return values[idx]; }

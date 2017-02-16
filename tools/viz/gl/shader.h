@@ -2,6 +2,7 @@
 #define VIZ_GL_SHADER_H
 
 #include "glad/glad.h"
+#include <string>
 #include <utility>
 
 namespace viz {

@@ -1,5 +1,7 @@
 #include "renderable_factory.h"
+#include "geom/primitives.h"
 #include "pipeline.h"
+#include "primitives.h"
 #include <memory>
 
 namespace viz {
@@ -30,10 +32,26 @@ namespace viz {
                 Pipeline::Create("color", points), GL_LINES, color);
         }
 
-        Renderable::Ref Create(const space::geom::LineSegment<Vec3> &line_segment, uint32_t color)
+        Renderable::Ref Create(const LineSegment &line_segment, uint32_t color)
         {
             return std::make_shared<ExplicitRenderable>(
                 Pipeline::Create("color", line_segment.points()), GL_LINES, color);
+        }
+
+        Renderable::Ref Create(const Circle &circle, uint32_t color)
+        {
+            auto N = 90u;
+            auto theta = M_PI * 2.f / float(N);
+            auto p = space::geom::PerpendicularAxis(circle.normal()) * circle.radius();
+            auto rot = E3f::AxisAngle(circle.normal(), theta);
+            auto points = std::vector<Vec3>();
+            points.reserve(N);
+            for (auto i = 0u; i < N; ++i) {
+                points.push_back(p);
+                p = p.Spin(rot);
+            }
+            return std::make_shared<ExplicitRenderable>(
+                Pipeline::Create("color", points), GL_LINE_LOOP, color);
         }
 
         Renderable::Ref Create(const space::geom::Sphere<Vec3> &sphere, uint32_t color, float tol)

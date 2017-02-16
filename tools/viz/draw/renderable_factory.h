@@ -13,7 +13,8 @@ namespace viz {
                                      const Vec3 &end,
                                      uint32_t divisions,
                                      uint32_t color);
-        Renderable::Ref Create(const space::geom::LineSegment<Vec3> &line_segment, uint32_t color);
+        Renderable::Ref Create(const LineSegment &line_segment, uint32_t color);
+        Renderable::Ref Create(const Circle &circle, uint32_t color);
         Renderable::Ref Create(const space::geom::Sphere<Vec3> &sphere,
                                uint32_t color,
                                float tol = 1e-3f);

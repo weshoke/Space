@@ -5,6 +5,7 @@
 #include "basis.h"
 #include "metric.h"
 #include "product.h"
+#include <cmath>
 
 namespace space {
     namespace algebra {
@@ -13,20 +14,26 @@ namespace space {
             using Metric = space::Metric<3>;
             using Algebra = space::Algebra<Metric, Value>;
             using VectorBasis = brigand::at_c<typename Algebra::BasisSpan, 1>;
-            using QuaternionBasis =
-                space::product::ProductBasisGp<Metric, VectorBasis, VectorBasis>;
+            using RotorBasis = space::product::ProductBasisGp<Metric, VectorBasis, VectorBasis>;
 
             // Multivectors
             using Scalar = typename Algebra::Scalar;
             using Vector = typename Algebra::Vec;
             using PseudoScalar = typename Algebra::PseudoScalar;
-            using Quaternion = Multivector<Algebra, QuaternionBasis>;
+            using Rotor = Multivector<Algebra, RotorBasis>;
 
             // Aliases
             using S = Scalar;
             using Vec = Vector;
-            using Quat = Quaternion;
+            using Rot = Rotor;
             using Pss = PseudoScalar;
+
+            // E3 specific functions
+            static Vec CrossProduct(const Vec &v1, const Vec &v2) { return (v1 ^ v2).Dual(); }
+            static Rot AxisAngle(const Vec &axis, float theta)
+            {
+                return std::cos(theta) + axis.Dual() * std::sin(theta);
+            }
         };
     }
 }

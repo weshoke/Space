@@ -4,7 +4,10 @@
 #include "draw/pipeline.h"
 #include "draw/renderable.h"
 #include "draw/renderable_factory.h"
+#include "geom/primitives.h"
 #include "linmath.h"
+#include <cxxabi.h>
+#include <sstream>
 
 static const char* vertex_shader_text =
     "#version 410\n"
@@ -24,6 +27,58 @@ static const char* fragment_shader_text =
     "    pixel = color;\n"
     "}\n";
 
+std::string demangle(const char* name)
+{
+    int status = -4;  // some arbitrary value to eliminate the compiler warning
+    // enable c++11 by passing the flag -std=c++11 to g++
+    std::unique_ptr<char, void (*)(void*)> res{abi::__cxa_demangle(name, NULL, NULL, &status),
+                                               std::free};
+    return (status == 0) ? res.get() : name;
+}
+
+std::string pretty_demangle(const char* name)
+{
+    auto ss = std::stringstream();
+    auto d_name = demangle(name);
+    auto it = d_name.begin();
+    auto ite = d_name.end();
+    auto lvl = 0;
+    const auto indent = [&]() {
+        for (auto i = 0; i < lvl; ++i) {
+            ss << "  ";
+        }
+    };
+    while (it != ite) {
+        switch (*it) {
+            case '<':
+                ss << *it;
+                ss << "\n";
+                ++lvl;
+                indent();
+                break;
+
+            case '>':
+                ss << "\n";
+                --lvl;
+                indent();
+                ss << *it;
+                break;
+
+            case ',':
+                ss << "\n";
+                indent();
+                ss << *it;
+                break;
+
+            default:
+                ss << *it;
+                break;
+        }
+        ++it;
+    }
+    return ss.str();
+}
+
 class C1 {
    public:
     using App = app::App<C1>;
@@ -31,19 +86,23 @@ class C1 {
     C1() {}
     void Init(App* app)
     {
+        using Vec2 = viz::draw::Vec2;
+        using Vec3 = viz::draw::Vec3;
         std::cout << glGetString(GL_VERSION) << "\n";
         viz::draw::Context::Get().RegisterProgram(
             "color", vertex_shader_text, fragment_shader_text);
 
-        auto verts = std::vector<viz::draw::Vec2>{viz::draw::Vec2(-0.6f, -0.4f),
-                                                  viz::draw::Vec2(0.6f, -0.4f),
-                                                  viz::draw::Vec2(0.0f, 0.6f)};
+        auto verts =
+            std::vector<viz::draw::Vec2>{Vec2(-0.6f, -0.4f), Vec2(0.6f, -0.4f), Vec2(0.0f, 0.6f)};
         auto pipeline = viz::draw::Pipeline::Create("color", verts);
         renderables_.emplace_back(std::make_shared<viz::draw::ExplicitRenderable>(
             std::move(pipeline), GL_TRIANGLES, viz::draw::Colors::grass));
-        renderables_.emplace_back(viz::draw::Create(
-            viz::draw::LineSegment(viz::draw::Vec3(-1.f, 0.f, 0.f), viz::draw::Vec3(1.f, 0.f, 0.f)),
-            viz::draw::Colors::black));
+        renderables_.emplace_back(
+            viz::draw::Create(viz::draw::LineSegment(Vec3(-1.f, 0.f, 0.f), Vec3(1.f, 0.f, 0.f)),
+                              viz::draw::Colors::black));
+
+        auto circle = viz::draw::Circle(Vec3(0.f, 0.f, 0.f), 1.f, Vec3(0.f, 0.f, 1.f));
+        renderables_.emplace_back(viz::draw::Create(circle, viz::draw::Colors::orange));
     }
 
     void Key(App* app, int32_t key, int32_t scancode, int32_t action, int32_t mods)
