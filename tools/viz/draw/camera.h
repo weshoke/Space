@@ -1,49 +1,43 @@
 #ifndef SPACE_VIZ_DRAW_CAMERA_H
 #define SPACE_VIZ_DRAW_CAMERA_H
 
-#include "draw.h"
-#include "entry/entry.h"
+#include "primitives.h"
 
-#define CAMERA_KEY_FORWARD UINT8_C(0x01)
-#define CAMERA_KEY_BACKWARD UINT8_C(0x02)
-#define CAMERA_KEY_LEFT UINT8_C(0x04)
-#define CAMERA_KEY_RIGHT UINT8_C(0x08)
-#define CAMERA_KEY_UP UINT8_C(0x10)
-#define CAMERA_KEY_DOWN UINT8_C(0x20)
-
-namespace space {
+namespace viz {
     namespace draw {
         class Camera {
            public:
-            struct MouseCoords {
-                int32_t m_mx;
-                int32_t m_my;
-            };
+            Camera(const Vec3 &eye, const Vec3 &look_at, const Vec3 &up, float lens_angle)
+            : eye_(eye)
+            , look_at_(look_at)
+            , up_(up)
+            , lens_angle_(lens_angle)
+            {
+            }
 
-            Camera();
-            ~Camera();
-            void Reset();
-            void SetKeyState(uint8_t _key, bool _down);
-            void Update(float _deltaTime, const entry::MouseState& _mouseState);
-            void GetViewMtx(float* _viewMtx);
-            void SetPosition(const Vec3& pos);
-            void SetHorizontalAngle(float horizontal_angle);
-            void SetVerticalAngle(float vertical_angle);
+            static Camera Default()
+            {
+                return Camera(Vec3(0.f, 0.f, -5.f), Vec3f(0.f, 0.f, 1.f), Vec3(0.f, 1.f, 0.), 45.f);
+            }
 
-            MouseCoords m_mouseNow;
-            MouseCoords m_mouseLast;
+            Vec3 Pan() { return E3::CrossProduct(up(), look_at()); }
+            template <class Rot>
+            void Spin(const Rot &rot)
+            {
+                eye_ = eye_.Spin(rot);
+                look_at_ = look_at_.Spin(rot);
+                up_ = up_.Spin(rot);
+            }
 
+            const Vec3 &eye() const { return eye_; }
+            const Vec3 &look_at() const { return look_at_; }
+            const Vec3 &up() const { return up_; }
+            float lens_angle() const { return lens_angle_; }
+           protected:
             Vec3 eye_;
-            Vec3 at_;
+            Vec3 look_at_;
             Vec3 up_;
-            float horizontal_angle_;
-            float vertical_angle_;
-
-            float mouse_speed_;
-            float move_speed_;
-
-            uint8_t keys_;
-            bool mouse_down_;
+            float lens_angle_;
         };
     }
 }

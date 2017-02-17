@@ -6,6 +6,7 @@
 #include "blade/weight.h"
 #include "brigand/algorithms/index_of.hpp"
 #include <ratio>
+#include <sstream>
 
 namespace space {
     namespace blade {
@@ -38,8 +39,22 @@ namespace space {
                 using BasisB = typename MultivectorB::Basis;
                 using IndexA = brigand::index_of<BasisA, BladeA>;
                 using IndexB = brigand::index_of<BasisB, BladeB>;
-                using S = Weight<Res>;
                 return Scale<ScalarValue>() * a[IndexA::value] * b[IndexB::value];
+            }
+
+            template <class MultivectorA, class MultivectorB>
+            static auto Print(const MultivectorA& a, const MultivectorB& b)
+            {
+                using ScalarValue = typename MultivectorA::ScalarValue;
+                using BasisA = typename MultivectorA::Basis;
+                using BasisB = typename MultivectorB::Basis;
+                using IndexA = brigand::index_of<BasisA, BladeA>;
+                using IndexB = brigand::index_of<BasisB, BladeB>;
+                auto ss = std::stringstream();
+                auto v = Scale<ScalarValue>();
+                auto v_str = (v == 1) ? "" : ((v == -1) ? "-" : (std::to_string(v) + " * "));
+                ss << v_str << "a[" << IndexA::value << "] * b[" << IndexB::value << "]";
+                return ss.str();
             }
         };
     }

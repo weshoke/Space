@@ -43,7 +43,7 @@ namespace viz {
             auto N = 90u;
             auto theta = M_PI * 2.f / float(N);
             auto p = space::geom::PerpendicularAxis(circle.normal()) * circle.radius();
-            auto rot = E3f::AxisAngle(circle.normal(), theta);
+            auto rot = E3::AxisAngle(circle.normal(), theta);
             auto points = std::vector<Vec3>();
             points.reserve(N);
             for (auto i = 0u; i < N; ++i) {

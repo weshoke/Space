@@ -1,5 +1,5 @@
-#ifndef SPACE_VIZ_GEOM_CIRCLE_H
-#define SPACE_VIZ_GEOM_CIRCLE_H
+#ifndef SPACE_GEOM_CIRCLE_H
+#define SPACE_GEOM_CIRCLE_H
 
 #include <cmath>
 

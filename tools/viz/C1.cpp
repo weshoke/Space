@@ -5,7 +5,6 @@
 #include "draw/renderable.h"
 #include "draw/renderable_factory.h"
 #include "geom/primitives.h"
-#include "linmath.h"
 #include <cxxabi.h>
 #include <sstream>
 
@@ -88,6 +87,11 @@ class C1 {
     {
         using Vec2 = viz::draw::Vec2;
         using Vec3 = viz::draw::Vec3;
+        //		std::cout << space::product::PrintOp(Vec3(0.f, 0.f, 0.f), Vec3(0.f, 0.f, 0.f)) <<
+        //"\n";
+        //		std::cout << "\n\n";
+        //		std::cout << space::product::PrintGp(Vec3(0.f, 0.f, 0.f) ^ Vec3(0.f, 0.f, 0.f),
+        //Vec3(0.f, 0.f, 0.f)) << "\n";
         std::cout << glGetString(GL_VERSION) << "\n";
         viz::draw::Context::Get().RegisterProgram(
             "color", vertex_shader_text, fragment_shader_text);
@@ -128,10 +132,8 @@ class C1 {
         glClear(GL_COLOR_BUFFER_BIT);
 
         auto ratio = float(window_size[0]) / float(window_size[1]);
-
-        mat4x4 m, p;
-        mat4x4_identity(m);
-        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        auto m = viz::draw::Matrix4::Identity();
+        auto p = viz::draw::Matrix4::Ortho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         viz::draw::Context::Get().ModelViewMatrix(m);
         viz::draw::Context::Get().ProjectionMatrix(p);
         for (auto& renderable : renderables_) {

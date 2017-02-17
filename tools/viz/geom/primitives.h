@@ -44,6 +44,9 @@ namespace space {
         template <class A, class B>
         auto Rejection(const A &a, const B &b)
         {
+            // TODO: use exression templates to automatically derive that
+            // the return type of this expression matches A without
+            // having to cast when input types are the same
             return (a ^ b) / b;
         }
 

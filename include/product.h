@@ -11,6 +11,8 @@
 #include "brigand/functions/lambda/bind.hpp"
 #include "brigand/functions/logical/not.hpp"
 #include <initializer_list>
+#include <sstream>
+#include <vector>
 
 namespace space {
     namespace product {
@@ -42,6 +44,12 @@ namespace space {
                 return BitProduct::Apply(a, b);
             }
 
+            template <class BitProduct, class A, class B>
+            constexpr auto PrintBladeProduct(BitProduct, const A& a, const B& b)
+            {
+                return BitProduct::Print(a, b);
+            }
+
             template <template <class...> class ProductList, class... Products, class A, class B>
             constexpr auto BasisProduct(ProductList<Products...>, const A& a, const B& b)
             {
@@ -51,6 +59,20 @@ namespace space {
                 (void)std::initializer_list<int>{
                     ((res += BladeProduct(Products{}, a, b)), void(), 0)...};
                 return res;
+            }
+
+            template <template <class...> class ProductList, class... Products, class A, class B>
+            auto PrintBasisProduct(ProductList<Products...>, const A& a, const B& b)
+            {
+                auto elems = std::vector<std::string>{PrintBladeProduct(Products{}, a, b)...};
+                auto ss = std::stringstream();
+                for (auto i = 0u; i < elems.size(); ++i) {
+                    ss << elems[i];
+                    if (i < elems.size() - 1) {
+                        ss << " + ";
+                    }
+                }
+                return ss.str();
             }
 
             template <template <class...> class ProductLists,
@@ -65,6 +87,28 @@ namespace space {
             {
                 using ProductBasis = basis::Basis<ProductLists<Lists...>>;
                 return Multivector<Algebra, ProductBasis>(BasisProduct(Lists{}, a, b)...);
+            }
+
+            template <template <class...> class ProductLists,
+                      class... Lists,
+                      class Algebra,
+                      template <class...> class Multivector,
+                      class BasisA,
+                      class BasisB>
+            auto PrintMultivectorProduct(ProductLists<Lists...>,
+                                         const Multivector<Algebra, BasisA>& a,
+                                         const Multivector<Algebra, BasisB>& b)
+            {
+                using ProductBasis = basis::Basis<ProductLists<Lists...>>;
+                auto elems = std::vector<std::string>{PrintBasisProduct(Lists{}, a, b)...};
+                auto ss = std::stringstream();
+                for (auto i = 0u; i < elems.size(); ++i) {
+                    ss << elems[i];
+                    if (i < elems.size() - 1) {
+                        ss << ",\n";
+                    }
+                }
+                return ss.str();
             }
         }
 
@@ -102,12 +146,30 @@ namespace space {
         }
 
         template <class Algebra, template <class...> class Multivector, class BasisA, class BasisB>
+        constexpr auto PrintGp(const Multivector<Algebra, BasisA>& a,
+                               const Multivector<Algebra, BasisB>& b)
+        {
+            using Metric = typename Algebra::Metric;
+            using ProductLists = BitProduct<Metric, BasisA, BasisB, op::Gp<brigand::_1>>;
+            return detail::PrintMultivectorProduct(ProductLists{}, a, b);
+        }
+
+        template <class Algebra, template <class...> class Multivector, class BasisA, class BasisB>
         constexpr auto Op(const Multivector<Algebra, BasisA>& a,
                           const Multivector<Algebra, BasisB>& b)
         {
             using Metric = typename Algebra::Metric;
             using ProductLists = BitProduct<Metric, BasisA, BasisB, op::Op<brigand::_1>>;
             return detail::MultivectorProduct(ProductLists{}, a, b);
+        }
+
+        template <class Algebra, template <class...> class Multivector, class BasisA, class BasisB>
+        constexpr auto PrintOp(const Multivector<Algebra, BasisA>& a,
+                               const Multivector<Algebra, BasisB>& b)
+        {
+            using Metric = typename Algebra::Metric;
+            using ProductLists = BitProduct<Metric, BasisA, BasisB, op::Op<brigand::_1>>;
+            return detail::PrintMultivectorProduct(ProductLists{}, a, b);
         }
 
         template <class Algebra, template <class...> class Multivector, class BasisA, class BasisB>
