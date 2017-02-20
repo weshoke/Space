@@ -99,7 +99,6 @@ namespace space {
                                          const Multivector<Algebra, BasisA>& a,
                                          const Multivector<Algebra, BasisB>& b)
             {
-                using ProductBasis = basis::Basis<ProductLists<Lists...>>;
                 auto elems = std::vector<std::string>{PrintBasisProduct(Lists{}, a, b)...};
                 auto ss = std::stringstream();
                 for (auto i = 0u; i < elems.size(); ++i) {

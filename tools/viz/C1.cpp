@@ -96,11 +96,6 @@ class C1 {
     {
         using Vec2 = viz::draw::Vec2;
         using Vec3 = viz::draw::Vec3;
-        //		std::cout << space::product::PrintOp(Vec3(0.f, 0.f, 0.f), Vec3(0.f, 0.f, 0.f)) <<
-        //"\n";
-        //		std::cout << "\n\n";
-        //		std::cout << space::product::PrintGp(Vec3(0.f, 0.f, 0.f) ^ Vec3(0.f, 0.f, 0.f),
-        // Vec3(0.f, 0.f, 0.f)) << "\n";
         std::cout << glGetString(GL_VERSION) << "\n";
         viz::draw::Context::Get().RegisterProgram(
             "color", vertex_shader_text, fragment_shader_text);

@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.7.1)
 set(CMAKE_VERBOSE_MAKEFILE on)
 project(space)
 
-set(DEBUG_COMPILER_OPTIONS "-std=c++1y" "-g")
-set(RELEASE_COMPILER_OPTIONS "-std=c++1y" "-O3")
+set(DEBUG_COMPILER_OPTIONS "-std=c++1y" "-g" "-Wno-missing-braces" "-Wmissing-field-initializers")
+set(RELEASE_COMPILER_OPTIONS "-std=c++1y" "-O3" "-Wno-missing-braces" "-Wmissing-field-initializers")
 
 set(CMAKE_OSX_SYSROOT /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.10")
