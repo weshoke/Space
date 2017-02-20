@@ -32,6 +32,18 @@ namespace viz {
                 Pipeline::Create("color", points), GL_LINES, color);
         }
 
+        Renderable::Ref CreateAxes(float length, uint32_t color)
+        {
+            auto points = std::vector<Vec3>{Vec3(-length, 0.f, 0.f),
+                                            Vec3(length, 0.f, 0.f),
+                                            Vec3(0.f, -length, 0.f),
+                                            Vec3(0.f, length, 0.f),
+                                            Vec3(0.f, 0.f, -length),
+                                            Vec3(0.f, 0.f, length)};
+            return std::make_shared<ExplicitRenderable>(
+                Pipeline::Create("color", points), GL_LINES, color);
+        }
+
         Renderable::Ref Create(const LineSegment &line_segment, uint32_t color)
         {
             return std::make_shared<ExplicitRenderable>(
