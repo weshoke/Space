@@ -90,10 +90,9 @@ class C1 {
         auto aspect = float(window_size[0]) / float(window_size[1]);
         camera = viz::draw::Camera::Default(aspect);
 
-        auto circle = viz::draw::Circle(Vec3(0.f, 0.f, 0.f), 1.f, Vec3(0.f, 0.f, 1.f));
-        renderables_.emplace_back(viz::draw::Create(circle, viz::draw::Colors::orange));
-
         renderables_.emplace_back(viz::draw::CreateAxes(2.f, viz::draw::Colors::grey));
+        renderables_.emplace_back(viz::draw::CreateGrid2d(
+            Vec3(-5.f, -5.f, 1.f), Vec3(5.f, 5.f, 1.f), 10, viz::draw::Colors::grey));
     }
 
     void Key(App* app, int32_t key, int32_t scancode, int32_t action, int32_t mods)
