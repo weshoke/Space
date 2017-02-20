@@ -1,12 +1,6 @@
 [submodule "vendor/brigand"]
 	path = vendor/brigand
 	url = https://github.com/edouarda/brigand
-[submodule "vendor/bgfx"]
-	path = vendor/bgfx
-	url = https://github.com/bkaradzic/bgfx
-[submodule "vendor/bx"]
-	path = vendor/bx
-	url = https://github.com/bkaradzic/bx
 [submodule "vendor/glfw"]
 	path = vendor/glfw
 	url = https://github.com/glfw/glfw.git
