@@ -2,35 +2,22 @@
 #define SPACE_VIZ_GEOM_PRIMITIVES_H
 
 #include <algorithm>
-
-// Vec3 PerpendicularComponent(const Vec3 &v, const Vec3 &normal)
-// {
-//     return v - normal * normal.dot(v);
-// }
-//
-// Vec3 InterpolatePolar(const Vec3 &axis0, const Vec3 &axis1, float theta)
-// {
-//     return axis0 * std::cos(theta) + axis1 * std::sin(theta);
-// }
-//
-// Vec3 PerpendicularAxis(const Vec3 &axis, const Vec3 &ref_dir)
-// {
-//     if (std::isnan(ref_dir(0)) ||
-//         std::abs(std::abs(axis.dot(ref_dir)) - 1.f) < tolerance::MinAlignmentDelta ||
-//         ref_dir.squaredNorm() < tolerance::MinSquaredDistance) {
-//         // Permute components to generate a new reference direction
-//         auto permutation = Vec3(axis(2), axis(0), axis(1));
-//         if (IsApprox(
-//                 (permutation - axis).squaredNorm(), 0.f, tolerance::MinSquaredDistance)) {
-//             permutation[0] = -permutation[0];
-//         }
-//         return PerpendicularComponent(permutation, axis).normalized();
-//     }
-//     return PerpendicularComponent(ref_dir, axis).normalized();
-// }
+#include <cmath>
 
 namespace space {
     namespace geom {
+        template <class T>
+        T RadToDeg(T v)
+        {
+            return v * 180.f / M_PI;
+        }
+
+        template <class T>
+        T DegToRad(T v)
+        {
+            return v * M_PI / 180.f;
+        }
+
         // Rotate the coordinates of the input element
         template <class Vec>
         Vec RotateCoordinates(const Vec &v)

@@ -1,6 +1,7 @@
 #ifndef SPACE_VIZ_DRAW_CONTEXT_H
 #define SPACE_VIZ_DRAW_CONTEXT_H
 
+#include "camera.h"
 #include "color.h"
 #include "draw.h"
 #include "gl/program.h"
@@ -21,6 +22,12 @@ namespace viz {
             uint32_t AttributeLocation(const std::string &name) { return attributes_[name]; }
             void ModelViewMatrix(const Matrix4 &model_view) { model_view_ = model_view; }
             void ProjectionMatrix(const Matrix4 &projection) { projection_ = projection; }
+            void ApplyCamera(const Camera &camera)
+            {
+                auto m = camera.ModelViewMatrix();
+                ModelViewMatrix(m);
+                ProjectionMatrix(camera.ProjectionMatrix());
+            }
             void SetProgramUniforms(gl::Program &program)
             {
                 {

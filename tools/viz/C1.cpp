@@ -1,9 +1,11 @@
 #include "app/app.h"
+#include "draw/camera.h"
 #include "draw/color.h"
 #include "draw/draw.h"
 #include "draw/pipeline.h"
 #include "draw/renderable.h"
 #include "draw/renderable_factory.h"
+#include "draw/trackball.h"
 #include "geom/primitives.h"
 #include <cxxabi.h>
 #include <sstream>
@@ -82,7 +84,14 @@ class C1 {
    public:
     using App = app::App<C1>;
 
-    C1() {}
+    C1()
+    : camera(viz::draw::Camera::Default())
+    , trackball(viz::draw::Trackball(1.f, 1.f))
+    , mouse_down(false)
+    , mouse_drag(false)
+    {
+    }
+
     void Init(App* app)
     {
         using Vec2 = viz::draw::Vec2;
@@ -91,7 +100,7 @@ class C1 {
         //"\n";
         //		std::cout << "\n\n";
         //		std::cout << space::product::PrintGp(Vec3(0.f, 0.f, 0.f) ^ Vec3(0.f, 0.f, 0.f),
-        //Vec3(0.f, 0.f, 0.f)) << "\n";
+        // Vec3(0.f, 0.f, 0.f)) << "\n";
         std::cout << glGetString(GL_VERSION) << "\n";
         viz::draw::Context::Get().RegisterProgram(
             "color", vertex_shader_text, fragment_shader_text);
@@ -105,6 +114,10 @@ class C1 {
             viz::draw::Create(viz::draw::LineSegment(Vec3(-1.f, 0.f, 0.f), Vec3(1.f, 0.f, 0.f)),
                               viz::draw::Colors::black));
 
+        auto window_size = app->WindowSize();
+        auto aspect = float(window_size[0]) / float(window_size[1]);
+        camera = viz::draw::Camera::Default(aspect);
+
         auto circle = viz::draw::Circle(Vec3(0.f, 0.f, 0.f), 1.f, Vec3(0.f, 0.f, 1.f));
         renderables_.emplace_back(viz::draw::Create(circle, viz::draw::Colors::orange));
     }
@@ -116,12 +129,22 @@ class C1 {
 
     void Mouse(App* app, int32_t button, int32_t action, int32_t mods)
     {
-        // std::cout << "Mouse\n";
+        mouse_down = true;
+        mouse_drag = true;
     }
 
     void Cursor(App* app, double xpos, double ypos)
     {
-        // std::cout << "Mouse: " << xpos << "," << ypos << "\n";
+        auto window_size = app->WindowSize();
+        auto mouse = viz::draw::Vec2((float(xpos) / float(window_size[0])) * 2.f - 1.f,
+                                     (float(ypos) / float(window_size[0])) * 2.f - 1.f);
+        if (mouse_down) {
+            trackball.Begin(mouse);
+        }
+        else if (mouse_drag) {
+            trackball.Next(mouse, camera);
+        }
+        mouse_down = false;
     }
 
     void Draw(App* app)
@@ -131,17 +154,17 @@ class C1 {
         glClearColor(0.93f, 0.93f, 0.93f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        auto ratio = float(window_size[0]) / float(window_size[1]);
-        auto m = viz::draw::Matrix4::Identity();
-        auto p = viz::draw::Matrix4::Ortho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        viz::draw::Context::Get().ModelViewMatrix(m);
-        viz::draw::Context::Get().ProjectionMatrix(p);
+        viz::draw::Context::Get().ApplyCamera(camera);
         for (auto& renderable : renderables_) {
             renderable->Draw();
         }
     }
 
     std::vector<viz::draw::Renderable::Ref> renderables_;
+    viz::draw::Camera camera;
+    viz::draw::Trackball trackball;
+    bool mouse_down;
+    bool mouse_drag;
 };
 
 int main(void) { return C1::App::Create(C1(), "C1", 640, 480)->Run(); }
