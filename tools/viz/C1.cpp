@@ -7,6 +7,7 @@
 #include "draw/renderable_factory.h"
 #include "draw/trackball.h"
 #include "geom/primitives.h"
+#include "mpark/variant.hpp"
 #include <cxxabi.h>
 #include <sstream>
 
@@ -80,15 +81,44 @@ std::string pretty_demangle(const char* name)
     return ss.str();
 }
 
+struct MouseEventState {
+   public:
+    struct MousePressed {
+    };
+    struct MouseDown {
+    };
+    struct MouseDrag {
+    };
+    struct MouseUp {
+    };
+    using State = mpark::variant<MousePressed, MouseDown, MouseUp>;
+
+    MouseEventState()
+    : state_(MouseUp())
+    {
+    }
+
+    void ButtonPressed() { state_ = MousePressed(); };
+    void Cursor()
+    {
+        if (ButtonWasPressed()) {
+            state_ = MouseDown();
+        }
+    }
+    void ButtonReleased() { state_ = MouseUp(); };
+    bool ButtonWasPressed() { return mpark::holds_alternative<MousePressed>(state_); }
+    bool IsButtonDown() { return !mpark::holds_alternative<MouseUp>(state_); }
+   private:
+    State state_;
+};
+
 class C1 {
    public:
     using App = app::App<C1>;
 
     C1()
     : camera(viz::draw::Camera::Default())
-    , trackball(viz::draw::Trackball(1.f, 1.f))
-    , mouse_down(false)
-    , mouse_drag(false)
+    , trackball(viz::draw::Trackball(1.f, 0.5f))
     {
     }
 
@@ -124,22 +154,25 @@ class C1 {
 
     void Mouse(App* app, int32_t button, int32_t action, int32_t mods)
     {
-        mouse_down = true;
-        mouse_drag = true;
+        action == 1 ? mouse.ButtonPressed() : mouse.ButtonReleased();
+        if (!mouse.IsButtonDown()) {
+        }
     }
 
     void Cursor(App* app, double xpos, double ypos)
     {
-        auto window_size = app->WindowSize();
-        auto mouse = viz::draw::Vec2((float(xpos) / float(window_size[0])) * 2.f - 1.f,
-                                     (float(ypos) / float(window_size[0])) * 2.f - 1.f);
-        if (mouse_down) {
-            trackball.Begin(mouse);
+        if (mouse.IsButtonDown()) {
+            auto window_size = app->WindowSize();
+            auto pos = viz::draw::Vec2((float(xpos) / float(window_size[0])) * 2.f - 1.f,
+                                       (float(ypos) / float(window_size[0])) * 2.f - 1.f);
+            if (mouse.ButtonWasPressed()) {
+                trackball.Begin(camera, pos);
+            }
+            else {
+                camera = trackball.Next(pos);
+            }
         }
-        else if (mouse_drag) {
-            trackball.Next(mouse, camera);
-        }
-        mouse_down = false;
+        mouse.Cursor();
     }
 
     void Draw(App* app)
@@ -158,8 +191,7 @@ class C1 {
     std::vector<viz::draw::Renderable::Ref> renderables_;
     viz::draw::Camera camera;
     viz::draw::Trackball trackball;
-    bool mouse_down;
-    bool mouse_drag;
+    MouseEventState mouse;
 };
 
 int main(void) { return C1::App::Create(C1(), "C1", 640, 480)->Run(); }

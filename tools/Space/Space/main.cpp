@@ -149,7 +149,7 @@ using E3f = space::algebra::E3<float>;
 int main(int argc, const char* argv[])
 {
     // std::cout << pretty_demangle(typeid(E3f).name()) << "\n";
-    std::cout << pretty_demangle(typeid(typename E3f::Quat).name()) << "\n";
+    //    std::cout << pretty_demangle(typeid(typename E3f::Quat).name()) << "\n";
 
     using Vec = typename E3f::Vec;
     auto v1 = Vec(0.f, 1.f, 0.f);

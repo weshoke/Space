@@ -4,3 +4,6 @@
 [submodule "vendor/glfw"]
 	path = vendor/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "vendor/variant"]
+	path = vendor/variant
+	url = https://github.com/mpark/variant.git
