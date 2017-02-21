@@ -130,18 +130,6 @@ namespace space {
                                                                    brigand::pin<Metric>,
                                                                    brigand::_1>>>>>;
 
-                template <class Metric, class ProductLists>
-                using ToWeightedBlade2 = brigand::transform<
-                    ProductLists,
-                    brigand::bind<
-                        brigand::transform,
-                        brigand::_1,
-                        brigand::defer<brigand::bind<blade::WeightedBlade,
-                                                     brigand::bind<blade::Blade, brigand::_1>,
-                                                     brigand::bind<blade::ProductScale,
-                                                                   brigand::pin<Metric>,
-                                                                   brigand::_1>>>>>;
-
                 template <class ProductList>
                 struct ProductListSum {
                     using WeightSum =
@@ -169,7 +157,7 @@ namespace space {
                     using DiagonalB = typename FromConformal<B>::type;
                     using ProductLists =
                         product::BitProduct<typename Metric::Diagonal, DiagonalA, DiagonalB, Op>;
-                    using Q_ = ToWeightedBlade2<Metric, ProductLists>;
+                    using Q_ = ToWeightedBlade<Metric, ProductLists>;
                     using Q = typename Simplify<Q_>::type;
                     using R = typename ToConformalList<Q>::type;
                     using S = brigand::flatten<R>;
