@@ -18,7 +18,6 @@ namespace space {
                       class M,
                       class Xform>
             struct BitProduct<Metric<N, M, Xform>, A, B, Op> {
-                // using type = B;
                 using type = typename Xform::template Apply<Metric<N, M, Xform>, A, B, Op>::type;
             };
         }

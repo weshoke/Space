@@ -56,6 +56,12 @@ namespace viz {
                 up_ = up_.Spin(rot);
             }
 
+            void Translate(const Vec3 &v)
+            {
+                eye_ = eye_ + v;
+                look_at_ = look_at_ + v;
+            }
+
             Matrix4 ModelViewMatrix() const { return Matrix4::LookAt(eye(), look_at(), up()); }
             Matrix4 ProjectionMatrix() const
             {

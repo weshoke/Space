@@ -7,9 +7,11 @@ namespace viz {
     namespace draw {
         class Trackball {
            public:
-            Trackball(float rot_speed)
+            Trackball(float rot_speed = 1.f, float move_speed = 1.f, float pan_speed = 1.f)
             : camera_(Camera::Default())
             , rot_speed_(rot_speed)
+            , move_speed_(move_speed)
+            , pan_speed_(pan_speed)
             {
             }
 
@@ -32,11 +34,30 @@ namespace viz {
                 return camera;
             }
 
+            void Move(Camera &camera, float amt)
+            {
+                camera.Translate(camera.Look() * amt * move_speed());
+            }
+
+            Camera Pan(const Vec2 &mouse)
+            {
+                auto camera = camera_;
+                auto move = (mouse - mouse_) * pan_speed();
+                auto pan = camera.Pan() * move[0];
+                auto up = camera.up() * move[1];
+                camera.Translate(pan + up);
+                return camera;
+            }
+
             float rot_speed() const { return rot_speed_; }
+            float move_speed() const { return move_speed_; }
+            float pan_speed() const { return pan_speed_; }
            private:
             Camera camera_;
             Vec2 mouse_;
             float rot_speed_;
+            float move_speed_;
+            float pan_speed_;
         };
     }
 }

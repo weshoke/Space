@@ -59,7 +59,7 @@ namespace viz {
             auto points = std::vector<Vec3>();
             points.reserve(N);
             for (auto i = 0u; i < N; ++i) {
-                points.push_back(p);
+                points.push_back(p + circle.center());
                 p = p.Spin(rot);
             }
             return std::make_shared<ExplicitRenderable>(

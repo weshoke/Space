@@ -14,6 +14,14 @@ namespace viz {
                                      uint32_t divisions,
                                      uint32_t color);
         Renderable::Ref CreateAxes(float length, uint32_t color);
+
+        template <class T>
+        Renderable::Ref Create(const std::vector<T> &points, GLenum primitive, uint32_t color)
+        {
+            return std::make_shared<ExplicitRenderable>(
+                Pipeline::Create("color", points), primitive, color);
+        }
+
         Renderable::Ref Create(const LineSegment &line_segment, uint32_t color);
         Renderable::Ref Create(const Circle &circle, uint32_t color);
         Renderable::Ref Create(const space::geom::Sphere<Vec3> &sphere,

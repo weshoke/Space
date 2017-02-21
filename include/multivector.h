@@ -50,13 +50,16 @@ namespace space {
             return *this;
         }
 
+        auto Reverse() const { return unary::Reverse(*this); }
+        auto Conjugate() const { return unary::Conjugate(*this); }
+        auto Involute() const { return unary::Involute(*this); }
         auto operator-() const { return unary::Negate(*this); }
         auto operator~() const { return unary::Reverse(*this); }
         auto operator!() const
         {
-            auto tmp = ~(*this);
-            auto v = ((*this) * tmp)[0];
-            return (v == 0) ? tmp : tmp / v;
+            auto rev = ~(*this);
+            auto v = ((*this) * rev)[0];
+            return (v == 0) ? rev : rev / v;
         }
 
         template <class MultivectorB>

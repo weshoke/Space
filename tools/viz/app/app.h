@@ -82,6 +82,11 @@ namespace app {
                 app->kernel().Cursor(app, xpos, ypos);
             });
 
+            glfwSetScrollCallback(window(), [](auto* window, auto xoffset, auto yoffset) {
+                auto* app = Get(window);
+                app->kernel().Scroll(app, xoffset, yoffset);
+            });
+
             while (!glfwWindowShouldClose(window())) {
                 kernel().Draw(this);
                 glfwSwapBuffers(window());
