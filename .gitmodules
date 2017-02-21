@@ -7,3 +7,6 @@
 [submodule "vendor/variant"]
 	path = vendor/variant
 	url = https://github.com/mpark/variant.git
+[submodule "vendor/hana"]
+	path = vendor/hana
+	url = https://github.com/boostorg/hana.git
