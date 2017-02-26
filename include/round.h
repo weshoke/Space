@@ -20,6 +20,8 @@ namespace space {
             using Conformal = algebra::Conformal<Algebra>;
             using Inf = typename Conformal::Inf;
             auto s = Inf(T{1}) <= elem;
+            // If Grade(elem) <= (Metric.Size - 1) / 2
+            // TODO: how does this work in C4D?
             auto is_dual = []() { return true; };
             return (elem * elem.Involute() / (s * s))[0] * (is_dual() ? T{-1} : T{1});
         }

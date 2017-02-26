@@ -565,8 +565,8 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				APP_DIR = "$(SRCROOT)";
 				BRIGAND_DIR = "$(VENDOR_DIR)/brigand";
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -604,10 +604,11 @@
 					"$(OTHER_CFLAGS)",
 					"-fno-elide-type",
 					"-fdiagnostics-show-template-tree",
+					"'-std=c++1z'",
 				);
 				ROOT_DIR = "$(APP_DIR)/../..";
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "$(BRIGAND_DIR) $(SRCROOT)/../../include";
+				USER_HEADER_SEARCH_PATHS = "$(BRIGAND_DIR) $(SRCROOT)/../../include $(VENDOR_DIR)/hana/include";
 				VENDOR_DIR = "$(ROOT_DIR)/vendor";
 			};
 			name = Debug;
@@ -618,8 +619,8 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				APP_DIR = "$(SRCROOT)";
 				BRIGAND_DIR = "$(VENDOR_DIR)/brigand";
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -650,10 +651,11 @@
 					"$(OTHER_CFLAGS)",
 					"-fno-elide-type",
 					"-fdiagnostics-show-template-tree",
+					"'-std=c++1z'",
 				);
 				ROOT_DIR = "$(APP_DIR)/../..";
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "$(BRIGAND_DIR) $(SRCROOT)/../../include";
+				USER_HEADER_SEARCH_PATHS = "$(BRIGAND_DIR) $(SRCROOT)/../../include $(VENDOR_DIR)/hana/include";
 				VENDOR_DIR = "$(ROOT_DIR)/vendor";
 			};
 			name = Release;

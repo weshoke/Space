@@ -27,6 +27,7 @@ target_include_directories(glad PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/d
 
 add_executable(C1
     tools/viz/C1.cpp
+    tools/viz/dbg/type.cpp
     tools/viz/draw/color.cpp
     tools/viz/draw/draw.cpp
     tools/viz/draw/mesh.h
@@ -44,6 +45,7 @@ target_include_directories(C1 PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/brigand
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/include
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/variant/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/hana/include
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/viz
 )
 

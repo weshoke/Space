@@ -1,7 +1,9 @@
 #include "type.h"
+#include <cxxabi.h>
+#include <sstream>
 
 namespace viz {
-    namespace type {
+    namespace dbg {
         std::string Demangle(const char* name)
         {
             int status = -4;  // some arbitrary value to eliminate the compiler warning
@@ -14,20 +16,12 @@ namespace viz {
         std::string PrettyDemangle(const char* name)
         {
             auto ss = std::stringstream();
-            auto d_name = Demangle(name);
-            auto it = d_name.begin();
-            auto ite = d_name.end();
             auto lvl = 0;
-            const auto indent = [&]() {
-                for (auto i = 0; i < lvl; ++i) {
-                    ss << "  ";
-                }
-            };
-            while (it != ite) {
-                switch (*it) {
+            const auto indent = [&]() { ss << std::string(lvl * 2, ' '); };
+            for (auto c : demangle(name)) {
+                switch (c) {
                     case '<':
-                        ss << *it;
-                        ss << "\n";
+                        ss << c << "\n";
                         ++lvl;
                         indent();
                         break;
@@ -36,20 +30,19 @@ namespace viz {
                         ss << "\n";
                         --lvl;
                         indent();
-                        ss << *it;
+                        ss << c;
                         break;
 
                     case ',':
                         ss << "\n";
                         indent();
-                        ss << *it;
+                        ss << c;
                         break;
 
                     default:
-                        ss << *it;
+                        ss << c;
                         break;
                 }
-                ++it;
             }
             return ss.str();
         }

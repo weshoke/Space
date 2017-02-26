@@ -1,5 +1,6 @@
 #include "algebra/C1.h"
 #include "app/app.h"
+#include "dbg/type.h"
 #include "draw/camera.h"
 #include "draw/color.h"
 #include "draw/draw.h"
@@ -10,6 +11,10 @@
 #include "geom/primitives.h"
 #include "mpark/variant.hpp"
 #include "round.h"
+#include <boost/hana/basic_tuple.hpp>
+#include <boost/hana/filter.hpp>
+#include <boost/hana/traits.hpp>
+#include <boost/hana/type.hpp>
 #include <sstream>
 
 static const char* vertex_shader_text =
@@ -90,6 +95,13 @@ class C1Viz {
 
     void Init(App* app)
     {
+        namespace hana = boost::hana;
+        constexpr hana::basic_tuple<int, char, double> xs{1, '2', 3.3};
+        auto ys =
+            hana::filter(xs, [](auto a) { return hana::traits::is_integral(hana::typeid_(a)); });
+        std::cout << viz::dbg::PrettyDemangle(typeid(decltype(xs)).name()) << "\n";
+        std::cout << viz::dbg::PrettyDemangle(typeid(decltype(ys)).name()) << "\n";
+
         using Vec2 = viz::draw::Vec2;
         using Vec3 = viz::draw::Vec3;
         std::cout << glGetString(GL_VERSION) << "\n";
