@@ -84,30 +84,21 @@ class C1Viz {
 
     C1Viz()
     : camera(viz::draw::Camera::Default())
-    , trackball(viz::draw::Trackball(1.3f, 1.f, 5.f))
+    , trackball(viz::draw::Trackball(1.3f, 1.f, 10.f))
     {
     }
 
-    void Init(App* app)
+    void MakeGrid()
     {
-        using Vec2 = viz::draw::Vec2;
         using Vec3 = viz::draw::Vec3;
-        std::cout << glGetString(GL_VERSION) << "\n";
-        viz::draw::Context::Get().RegisterProgram(
-            "color", vertex_shader_text, fragment_shader_text);
-
-        auto verts =
-            std::vector<viz::draw::Vec2>{Vec2(-0.6f, -0.4f), Vec2(0.6f, -0.4f), Vec2(0.0f, 0.6f)};
-        auto pipeline = viz::draw::Pipeline::Create("color", verts);
-
-        auto window_size = app->WindowSize();
-        auto aspect = float(window_size[0]) / float(window_size[1]);
-        camera = viz::draw::Camera::Default(aspect);
-
         renderables_.emplace_back(viz::draw::CreateAxes(2.f, viz::draw::Colors::grey));
         renderables_.emplace_back(viz::draw::CreateGrid2d(
             Vec3(-5.f, 1.f, -5.f), Vec3(5.f, 1.f, 5.f), 10, viz::draw::Colors::grey));
+    }
 
+    void MakeHorosphere()
+    {
+        using Vec3 = viz::draw::Vec3;
         auto horosphere = std::vector<Vec3>();
         horosphere.reserve(101);
         for (auto i = 0u; i <= 100u; ++i) {
@@ -117,34 +108,64 @@ class C1Viz {
         }
         renderables_.emplace_back(
             viz::draw::Create(horosphere, GL_LINE_STRIP, viz::draw::Colors::black));
+    }
 
+    void MakeSizeCircles(float no)
+    {
+        using Vec3 = viz::draw::Vec3;
         const auto map_range = [](auto v) { return float(v) / 20.f * 10.f - 5.f; };
         for (auto k = 0u; k <= 20u; ++k) {
-            //			for(auto j = 5u; j <= 15u; j += 3)
-            auto j = 8.5f;
-            {
-                for (auto i = 0u; i <= 20u; ++i) {
-                    auto e1 = map_range(i);
-                    auto no = map_range(j);
-                    auto ni = map_range(k);
-                    auto p = C1::Pnt(e1, no, ni);
-                    auto size = space::round::Size(p);
-                    auto r = std::sqrt(std::abs(size));
-                    auto circle = viz::draw::Circle(
-                        Vec3(e1, no, ni), std::max(r * 0.05f, 0.02f), Vec3(0.f, 1.f, 0.f));
-                    auto c = size < 0.f ? viz::draw::Colors::sky : viz::draw::Colors::red;
-                    renderables_.emplace_back(viz::draw::Create(circle, c));
-                }
+            for (auto i = 0u; i <= 20u; ++i) {
+                auto e1 = map_range(i);
+                auto ni = map_range(k);
+                auto p = C1::Pnt(e1, no, ni);
+                auto size = space::round::Size(p);
+                auto r = std::sqrt(std::abs(size));
+                auto circle = viz::draw::Circle(
+                    Vec3(e1, no, ni), std::max(r * 0.05f, 0.02f), Vec3(0.f, 1.f, 0.f));
+                auto c = size < 0.f ? viz::draw::Colors::sky : viz::draw::Colors::red;
+                renderables_.emplace_back(viz::draw::Create(circle, c));
             }
         }
-        // as the weight (no) coordinate decreases to 0, the amount of ni required to balance
-        // the involute product increases toward infinity.  Once the coordinate crosses zero,
-        // the graph of dual sphere sizes flips around the e1^no plane
-        auto pp = C1::Pnt(0.f, 1.f, 1.f);
-        auto pp_d = pp.Dual();
-        std::cout << pp << "\n";
-        auto ss = space::round::Size(pp_d);
-        std::cout << pp_d << " " << ss << "\n";
+    }
+
+    void VisualizeSize()
+    {
+        MakeGrid();
+        MakeHorosphere();
+        MakeSizeCircles(1.f);
+    }
+
+    void Init(App* app)
+    {
+        std::cout << glGetString(GL_VERSION) << "\n";
+        viz::draw::Context::Get().RegisterProgram(
+            "color", vertex_shader_text, fragment_shader_text);
+
+        auto window_size = app->WindowSize();
+        auto aspect = float(window_size[0]) / float(window_size[1]);
+        camera = viz::draw::Camera::Default(aspect);
+
+        auto p = space::round::Point(C1::EVec(1.f));
+        auto pss = C1::Pss(1.f);
+        auto m = p <= pss;
+        auto pts = space::round::Split(m);
+        std::cout << p << "\n";
+        std::cout << pss << "\n";
+        std::cout << m << "\n";
+        std::cout << (C1::e1(1.f) <= pss) << "\n";
+        std::cout << (C1::ni(1.f) <= pss) << "\n";
+        std::cout << (C1::no(1.f) <= pss) << "\n";
+        std::cout << pts[0] << "\n";
+        std::cout << pts[1] << "\n";
+
+        auto s = space::round::DualSphere(C1::EVec(0.f), 1.f);
+        auto s_ = s <= pss;
+        auto s_pts = space::round::Split(s_);
+        std::cout << s << "\n";
+        std::cout << s_ << "\n";
+        std::cout << s_pts[0] << "\n";
+        std::cout << s_pts[1] << "\n";
     }
 
     void Key(App* app, int32_t key, int32_t scancode, int32_t action, int32_t mods)

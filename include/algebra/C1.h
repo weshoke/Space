@@ -21,9 +21,21 @@ namespace space {
             using Point = Vector;
             using PseudoScalar = typename Algebra::PseudoScalar;
 
+            // Euclidean
+            // TODO: all non-ori/info 1-blades
+            using e1 = Multivector<
+                Algebra,
+                brigand::list<brigand::at_c<brigand::at_c<typename Algebra::BasisSpan, 1>, 0>>>;
+            using EuclideanVector = e1;
+            using no = Multivector<Algebra, brigand::list<brigand::uint16_t<Xform::Ori()>>>;
+            using ni = Multivector<Algebra, brigand::list<brigand::uint16_t<Xform::Inf()>>>;
+
             // Aliases
             using S = Scalar;
             using Vec = Vector;
+            using EVec = EuclideanVector;
+            using Ori = no;
+            using Inf = ni;
             using Pnt = Point;
             using Pss = PseudoScalar;
         };
