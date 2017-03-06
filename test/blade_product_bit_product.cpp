@@ -1,10 +1,10 @@
 #include "basis/xform/conformal.h"
+#include "blade/bit_product.h"
 #include "blade/derived_blade.h"
-#include "blade/product/bit_product.h"
 #include "blade/weight.h"
 #include "metric.h"
 
-using Gp = brigand::bind<space::product::op::Gp, brigand::_1>;
+using Gp = brigand::bind<space::ops::detail::Gp, brigand::_1>;
 template <class Metric, uint16_t B1, uint16_t B2>
 using BitProduct = space::blade::
     BitProduct<Metric, brigand::list<brigand::uint16_t<B1>, brigand::uint16_t<B2>>, Gp>;

@@ -5,7 +5,7 @@
 #include "brigand/functions/bitwise/shift_left.hpp"
 #include "brigand/sequences/make_sequence.hpp"
 #include "metric/diagonal.h"
-#include "product.h"
+#include "ops/product.h"
 
 namespace space {
     namespace basis {
@@ -26,8 +26,8 @@ namespace space {
                     static_assert(Metric::Dim >= Dim, "Dimension Error");
                     using VectorBasis = typename BasisSpan<Metric, 1>::type;
                     using PrevBasis = typename BasisSpan<Metric, Dim - 1>::type;
-                    using Op = product::op::Op<brigand::_1>;
-                    using ProductLists = product::BitProduct<Metric, PrevBasis, VectorBasis, Op>;
+                    using Op = ops::detail::Op<brigand::_1>;
+                    using ProductLists = ops::BitProduct<Metric, PrevBasis, VectorBasis, Op>;
                     using ProductBasis = brigand::transform<
                         ProductLists,
                         brigand::bind<blade::Blade, brigand::bind<brigand::front, brigand::_1>>>;

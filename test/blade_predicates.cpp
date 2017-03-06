@@ -1,16 +1,16 @@
 #include "blade/predicates.h"
 
 // Grade test
-static_assert(space::blade::detail::Grade(0) == 0, "Grade error");
-static_assert(space::blade::detail::Grade(0b1) == 1, "Grade error");
-static_assert(space::blade::detail::Grade(0b10) == 1, "Grade error");
-static_assert(space::blade::detail::Grade(0b11) == 2, "Grade error");
-static_assert(space::blade::detail::Grade(0b101) == 2, "Grade error");
-static_assert(space::blade::detail::Grade(0b1000) == 1, "Grade error");
-static_assert(space::blade::detail::Grade(0b1011) == 3, "Grade error");
-static_assert(space::blade::detail::Grade(0b1011) == 3, "Grade error");
-static_assert(space::blade::detail::Grade(0b101011) == 4, "Grade error");
-static_assert(space::blade::detail::Grade(0b1111000) == 4, "Grade error");
+static_assert(space::blade::Grade(0) == 0, "Grade error");
+static_assert(space::blade::Grade(0b1) == 1, "Grade error");
+static_assert(space::blade::Grade(0b10) == 1, "Grade error");
+static_assert(space::blade::Grade(0b11) == 2, "Grade error");
+static_assert(space::blade::Grade(0b101) == 2, "Grade error");
+static_assert(space::blade::Grade(0b1000) == 1, "Grade error");
+static_assert(space::blade::Grade(0b1011) == 3, "Grade error");
+static_assert(space::blade::Grade(0b1011) == 3, "Grade error");
+static_assert(space::blade::Grade(0b101011) == 4, "Grade error");
+static_assert(space::blade::Grade(0b1111000) == 4, "Grade error");
 
 // Inner product test
 static_assert(space::blade::HasInner(0b01, 0b01) == true, "HasInner error");

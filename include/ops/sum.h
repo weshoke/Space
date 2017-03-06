@@ -1,5 +1,5 @@
-#ifndef SPACE_SUM_H
-#define SPACE_SUM_H
+#ifndef SPACE_OPS_SUM_H
+#define SPACE_OPS_SUM_H
 
 #include "brigand/algorithms/index_of.hpp"
 #include "brigand/algorithms/transform.hpp"
@@ -7,7 +7,7 @@
 #include "brigand/sequences/append.hpp"
 
 namespace space {
-    namespace sum {
+    namespace ops {
         namespace detail {
             template <class Basis, class Blade, bool First>
             struct Add : public Blade {

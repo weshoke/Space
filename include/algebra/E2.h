@@ -4,7 +4,6 @@
 #include "algebra.h"
 #include "basis.h"
 #include "metric.h"
-#include "product.h"
 
 namespace space {
     namespace algebra {

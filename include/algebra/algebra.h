@@ -4,7 +4,6 @@
 #include "basis.h"
 #include "basis/span.h"
 #include "multivector.h"
-#include "product.h"
 
 namespace space {
     namespace detail {

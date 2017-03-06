@@ -4,9 +4,7 @@
 #include "basis.h"
 #include "brigand/algorithms/for_each.hpp"
 #include "brigand/functions/bitwise/bitxor.hpp"
-#include "product.h"
-#include "sum.h"
-#include "unary.h"
+#include "ops.h"
 #include <array>
 #include <cmath>
 #include <ostream>
@@ -50,11 +48,11 @@ namespace space {
             return *this;
         }
 
-        auto Reverse() const { return unary::Reverse(*this); }
-        auto Conjugate() const { return unary::Conjugate(*this); }
-        auto Involute() const { return unary::Involute(*this); }
-        auto operator-() const { return unary::Negate(*this); }
-        auto operator~() const { return unary::Reverse(*this); }
+        auto Reverse() const { return ops::Reverse(*this); }
+        auto Conjugate() const { return ops::Conjugate(*this); }
+        auto Involute() const { return ops::Involute(*this); }
+        auto operator-() const { return ops::Negate(*this); }
+        auto operator~() const { return ops::Reverse(*this); }
         auto operator!() const
         {
             auto rev = ~(*this);
@@ -76,7 +74,7 @@ namespace space {
         template <class MultivectorB>
         auto operator*(const MultivectorB& b) const
         {
-            return product::Gp(*this, b);
+            return ops::Gp(*this, b);
         }
 
         auto operator*(const typename Algebra::ScalarValue& b) const
@@ -87,19 +85,19 @@ namespace space {
         template <class MultivectorB>
         auto operator^(const MultivectorB& b) const
         {
-            return product::Op(*this, b);
+            return ops::Op(*this, b);
         }
 
         template <class MultivectorB>
         auto operator<=(const MultivectorB& b) const
         {
-            return product::Ip(*this, b);
+            return ops::Ip(*this, b);
         }
 
         template <class MultivectorB>
         auto operator+(const MultivectorB& b) const
         {
-            return sum::Add(*this, b);
+            return ops::Add(*this, b);
         }
 
         friend auto operator+(ScalarValue v, const Multivector& mv)
@@ -111,7 +109,7 @@ namespace space {
         template <class MultivectorB>
         auto operator-(const MultivectorB& b) const
         {
-            return sum::Add(*this, -b);
+            return ops::Add(*this, -b);
         }
 
         friend auto operator-(ScalarValue v, const Multivector& mv)
@@ -149,7 +147,7 @@ namespace space {
         template <class MultivectorB>
         MultivectorB Cast() const
         {
-            return unary::Cast<MultivectorB>(*this);
+            return ops::Cast<MultivectorB>(*this);
         }
 
         auto& operator[](const int32_t idx) { return values[idx]; }

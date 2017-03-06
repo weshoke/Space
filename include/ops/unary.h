@@ -1,5 +1,5 @@
-#ifndef SPACE_UNARY_H
-#define SPACE_UNARY_H
+#ifndef SPACE_OPS_UNARY_H
+#define SPACE_OPS_UNARY_H
 
 #include "basis.h"
 #include "blade.h"
@@ -9,7 +9,7 @@
 #include <type_traits>
 
 namespace space {
-    namespace unary {
+    namespace ops {
         namespace detail {
             template <class Op,
                       class Algebra,

@@ -4,7 +4,7 @@
 #include "algebra.h"
 #include "basis.h"
 #include "metric.h"
-#include "product.h"
+#include "ops/product.h"
 #include <cmath>
 
 namespace space {
@@ -14,7 +14,7 @@ namespace space {
             using Metric = space::Metric<3>;
             using Algebra = space::Algebra<Metric, Value>;
             using VectorBasis = brigand::at_c<typename Algebra::BasisSpan, 1>;
-            using RotorBasis = space::product::ProductBasisGp<Metric, VectorBasis, VectorBasis>;
+            using RotorBasis = ops::ProductBasisGp<Metric, VectorBasis, VectorBasis>;
 
             // Multivectors
             using Scalar = typename Algebra::Scalar;

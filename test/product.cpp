@@ -1,10 +1,10 @@
-#include "product.h"
+#include "ops/product.h"
 #include "basis/xform/conformal.h"
 #include "metric.h"
 
 template <class Metric, class BasisA, class BasisB>
-using ProductLists = typename space::product::detail::
-    BitProduct<Metric, BasisA, BasisB, brigand::bind<space::product::op::Gp, brigand::_1>>::type;
+using ProductLists = typename space::ops::detail::
+    BitProduct<Metric, BasisA, BasisB, brigand::bind<space::ops::detail::Gp, brigand::_1>>::type;
 
 using MC2 = space::Metric<3, 1, space::basis::xform::Conformal<2, 3>>;
 using e1 = brigand::uint16_t<0b0001>;
@@ -65,12 +65,12 @@ static_assert(brigand::at_c<brigand::at_c<ProductLists<MC2, brigand::list<e1, e1
 
 
 template<class Metric, class BasisA, class BasisB>
-using ProductListsOp = typename space::product::detail::BitProduct<
+using ProductListsOp = typename space::ops::detail::BitProduct<
     Metric,
     BasisA,
     BasisB,
     brigand::bind<
-        space::product::op::Op,
+        space::ops::detail::Op,
         brigand::_1
     >
 >::type;

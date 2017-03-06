@@ -8,7 +8,7 @@
 #include "brigand/algorithms/remove.hpp"
 #include "brigand/algorithms/transform.hpp"
 #include "brigand/sequences/front.hpp"
-#include "product.h"
+#include "ops/product.h"
 #include <ratio>
 #include <type_traits>
 
@@ -156,12 +156,12 @@ namespace space {
                     using DiagonalA = typename FromConformal<A>::type;
                     using DiagonalB = typename FromConformal<B>::type;
                     using ProductLists =
-                        product::BitProduct<typename Metric::Diagonal, DiagonalA, DiagonalB, Op>;
+                        ops::BitProduct<typename Metric::Diagonal, DiagonalA, DiagonalB, Op>;
                     using Q_ = ToWeightedBlade<Metric, ProductLists>;
                     using Q = typename Simplify<Q_>::type;
                     using R = typename ToConformalList<Q>::type;
                     using S = brigand::flatten<R>;
-                    using T = typename product::detail::GroupBlades<S>::type;
+                    using T = typename ops::detail::GroupBlades<S>::type;
                     using U = typename Simplify<T>::type;
                     using V =
                         brigand::remove_if<U,
