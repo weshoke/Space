@@ -1,5 +1,5 @@
-#ifndef SPACE_ALGEBRA_E3_H
-#define SPACE_ALGEBRA_E3_H
+#ifndef SPACE_ALGEBRAS_E3_H
+#define SPACE_ALGEBRAS_E3_H
 
 #include "algebra.h"
 #include "basis.h"
@@ -8,7 +8,7 @@
 #include <cmath>
 
 namespace space {
-    namespace algebra {
+    namespace algebras {
         template <class Value>
         struct E3 {
             using Metric = space::Metric<3>;

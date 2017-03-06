@@ -1,12 +1,12 @@
-#ifndef SPACE_ALGEBRA_E2_H
-#define SPACE_ALGEBRA_E2_H
+#ifndef SPACE_ALGEBRAS_E2_H
+#define SPACE_ALGEBRAS_E2_H
 
 #include "algebra.h"
 #include "basis.h"
 #include "metric.h"
 
 namespace space {
-    namespace algebra {
+    namespace algebras {
         template <class Value>
         struct E2 {
             using Metric = space::Metric<2>;

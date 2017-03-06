@@ -1,45 +1,14 @@
-#ifndef SPACE_ALGEBRA_C1_H
-#define SPACE_ALGEBRA_C1_H
+#ifndef SPACE_ALGEBRAS_C1_H
+#define SPACE_ALGEBRAS_C1_H
 
-#include "algebra.h"
-#include "basis.h"
-#include "metric.h"
+#include "conformal.h"
 
 namespace space {
-    namespace algebra {
-        template <class Value>
-        struct C1 {
-            using Xform = basis::xform::Conformal<1, 2>;
-            using Metric = space::Metric<2, 1, Xform>;
-            using Algebra = space::Algebra<Metric, Value>;
-            using VectorBasis = brigand::at_c<typename Algebra::BasisSpan, 1>;
-
-            // Multivectors
-            using Scalar = typename Algebra::Scalar;
-            using Vector = typename Algebra::Vec;
-            using Point = Vector;
-            using PseudoScalar = typename Algebra::PseudoScalar;
-
-            // Euclidean
-            // TODO: all non-ori/info 1-blades
-            // TODO: capitalize blades as multivectors
-            // TODO: lowercase blades as integer types
-            // TODO: implement multivector.Coord<int>()
-            using e1 = Multivector<
-                Algebra,
-                brigand::list<brigand::at_c<brigand::at_c<typename Algebra::BasisSpan, 1>, 0>>>;
-            using EuclideanVector = e1;
-            using no = Multivector<Algebra, brigand::list<brigand::uint16_t<Xform::Ori()>>>;
-            using ni = Multivector<Algebra, brigand::list<brigand::uint16_t<Xform::Inf()>>>;
-
-            // Aliases
-            using S = Scalar;
-            using Vec = Vector;
-            using EVec = EuclideanVector;
-            using Ori = no;
-            using Inf = ni;
-            using Pnt = Point;
-            using Pss = PseudoScalar;
+    namespace algebras {
+        template <class Value_>
+        struct C1 : public Conformal<Value_, 1> {
+            using Base = Conformal<Value_, 1>;
+            using E1 = typename Base::template BladeMultivector<0>;
         };
     }
 }

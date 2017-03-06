@@ -8,7 +8,7 @@
 #include "draw/renderable.h"
 #include "draw/renderable_factory.h"
 #include "draw/trackball.h"
-#include "flat.h"
+//#include "flat.h"
 #include "geom/primitives.h"
 #include "mpark/variant.hpp"
 #include "round.h"
@@ -140,8 +140,8 @@ struct MouseEventState {
     State state_;
 };
 
-using C1 = space::algebra::C1<float>;
-using C2 = space::algebra::C2<float>;
+using C1 = space::algebras::C1<float>;
+using C2 = space::algebras::C2<float>;
 
 // TODO: should be nested contexts
 // auto app = App {
@@ -184,21 +184,21 @@ class C1Viz {
 
     void MakeSizeCircles(float no)
     {
-        using Vec3 = viz::draw::Vec3;
-        const auto map_range = [](auto v) { return float(v) / 20.f * 10.f - 5.f; };
-        for (auto k = 0u; k <= 20u; ++k) {
-            for (auto i = 0u; i <= 20u; ++i) {
-                auto e1 = map_range(i);
-                auto ni = map_range(k);
-                auto p = C1::Pnt(e1, no, ni);
-                auto size = space::round::Size(p);
-                auto r = std::sqrt(std::abs(size));
-                auto circle = viz::draw::Circle(
-                    Vec3(e1, no, ni), std::max(r * 0.05f, 0.02f), Vec3(0.f, 1.f, 0.f));
-                auto c = size < 0.f ? viz::draw::Colors::sky : viz::draw::Colors::red;
-                renderables_.emplace_back(viz::draw::Create(circle, c));
-            }
-        }
+        //        using Vec3 = viz::draw::Vec3;
+        //        const auto map_range = [](auto v) { return float(v) / 20.f * 10.f - 5.f; };
+        //        for (auto k = 0u; k <= 20u; ++k) {
+        //            for (auto i = 0u; i <= 20u; ++i) {
+        //                auto e1 = map_range(i);
+        //                auto ni = map_range(k);
+        //                auto p = C1::Pnt(e1, no, ni);
+        //                auto size = space::round::Size(p);
+        //                auto r = std::sqrt(std::abs(size));
+        //                auto circle = viz::draw::Circle(
+        //                    Vec3(e1, no, ni), std::max(r * 0.05f, 0.02f), Vec3(0.f, 1.f, 0.f));
+        //                auto c = size < 0.f ? viz::draw::Colors::sky : viz::draw::Colors::red;
+        //                renderables_.emplace_back(viz::draw::Create(circle, c));
+        //            }
+        //        }
     }
 
     void VisualizeSize()
@@ -213,13 +213,13 @@ class C1Viz {
         using Vec3 = viz::draw::Vec3;
 
         // Dual of sphere
-        auto s = space::round::DualSphere(C1::EVec(0.f), 1.f);
+        auto s = C1::Round::DualSphere(C1::EVec(0.f), 1.f);
         auto pss = C1::Pss(1.f);
         auto s_ = s <= pss;
-        auto s_pts = space::round::Split(s_);
+        auto s_pts = C1::Round::Split(s_);
 
         // Spherical inversion of point
-        auto p1 = space::round::Point(C1::e1(0.5f));
+        auto p1 = C1::Round::Point(C1::E1(0.5f));
         auto p2 = p1.Spin(s);
         p2 = p2 / p2[1];
 
@@ -255,11 +255,11 @@ class C1Viz {
         MakeGrid();
         //        VisualizeC1();
 
-        auto p1 = space::round::Point(C2::EVec(1.f, 0.f));
-        auto p2 = space::round::Point(C2::EVec(1.f, 1.f));
+        auto p1 = C2::Round::Point(C2::EVec(1.f, 0.f));
+        auto p2 = C2::Round::Point(C2::EVec(1.f, 1.f));
         auto L = p1 ^ p2 ^ C2::Inf(1.f);
-        auto p = space::flat::Point(L);
-        auto dir = space::flat::Direction(L);
+        auto p = C2::Flat::Point(L);
+        auto dir = C2::Flat::Direction(L);
         auto line = viz::draw::Line(Vec3(p[0], p[1], 0.f), Vec3(dir[0], dir[1], 0.f));
         renderables_.emplace_back(viz::draw::Create(line, viz::draw::Colors::red));
     }

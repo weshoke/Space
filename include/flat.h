@@ -19,11 +19,11 @@ namespace space {
         template <class Elem>
         auto Point(const Elem &elem)
         {
-            using T = typename Elem::ScalarValue;
+            // using T = typename Elem::ScalarValue;
             using Algebra = typename Elem::Algebra;
             using Conformal = algebra::Conformal<Algebra>;
             using Ori = typename Conformal::Ori;
-            return (Ori(T{1}) <= elem) / elem;
+            return (Ori(typename Elem::ScalarValue{1}) <= elem) / elem;
         }
     }
 }

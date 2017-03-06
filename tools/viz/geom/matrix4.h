@@ -11,7 +11,7 @@ namespace space {
         template <class T>
         class Matrix4 {
            public:
-            using Vec = typename algebra::E3<T>::Vec;
+            using Vec = typename algebras::E3<T>::Vec;
 
             template <class... Values>
             Matrix4(const Values&... v)
@@ -91,8 +91,8 @@ namespace space {
             static Matrix4 LookAt(const Vec& eye, const Vec& center, const Vec& up)
             {
                 auto look = (center - eye).Normalized();
-                auto s = algebra::E3<T>::CrossProduct(look, up).Normalized();
-                auto u = algebra::E3<T>::CrossProduct(s, look).Normalized();
+                auto s = algebras::E3<T>::CrossProduct(look, up).Normalized();
+                auto u = algebras::E3<T>::CrossProduct(s, look).Normalized();
                 look = -look;
                 auto t = Vec((eye <= s)[0], (eye <= u)[0], (eye <= look)[0]);
                 return Matrix4(s[0],

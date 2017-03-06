@@ -11,8 +11,8 @@
 
 namespace viz {
     namespace draw {
-        using E2 = space::algebra::E2<float>;
-        using E3 = space::algebra::E3<float>;
+        using E2 = space::algebras::E2<float>;
+        using E3 = space::algebras::E3<float>;
         using Vec2 = typename E2::Vec;
         using Vec3 = typename E3::Vec;
         using LineSegment = space::geom::LineSegment<Vec3>;
