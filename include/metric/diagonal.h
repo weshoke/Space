@@ -1,5 +1,5 @@
-#ifndef METRIC_DIAGONAL_H
-#define METRIC_DIAGONAL_H
+#ifndef SPACE_METRIC_DIAGONAL_H
+#define SPACE_METRIC_DIAGONAL_H
 
 #include "basis/xform.h"
 
