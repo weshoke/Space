@@ -4,7 +4,7 @@
 #include "brigand/algorithms/transform.hpp"
 #include "brigand/functions/bitwise/shift_left.hpp"
 #include "brigand/sequences/make_sequence.hpp"
-#include "metric/xform.h"
+#include "metric/diagonal.h"
 #include "product.h"
 
 namespace space {
@@ -49,7 +49,7 @@ namespace space {
 
                 template <class Metric, class Dim>
                 struct Span {
-                    using DiagonalMetric = Diagonal<Metric>;
+                    using DiagonalMetric = metric::Diagonal<Metric>;
                     using Dims = brigand::make_sequence<brigand::uint16_t<0>, Dim::value + 1>;
                     using type = brigand::transform<
                         Dims,
