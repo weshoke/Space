@@ -8,10 +8,8 @@
 #include "draw/renderable.h"
 #include "draw/renderable_factory.h"
 #include "draw/trackball.h"
-//#include "flat.h"
 #include "geom/primitives.h"
 #include "mpark/variant.hpp"
-#include "round.h"
 #include <sstream>
 
 static const char* vertex_shader_text =
