@@ -1,7 +1,7 @@
 #ifndef SPACE_FLAT_H
 #define SPACE_FLAT_H
 
-#include "algebra/conformal.h"
+#include "algebras/conformal.h"
 
 namespace space {
     namespace flat {

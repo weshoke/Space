@@ -1,8 +1,8 @@
 #ifndef SPACE_VIZ_DRAW_PRIMITIVES_H
 #define SPACE_VIZ_DRAW_PRIMITIVES_H
 
-#include "algebra/E2.h"
-#include "algebra/E3.h"
+#include "algebras/E2.h"
+#include "algebras/E3.h"
 #include "geom/circle.h"
 #include "geom/line.h"
 #include "geom/line_segment.h"

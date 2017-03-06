@@ -1,5 +1,5 @@
-#include "algebra/C1.h"
-#include "algebra/C2.h"
+#include "algebras/C1.h"
+#include "algebras/C2.h"
 #include "app/app.h"
 #include "draw/camera.h"
 #include "draw/color.h"

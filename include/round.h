@@ -1,7 +1,7 @@
 #ifndef SPACE_ROUND_H
 #define SPACE_ROUND_H
 
-#include "algebra/conformal.h"
+#include "algebras/conformal.h"
 
 namespace space {
     namespace round {

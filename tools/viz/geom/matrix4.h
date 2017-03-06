@@ -1,7 +1,7 @@
 #ifndef SPACE_GEOM_MATRIX4_H
 #define SPACE_GEOM_MATRIX4_H
 
-#include "algebra/E3.h"
+#include "algebras/E3.h"
 #include "primitives.h"
 #include <array>
 
