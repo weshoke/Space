@@ -1,5 +1,5 @@
-#ifndef SPACE_ALGEBRA_C1_H
-#define SPACE_ALGEBRA_C1_H
+#ifndef SPACE_ALGEBRA_C2_H
+#define SPACE_ALGEBRA_C2_H
 
 #include "algebra.h"
 #include "basis.h"
@@ -8,9 +8,9 @@
 namespace space {
     namespace algebra {
         template <class Value>
-        struct C1 {
-            using Xform = basis::xform::Conformal<1, 2>;
-            using Metric = space::Metric<2, 1, Xform>;
+        struct C2 {
+            using Xform = basis::xform::Conformal<2, 3>;
+            using Metric = space::Metric<3, 1, Xform>;
             using Algebra = space::Algebra<Metric, Value>;
             using VectorBasis = brigand::at_c<typename Algebra::BasisSpan, 1>;
 
@@ -25,19 +25,19 @@ namespace space {
             // TODO: capitalize blades as multivectors
             // TODO: lowercase blades as integer types
             // TODO: implement multivector.Coord<int>()
-            using e1 = Multivector<
+            using EuclideanVector = Multivector<
                 Algebra,
-                brigand::list<brigand::at_c<brigand::at_c<typename Algebra::BasisSpan, 1>, 0>>>;
-            using EuclideanVector = e1;
-            using no = Multivector<Algebra, brigand::list<brigand::uint16_t<Xform::Ori()>>>;
-            using ni = Multivector<Algebra, brigand::list<brigand::uint16_t<Xform::Inf()>>>;
+                brigand::list<brigand::at_c<brigand::at_c<typename Algebra::BasisSpan, 1>, 0>,
+                              brigand::at_c<brigand::at_c<typename Algebra::BasisSpan, 1>, 1>>>;
+            using No = Multivector<Algebra, brigand::list<brigand::uint16_t<Xform::Ori()>>>;
+            using Ni = Multivector<Algebra, brigand::list<brigand::uint16_t<Xform::Inf()>>>;
 
             // Aliases
             using S = Scalar;
             using Vec = Vector;
             using EVec = EuclideanVector;
-            using Ori = no;
-            using Inf = ni;
+            using Ori = No;
+            using Inf = Ni;
             using Pnt = Point;
             using Pss = PseudoScalar;
         };

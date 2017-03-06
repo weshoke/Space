@@ -29,10 +29,13 @@ namespace viz {
                     id_ = std::exchange(src.id_, 0u);
                 }
 
+                // TODO: somehow this binding needs to be attached to the VAO and "unbound" with
+                // that object
                 ~Binding()
                 {
                     if (id() != 0u) {
-                        Bind(target(), 0u);
+                        //						std::cout << "~Buffer\n";
+                        //                        Bind(target(), 0u);
                     }
                 }
 

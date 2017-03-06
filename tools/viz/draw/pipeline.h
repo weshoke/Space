@@ -89,10 +89,8 @@ namespace viz {
                                    const IndexData& index)
             {
                 auto pipeline = Pipeline(Context::Get().Program(program));
-                pipeline.Bind().Mesh([&vertex, &index](auto&& binding) {
-                    binding.Vertex(vertex);
-                    binding.Index(index);
-                });
+                pipeline.Bind().Mesh(
+                    [&vertex, &index](auto&& binding) { binding.Vertex(vertex).Index(index); });
                 return pipeline;
             }
 

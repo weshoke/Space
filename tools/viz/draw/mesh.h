@@ -7,7 +7,6 @@
 #include "gl/vertex_array.h"
 #include "glad/glad.h"
 #include "primitives.h"
-#include <iostream>
 #include <utility>
 #include <vector>
 
@@ -51,7 +50,7 @@ namespace viz {
                     mesh_.count_ = data.size();
                     mesh_.type_ = gl::Type<T>();
                     mesh_.vbos_.emplace_back(std::make_shared<gl::Buffer>());
-                    mesh_.vbos_.back()->Bind(GL_ELEMENT_ARRAY_BUFFER).Data(data);
+                    auto binding = mesh_.vbos_.back()->Bind(GL_ELEMENT_ARRAY_BUFFER).Data(data);
                     return std::move(*this);
                 }
 

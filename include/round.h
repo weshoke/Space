@@ -42,7 +42,7 @@ namespace space {
             using Algebra = typename Elem::Algebra;
             using Conformal = algebra::Conformal<Algebra>;
             using Inf = typename Conformal::Inf;
-            return Point(elem) + Inf(T{0.5} * radius * radius * (radius < 0. ? T{-1} : T{1}));
+            return Point(elem) + Inf(T{0.5} * radius * radius * (radius < 0. ? T{1} : T{-1}));
         }
 
         template <class Elem>

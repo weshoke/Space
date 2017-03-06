@@ -1,4 +1,5 @@
 #include "algebra/C1.h"
+#include "algebra/C2.h"
 #include "app/app.h"
 #include "draw/camera.h"
 #include "draw/color.h"
@@ -7,6 +8,7 @@
 #include "draw/renderable.h"
 #include "draw/renderable_factory.h"
 #include "draw/trackball.h"
+#include "flat.h"
 #include "geom/primitives.h"
 #include "mpark/variant.hpp"
 #include "round.h"
@@ -28,6 +30,75 @@ static const char* fragment_shader_text =
     "void main()\n"
     "{\n"
     "    pixel = color;\n"
+    "}\n";
+
+static const char* wireframe_vertex =
+    "#version 150\n"
+    "\n"
+    "uniform mat4 MVP;\n"
+    "in vec3 pos;\n"
+    "\n"
+    "void main() {\n"
+    "    gl_Position = MVP * vec4(pos, 1.0);\n"
+    "}\n";
+
+static const char* wireframe_geometry =
+    "#version 150\n"
+    "\n"
+    "layout (triangles) in;\n"
+    "layout (triangle_strip, max_vertices=3) out;\n"
+    "\n"
+    "uniform vec2 screen_size;\n"
+    "\n"
+    "out vec4 color;\n"
+    "noperspective out vec3 pixDistance;\n"
+    "\n"
+    "void main() {\n"
+    "    // taken from 'Single-Pass Wireframe Rendering'\n"
+    "    vec2 p0 = screen_size * gl_in[0].gl_Position.xy / gl_in[0].gl_Position.w;\n"
+    "    vec2 p1 = screen_size * gl_in[1].gl_Position.xy / gl_in[1].gl_Position.w;\n"
+    "    vec2 p2 = screen_size * gl_in[2].gl_Position.xy / gl_in[2].gl_Position.w;\n"
+    "\n"
+    "    vec2 v0 = p2 - p1;\n"
+    "    vec2 v1 = p2 - p0;\n"
+    "    vec2 v2 = p1 - p0;\n"
+    "    float fArea = abs( v1.x * v2.y - v1.y * v2.x );\n"
+    "\n"
+    "    pixDistance = vec3( fArea / length( v0 ), 0, 0 );\n"
+    "    gl_Position = gl_in[0].gl_Position;\n"
+    "    EmitVertex();\n"
+    "\n"
+    "    pixDistance = vec3( 0, fArea / length( v1 ), 0 );\n"
+    "    gl_Position = gl_in[1].gl_Position;\n"
+    "    EmitVertex();\n"
+    "\n"
+    "    pixDistance = vec3( 0, 0, fArea / length( v2 ) );\n"
+    "    gl_Position = gl_in[2].gl_Position;\n"
+    "    EmitVertex();\n"
+    "\n"
+    "    EndPrimitive();\n"
+    "}\n";
+
+static const char* wireframe_fragment =
+    "#version 150\n"
+    "\n"
+    "uniform vec4 color;\n"
+    "\n"
+    "noperspective in vec3 pixDistance;\n"
+    "out vec4 fragColor;\n"
+    "\n"
+    "void main() {\n"
+    "    // Determine frag distance to closest edge\n"
+    "    float nearest = min(min(pixDistance[0], pixDistance[1]), pixDistance[2]);\n"
+    "    float edge_intensity = exp2(-1.0 * nearest * nearest);\n"
+    "\n"
+    "    // Blend between edge color and face color\n"
+    "    vec3 face_color = color.rgb;\n"
+    "    //vec3 edge_color = vec3(0.2);\n"
+    "    vec3 edge_color = face_color * 0.8;\n"
+    "\n"
+    "    fragColor.rgb = mix(face_color, edge_color, edge_intensity);\n"
+    "    fragColor.a = 1.;\n"
     "}\n";
 
 struct MouseEventState {
@@ -70,6 +141,7 @@ struct MouseEventState {
 };
 
 using C1 = space::algebra::C1<float>;
+using C2 = space::algebra::C2<float>;
 
 // TODO: should be nested contexts
 // auto app = App {
@@ -92,8 +164,8 @@ class C1Viz {
     {
         using Vec3 = viz::draw::Vec3;
         renderables_.emplace_back(viz::draw::CreateAxes(2.f, viz::draw::Colors::grey));
-        renderables_.emplace_back(viz::draw::CreateGrid2d(
-            Vec3(-5.f, 1.f, -5.f), Vec3(5.f, 1.f, 5.f), 10, viz::draw::Colors::grey));
+        //        renderables_.emplace_back(viz::draw::CreateGrid2d(
+        //            Vec3(-5.f, 1.f, -5.f), Vec3(5.f, 1.f, 5.f), 10, viz::draw::Colors::grey));
     }
 
     void MakeHorosphere()
@@ -136,36 +208,60 @@ class C1Viz {
         MakeSizeCircles(1.f);
     }
 
+    void VisualizeC1()
+    {
+        using Vec3 = viz::draw::Vec3;
+
+        // Dual of sphere
+        auto s = space::round::DualSphere(C1::EVec(0.f), 1.f);
+        auto pss = C1::Pss(1.f);
+        auto s_ = s <= pss;
+        auto s_pts = space::round::Split(s_);
+
+        // Spherical inversion of point
+        auto p1 = space::round::Point(C1::e1(0.5f));
+        auto p2 = p1.Spin(s);
+        p2 = p2 / p2[1];
+
+        renderables_.emplace_back(
+            viz::draw::Create(viz::draw::Circle(Vec3(s[0], 0.f, 0.f), 1.f, Vec3(0.f, 0.f, 1.f)),
+                              viz::draw::Colors::sky));
+        renderables_.emplace_back(
+            viz::draw::Create(Vec3(s_pts[0][0], 0.f, 0.f), viz::draw::Colors::red));
+        renderables_.emplace_back(
+            viz::draw::Create(Vec3(s_pts[1][0], 0.f, 0.f), viz::draw::Colors::red));
+
+        renderables_.emplace_back(
+            viz::draw::Create(Vec3(p1[0], 0.f, 0.f), viz::draw::Colors::yellow));
+        renderables_.emplace_back(
+            viz::draw::Create(Vec3(p2[0], 0.f, 0.f), viz::draw::Colors::grass));
+    }
+
     void Init(App* app)
     {
+        using Vec3 = viz::draw::Vec3;
+
         std::cout << glGetString(GL_VERSION) << "\n";
         viz::draw::Context::Get().RegisterProgram(
             "color", vertex_shader_text, fragment_shader_text);
+        viz::draw::Context::Get().RegisterProgram(
+            "wireframe", wireframe_vertex, wireframe_geometry, wireframe_fragment);
 
         auto window_size = app->WindowSize();
         auto aspect = float(window_size[0]) / float(window_size[1]);
-        camera = viz::draw::Camera::Default(aspect);
+        camera = viz::draw::Camera(
+            Vec3(0.f, 0.f, 6.f), Vec3(0.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), 35.f, aspect);
 
-        auto p = space::round::Point(C1::EVec(1.f));
-        auto pss = C1::Pss(1.f);
-        auto m = p <= pss;
-        auto pts = space::round::Split(m);
-        std::cout << p << "\n";
-        std::cout << pss << "\n";
-        std::cout << m << "\n";
-        std::cout << (C1::e1(1.f) <= pss) << "\n";
-        std::cout << (C1::ni(1.f) <= pss) << "\n";
-        std::cout << (C1::no(1.f) <= pss) << "\n";
-        std::cout << pts[0] << "\n";
-        std::cout << pts[1] << "\n";
+        MakeGrid();
+        //        VisualizeC1();
 
-        auto s = space::round::DualSphere(C1::EVec(0.f), 1.f);
-        auto s_ = s <= pss;
-        auto s_pts = space::round::Split(s_);
-        std::cout << s << "\n";
-        std::cout << s_ << "\n";
-        std::cout << s_pts[0] << "\n";
-        std::cout << s_pts[1] << "\n";
+        auto p1 = space::round::Point(C2::EVec(1.f, 0.f));
+        auto p2 = space::round::Point(C2::EVec(1.f, 1.f));
+        auto L = p1 ^ p2 ^ C2::Inf(1.f);
+        auto p = space::flat::Point(L);
+        auto dir = space::flat::Direction(L);
+        auto line = viz::draw::Line(Vec3(p[0], p[1], 0.f), Vec3(dir[0], dir[1], 0.f));
+        renderables_.emplace_back(viz::draw::Create(line, viz::draw::Colors::red));
     }
 
     void Key(App* app, int32_t key, int32_t scancode, int32_t action, int32_t mods)
@@ -228,9 +324,12 @@ class C1Viz {
         auto window_size = app->WindowSize();
         glViewport(0, 0, window_size[0], window_size[1]);
         glClearColor(0.93f, 0.93f, 0.93f, 1.f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
 
+        using Vec2 = viz::draw::Vec2;
         viz::draw::Context::Get().ApplyCamera(camera);
+        viz::draw::Context::Get().ScreenSize(Vec2(float(window_size[0]), float(window_size[1])));
         for (auto& renderable : renderables_) {
             renderable->Draw();
         }

@@ -22,6 +22,7 @@ namespace viz {
             uint32_t AttributeLocation(const std::string &name) { return attributes_[name]; }
             void ModelViewMatrix(const Matrix4 &model_view) { model_view_ = model_view; }
             void ProjectionMatrix(const Matrix4 &projection) { projection_ = projection; }
+            void ScreenSize(const Vec2 &screen_size) { screen_size_ = screen_size; }
             void ApplyCamera(const Camera &camera)
             {
                 auto m = camera.ModelViewMatrix();
@@ -43,6 +44,12 @@ namespace viz {
                         glUniform4fv(uniform, 1, ColorComponents(color_).data());
                     }
                 }
+                {
+                    auto uniform = program.GetUniform("screen_size");
+                    if (uniform.IsValid()) {
+                        glUniform2fv(uniform, 1, screen_size_.values.data());
+                    }
+                }
             }
 
             void Color(uint32_t color) { color_ = color; }
@@ -52,6 +59,16 @@ namespace viz {
             {
                 auto program = std::make_shared<gl::Program>();
                 program->Attach(vertex, fragment).Link();
+                programs_.emplace(name, program);
+            }
+
+            void RegisterProgram(const std::string &name,
+                                 const std::string &vertex,
+                                 const std::string &geometry,
+                                 const std::string &fragment)
+            {
+                auto program = std::make_shared<gl::Program>();
+                program->Attach(vertex, geometry, fragment).Link();
                 programs_.emplace(name, program);
             }
 
@@ -68,6 +85,7 @@ namespace viz {
             std::unordered_map<std::string, uint32_t> attributes_;
             std::unordered_map<std::string, gl::Program::Ref> programs_;
 
+            Vec2 screen_size_;
             Matrix4 model_view_;
             Matrix4 projection_;
             uint32_t color_;
