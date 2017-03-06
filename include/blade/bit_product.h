@@ -1,5 +1,5 @@
-#ifndef BLADE_BIT_PRODUCT_H
-#define BLADE_BIT_PRODUCT_H
+#ifndef SPACE_BLADE_BIT_PRODUCT_H
+#define SPACE_BLADE_BIT_PRODUCT_H
 
 #include "brigand/sequences/back.hpp"
 #include "brigand/sequences/front.hpp"

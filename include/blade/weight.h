@@ -1,5 +1,5 @@
-#ifndef BLADE_WEIGHT_H
-#define BLADE_WEIGHT_H
+#ifndef SPACE_BLADE_WEIGHT_H
+#define SPACE_BLADE_WEIGHT_H
 
 #include <ratio>
 

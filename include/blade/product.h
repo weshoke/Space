@@ -1,5 +1,5 @@
-#ifndef BLADE_PRODUCT_H
-#define BLADE_PRODUCT_H
+#ifndef SPACE_BLADE_PRODUCT_H
+#define SPACE_BLADE_PRODUCT_H
 
 #include "blade/derived_blade.h"
 #include "blade/scale.h"

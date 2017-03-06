@@ -1,5 +1,5 @@
-#ifndef BLADE_DERIVED_BLADE_H
-#define BLADE_DERIVED_BLADE_H
+#ifndef SPACE_BLADE_DERIVED_BLADE_H
+#define SPACE_BLADE_DERIVED_BLADE_H
 
 #include "blade/blade.h"
 #include "blade/predicates.h"

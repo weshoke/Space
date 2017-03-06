@@ -1,5 +1,5 @@
-#ifndef BLADE_WEIGHTED_BLADE_H
-#define BLADE_WEIGHTED_BLADE_H
+#ifndef SPACE_BLADE_WEIGHTED_BLADE_H
+#define SPACE_BLADE_WEIGHTED_BLADE_H
 
 #include "blade.h"
 #include "derived_blade.h"

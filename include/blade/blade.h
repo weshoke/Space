@@ -1,5 +1,5 @@
-#ifndef BLADE_BLADE_H
-#define BLADE_BLADE_H
+#ifndef SPACE_BLADE_BLADE_H
+#define SPACE_BLADE_BLADE_H
 
 #include <type_traits>
 
