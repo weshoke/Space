@@ -1,5 +1,5 @@
-#ifndef SPACE_ALGEBRA_ALGEBRA_H
-#define SPACE_ALGEBRA_ALGEBRA_H
+#ifndef SPACE_ALGEBRA_H
+#define SPACE_ALGEBRA_H
 
 #include "basis.h"
 #include "basis/span.h"
