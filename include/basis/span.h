@@ -1,5 +1,5 @@
-#ifndef BASIS_SPAN_H
-#define BASIS_SPAN_H
+#ifndef SPACE_BASIS_SPAN_H
+#define SPACE_BASIS_SPAN_H
 
 #include "brigand/algorithms/transform.hpp"
 #include "brigand/functions/bitwise/shift_left.hpp"

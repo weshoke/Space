@@ -1,5 +1,5 @@
-#ifndef BASIS_XFORM_CONFORMAL_H
-#define BASIS_XFORM_CONFORMAL_H
+#ifndef SPACE_BASIS_XFORM_CONFORMAL_H
+#define SPACE_BASIS_XFORM_CONFORMAL_H
 
 #include "blade/derived_blade.h"
 #include "blade/weight.h"

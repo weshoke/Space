@@ -1,5 +1,5 @@
-#ifndef BASIS_XFORM_IDENTITY_H
-#define BASIS_XFORM_IDENTITY_H
+#ifndef SPACE_BASIS_XFORM_IDENTITY_H
+#define SPACE_BASIS_XFORM_IDENTITY_H
 
 #include "blade/product.h"
 #include "brigand/algorithms/remove.hpp"
