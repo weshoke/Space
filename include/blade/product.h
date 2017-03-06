@@ -1,8 +1,8 @@
-#ifndef BLADE_PRODUCT_PRODUCT_H
-#define BLADE_PRODUCT_PRODUCT_H
+#ifndef BLADE_PRODUCT_H
+#define BLADE_PRODUCT_H
 
 #include "blade/derived_blade.h"
-#include "blade/product/scale.h"
+#include "blade/scale.h"
 #include "blade/weighted_blade.h"
 #include "brigand/functions/bitwise/bitxor.hpp"
 

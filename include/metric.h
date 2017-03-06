@@ -15,7 +15,6 @@ namespace space {
             static constexpr auto M = M_::value;
             static constexpr auto Dim = N + M;
             using Xform = Xform_;
-            // using BasisSpan = basis::span::Span<N_, M_, brigand::uint16_t<Dim>>;
             using Diagonal = space::Diagonal<Metric>;
         };
     }

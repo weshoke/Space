@@ -1,7 +1,7 @@
 #ifndef BASIS_XFORM_IDENTITY_H
 #define BASIS_XFORM_IDENTITY_H
 
-#include "blade/product/product.h"
+#include "blade/product.h"
 #include "brigand/algorithms/remove.hpp"
 #include "brigand/functions/logical/not.hpp"
 #include "brigand/sequences/list.hpp"

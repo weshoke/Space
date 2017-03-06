@@ -1,5 +1,5 @@
-#ifndef BLADE_PRODUCT_SCALE_H
-#define BLADE_PRODUCT_SCALE_H
+#ifndef BLADE_SCALE_H
+#define BLADE_SCALE_H
 
 #include "blade/predicates.h"
 #include <ratio>
