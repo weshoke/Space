@@ -48,6 +48,10 @@ namespace space {
             // Subspace Operators
             using Flat = conformal::Flat<Self>;
             using Round = conformal::Round<Self>;
+
+            // Aliases
+            using Point = Vec;
+            using Pnt = Point;
         };
     }
 }

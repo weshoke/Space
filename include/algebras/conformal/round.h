@@ -18,6 +18,7 @@ namespace space {
                 using Inf = typename Algebra::Inf;
                 using S = typename Algebra::S;
                 using Vec = typename Algebra::Vec;
+                using Pnt = typename Algebra::Pnt;
 
                 template <class Elem>
                 static auto Size(const Elem &elem)
@@ -48,6 +49,19 @@ namespace space {
                     auto a = ((elem + S(r)) / d).template Cast<Vec>();
                     auto b = ((elem - S(r)) / d).template Cast<Vec>();
                     return std::array<Vec, 2>{a, b};
+                }
+
+                static auto PointPair(const Pnt &p1, const Pnt &p2) { return p1 ^ p2; }
+                static auto Circle(const Pnt &p1, const Pnt &p2, const Pnt &p3)
+                {
+                    static_assert(Algebra::EuclideanDim >= 2);
+                    return p1 ^ p2 ^ p3;
+                }
+
+                static auto Sphere(const Pnt &p1, const Pnt &p2, const Pnt &p3, const Pnt &p4)
+                {
+                    static_assert(Algebra::EuclideanDim >= 3);
+                    return p1 ^ p2 ^ p3 ^ p4;
                 }
             };
         }
