@@ -44,17 +44,6 @@ namespace viz {
                 Pipeline::Create("color", points), GL_LINES, color);
         }
 
-        Renderable::Ref Create(const LineSegment &line_segment, uint32_t color)
-        {
-            return std::make_shared<ExplicitRenderable>(
-                Pipeline::Create("color", line_segment.points()), GL_LINES, color);
-        }
-
-        Renderable::Ref Create(const Line &line, uint32_t color, float extent)
-        {
-            return Create(LineSegment(line.Point(-extent), line.Point(extent)), color);
-        }
-
         Renderable::Ref Create(const Circle &circle, uint32_t color)
         {
             auto N = 90u;

@@ -258,18 +258,7 @@ class C1Viz {
         auto p1 = C2::Round::Point(C2::EVec(1.f, 0.f));
         auto p2 = C2::Round::Point(C2::EVec(1.f, 1.f));
         auto L = p1 ^ p2 ^ C2::Inf(1.f);
-        auto p = C2::Flat::Point(L);
-        auto dir = C2::Flat::Direction(L);
-
-        // std::cout << viz::type::PrettyDemangle(typeid(typename C2::Line).name()) << "\n";
-        // std::cout << viz::type::PrettyDemangle(typeid(decltype(L)).name()) << "\n";
-        // std::cout << viz::type::PrettyDemangle(typeid(typename
-        // space::geom::Line<Vec2>::C).name()) << "\n";
-
-        auto l2 = space::geom::Line<Vec2>(L);
-        auto LL = l2.Multivector();
-        auto line = viz::draw::Line(Vec3(p[0], p[1], 0.f), Vec3(dir[0], dir[1], 0.f));
-        renderables_.emplace_back(viz::draw::Create(line, viz::draw::Colors::red));
+        renderables_.emplace_back(viz::draw::Create(viz::draw::Line2d(L), viz::draw::Colors::red));
     }
 
     void Key(App* app, int32_t key, int32_t scancode, int32_t action, int32_t mods)

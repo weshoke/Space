@@ -15,7 +15,9 @@ namespace viz {
         using E3 = space::algebras::E3<float>;
         using Vec2 = typename E2::Vec;
         using Vec3 = typename E3::Vec;
+        using LineSegment2d = space::geom::LineSegment<Vec2>;
         using LineSegment = space::geom::LineSegment<Vec3>;
+        using Line2d = space::geom::Line<Vec2>;
         using Line = space::geom::Line<Vec3>;
         using Circle = space::geom::Circle<Vec3>;
         using Sphere = space::geom::Sphere<Vec3>;
