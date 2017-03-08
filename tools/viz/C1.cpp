@@ -1,6 +1,7 @@
 #include "algebras/C1.h"
 #include "algebras/C2.h"
 #include "app/app.h"
+#include "dbg/type.h"
 #include "draw/camera.h"
 #include "draw/color.h"
 #include "draw/draw.h"
@@ -237,6 +238,7 @@ class C1Viz {
 
     void Init(App* app)
     {
+        using Vec2 = viz::draw::Vec2;
         using Vec3 = viz::draw::Vec3;
 
         std::cout << glGetString(GL_VERSION) << "\n";
@@ -258,6 +260,14 @@ class C1Viz {
         auto L = p1 ^ p2 ^ C2::Inf(1.f);
         auto p = C2::Flat::Point(L);
         auto dir = C2::Flat::Direction(L);
+
+        // std::cout << viz::type::PrettyDemangle(typeid(typename C2::Line).name()) << "\n";
+        // std::cout << viz::type::PrettyDemangle(typeid(decltype(L)).name()) << "\n";
+        // std::cout << viz::type::PrettyDemangle(typeid(typename
+        // space::geom::Line<Vec2>::C).name()) << "\n";
+
+        auto l2 = space::geom::Line<Vec2>(L);
+        auto LL = l2.Multivector();
         auto line = viz::draw::Line(Vec3(p[0], p[1], 0.f), Vec3(dir[0], dir[1], 0.f));
         renderables_.emplace_back(viz::draw::Create(line, viz::draw::Colors::red));
     }

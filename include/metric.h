@@ -14,8 +14,11 @@ namespace space {
             static constexpr auto N = N_::value;
             static constexpr auto M = M_::value;
             static constexpr auto Dim = N + M;
+
             using Xform = Xform_;
             using Diagonal = metric::Diagonal<Metric>;
+
+            static constexpr auto EuclideanDim() { return Xform::EuclideanDim(N); }
         };
     }
 

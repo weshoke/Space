@@ -27,6 +27,7 @@ target_include_directories(glad PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/d
 
 add_executable(C1
     tools/viz/C1.cpp
+    tools/viz/dbg/type.cpp
     tools/viz/draw/color.cpp
     tools/viz/draw/draw.cpp
     tools/viz/draw/mesh.h

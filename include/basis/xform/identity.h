@@ -16,6 +16,8 @@ namespace space {
                     using R = brigand::remove_if<P, brigand::bind<brigand::not_, Op>>;
                     using type = R;
                 };
+
+                static constexpr auto EuclideanDim(uint16_t n) { return n; }
             };
         }
     }

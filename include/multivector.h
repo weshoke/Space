@@ -25,7 +25,6 @@ namespace space {
         {
         }
 
-        // Explicit??
         template <class... Values>
         Multivector(const Values&... v)
         : values{v...}

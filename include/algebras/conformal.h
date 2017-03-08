@@ -9,6 +9,7 @@
 #include "conformal/round.h"
 #include "metric.h"
 #include "multivector.h"
+#include "ops/product.h"
 
 namespace space {
     namespace algebras {
@@ -36,14 +37,24 @@ namespace space {
             using BladeMultivector =
                 Multivector<Algebra, brigand::list<brigand::at_c<VectorBasis, Index>>>;
 
+            // Conformal Blades
+            using Ori = BladeMultivector<EuclideanDim>;
+            using Inf = BladeMultivector<EuclideanDim + 1>;
+
+            using InfBasis = typename Inf::Basis;
+            // TODO: Make variadic version
+            using LineBasis =
+                ops::ProductBasisOp<Metric,
+                                    ops::ProductBasisOp<Metric, VectorBasis, VectorBasis>,
+                                    InfBasis>;
+
             // Euclidean
             using EuclideanBasis =
                 brigand::at_c<brigand::split_at<VectorBasis, brigand::uint16_t<EuclideanDim>>, 0>;
             using EVec = Multivector<Algebra, EuclideanBasis>;
 
-            // Conformal Blades
-            using Ori = BladeMultivector<EuclideanDim>;
-            using Inf = BladeMultivector<EuclideanDim + 1>;
+            // Conformal
+            using Line = Multivector<Algebra, LineBasis>;
 
             // Subspace Operators
             using Flat = conformal::Flat<Self>;

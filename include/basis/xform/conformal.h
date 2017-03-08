@@ -31,6 +31,7 @@ namespace space {
                     return !(plane == 0 || plane == EPlane());
                 }
 
+                static constexpr auto EuclideanDim(uint16_t n) { return n - 1; }
                 static constexpr bool HasFlag(FlagType a, FlagType flag)
                 {
                     return (a & flag) == flag;

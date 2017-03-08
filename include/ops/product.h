@@ -109,21 +109,19 @@ namespace space {
                 }
                 return ss.str();
             }
-			
-			template <class BitProduct>
-			struct Gp : std::true_type {
-			};
 
-			template <class BitProduct>
-			struct Op : std::integral_constant<bool, BitProduct::HasOuter()> {
-			};
+            template <class BitProduct>
+            struct Gp : std::true_type {
+            };
 
-			template <class BitProduct>
-			struct Ip : std::integral_constant<bool, BitProduct::HasInner()> {
-			};
+            template <class BitProduct>
+            struct Op : std::integral_constant<bool, BitProduct::HasOuter()> {
+            };
+
+            template <class BitProduct>
+            struct Ip : std::integral_constant<bool, BitProduct::HasInner()> {
+            };
         }
-		
-		
 
         template <class Metric, class BasisA, class BasisB, class Op>
         using BitProduct = typename detail::BitProduct<Metric, BasisA, BasisB, Op>::type;
@@ -152,6 +150,10 @@ namespace space {
             using ProductLists = BitProduct<Metric, BasisA, BasisB, detail::Gp<brigand::_1>>;
             return detail::PrintMultivectorProduct(ProductLists{}, a, b);
         }
+
+        template <class Metric, class BasisA, class BasisB>
+        using ProductBasisOp = basis::Basis<
+            BitProduct<Metric, BasisA, BasisB, brigand::bind<detail::Op, brigand::_1>>>;
 
         template <class Algebra, template <class...> class Multivector, class BasisA, class BasisB>
         constexpr auto Op(const Multivector<Algebra, BasisA>& a,
