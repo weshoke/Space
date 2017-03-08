@@ -253,7 +253,7 @@ class C1Viz {
             Vec3(0.f, 0.f, 6.f), Vec3(0.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), 35.f, aspect);
 
         MakeGrid();
-        //        VisualizeC1();
+        // VisualizeC1();
 
         auto p1 = C2::Round::Point(C2::EVec(1.f, 0.f));
         auto p2 = C2::Round::Point(C2::EVec(1.f, 1.f));

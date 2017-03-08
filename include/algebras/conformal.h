@@ -43,10 +43,9 @@ namespace space {
 
             using InfBasis = typename Inf::Basis;
             // TODO: Make variadic version
-            using LineBasis =
-                ops::ProductBasisOp<Metric,
-                                    ops::ProductBasisOp<Metric, VectorBasis, VectorBasis>,
-                                    InfBasis>;
+            using PointPairBasis = ops::ProductBasisOp<Metric, VectorBasis, VectorBasis>;
+            using LineBasis = ops::ProductBasisOp<Metric, PointPairBasis, InfBasis>;
+            using CircleBasis = ops::ProductBasisOp<Metric, PointPairBasis, VectorBasis>;
 
             // Euclidean
             using EuclideanBasis =
@@ -54,7 +53,9 @@ namespace space {
             using EVec = Multivector<Algebra, EuclideanBasis>;
 
             // Conformal
+            using PointPair = Multivector<Algebra, PointPairBasis>;
             using Line = Multivector<Algebra, LineBasis>;
+            using Circle = Multivector<Algebra, CircleBasis>;
 
             // Subspace Operators
             using Flat = conformal::Flat<Self>;

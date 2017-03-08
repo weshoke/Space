@@ -22,10 +22,11 @@ namespace space {
             {
             }
 
+            // TODO: better conversion functions
             Line(const MV &mv)
-                // TODO: better conversion functions
-                : start_(C::Flat::Point(mv).template Cast<EVec>().values),
-                  dir_(C::Flat::Direction(mv).values)
+
+            : start_(C::Flat::Point(mv).template Cast<EVec>().values)
+            , dir_(C::Flat::Direction(mv).values)
             {
             }
 
