@@ -44,6 +44,14 @@ namespace viz {
                 Pipeline::Create("color", points), GL_LINES, color);
         }
 
+        Renderable::Ref Create(const Circle2d &circle, uint32_t color)
+        {
+            const auto &center = circle.center();
+            return Create(
+                Circle(Vec3(center[0], center[1], 0.f), circle.radius(), Vec3(0.f, 0.f, 1.f)),
+                color);
+        }
+
         Renderable::Ref Create(const Circle &circle, uint32_t color)
         {
             auto N = 90u;
@@ -60,32 +68,24 @@ namespace viz {
                 Pipeline::Create("color", points), GL_LINE_LOOP, color);
         }
 
+        Renderable::Ref Create(const Point2d &p, uint32_t color, float radius)
+        {
+            return Create(Vec2(p[0], p[1]), color, radius);
+        }
+
+        Renderable::Ref Create(const Point &p, uint32_t color, float radius)
+        {
+            return Create(Vec3(p[0], p[1], p[2]), color, radius);
+        }
+
+        Renderable::Ref Create(const Vec2 &p, uint32_t color, float radius)
+        {
+            return Create(Sphere(Vec3(p[0], p[1], 0.f), radius), color);
+        }
+
         Renderable::Ref Create(const Vec3 &p, uint32_t color, float radius)
         {
-            auto points = std::vector<Vec3>();
-            auto res = 20u;
-            points.reserve(res * res);
-
-            auto sphere = Sphere(p, radius);
-            for (auto j = 0u; j <= res; ++j) {
-                auto v = float(j) / float(res);
-                for (auto i = 0u; i < res; ++i) {
-                    auto u = float(i) / float(res);
-                    points.emplace_back(sphere.Point(u, v));
-                }
-            }
-
-            const auto idx = [res](auto i, auto j) { return (i % res) + (j % res) * res; };
-            auto index = std::vector<uint32_t>();
-            index.reserve(2 * (res + 1) * (res + 1));
-            for (auto j = 0u; j <= res; ++j) {
-                for (auto i = 0u; i <= res; ++i) {
-                    index.push_back(idx(i, j));
-                    index.push_back(idx(i, j + 1));
-                }
-            }
-            return std::make_shared<ExplicitRenderable>(
-                Pipeline::Create("color", points, index), GL_TRIANGLE_STRIP, color);
+            return Create(Sphere(p, radius), color);
         }
 
         Renderable::Ref Create(const space::geom::Sphere<Vec3> &sphere, uint32_t color, float tol)

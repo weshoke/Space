@@ -1,36 +1,20 @@
 #ifndef SPACE_ALGEBRAS_E3_H
 #define SPACE_ALGEBRAS_E3_H
 
-#include "algebra.h"
-#include "basis.h"
-#include "metric.h"
+#include "euclidean.h"
 #include "ops/product.h"
 #include <cmath>
 
 namespace space {
     namespace algebras {
         template <class Value>
-        struct E3 {
-            using Metric = space::Metric<3>;
-            using Algebra = space::Algebra<Metric, Value>;
-            using VectorBasis = brigand::at_c<typename Algebra::BasisSpan, 1>;
-            using RotorBasis = ops::ProductBasisGp<Metric, VectorBasis, VectorBasis>;
-
-            // Multivectors
-            using Scalar = typename Algebra::Scalar;
-            using Vector = typename Algebra::Vec;
-            using PseudoScalar = typename Algebra::PseudoScalar;
-            using Rotor = Multivector<Algebra, RotorBasis>;
-
-            // Aliases
-            using S = Scalar;
-            using Vec = Vector;
-            using Rot = Rotor;
-            using Pss = PseudoScalar;
+        struct E3 : public Euclidean<Value, 3> {
+            using Base = Euclidean<Value, 3>;
+            using Vec = typename Base::Vec;
 
             // E3 specific functions
-            static Vec CrossProduct(const Vec &v1, const Vec &v2) { return (v1 ^ v2).Dual(); }
-            static Rot AxisAngle(const Vec &axis, float theta)
+            static auto CrossProduct(const Vec &v1, const Vec &v2) { return (v1 ^ v2).Dual(); }
+            static auto AxisAngle(const Vec &axis, float theta)
             {
                 return std::cos(theta) + axis.Dual() * std::sin(theta);
             }

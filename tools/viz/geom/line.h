@@ -24,7 +24,6 @@ namespace space {
 
             // TODO: better conversion functions
             Line(const MV &mv)
-
             : start_(C::Flat::Point(mv).template Cast<EVec>().values)
             , dir_(C::Flat::Direction(mv).values)
             {

@@ -6,8 +6,8 @@
 namespace space {
     namespace algebras {
         template <class Value_>
-        struct C3 : public Conformal<Value_, 2> {
-            using Base = Conformal<Value_, 2>;
+        struct C3 : public Conformal<Value_, 3> {
+            using Base = Conformal<Value_, 3>;
             using E1 = typename Base::template BladeMultivector<0>;
             using E2 = typename Base::template BladeMultivector<1>;
             using E3 = typename Base::template BladeMultivector<2>;

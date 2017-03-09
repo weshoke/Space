@@ -257,8 +257,16 @@ class C1Viz {
 
         auto p1 = C2::Round::Point(C2::EVec(1.f, 0.f));
         auto p2 = C2::Round::Point(C2::EVec(1.f, 1.f));
+        auto p3 = C2::Round::Point(C2::EVec(-1.f, 0.f));
         auto L = p1 ^ p2 ^ C2::Inf(1.f);
         renderables_.emplace_back(viz::draw::Create(viz::draw::Line2d(L), viz::draw::Colors::red));
+
+        auto C = p1 ^ p2 ^ p3;
+        renderables_.emplace_back(
+            viz::draw::Create(viz::draw::Circle2d(C), viz::draw::Colors::red));
+        renderables_.emplace_back(viz::draw::Create(p1, viz::draw::Colors::black));
+        renderables_.emplace_back(viz::draw::Create(p2, viz::draw::Colors::black));
+        renderables_.emplace_back(viz::draw::Create(p3, viz::draw::Colors::black));
     }
 
     void Key(App* app, int32_t key, int32_t scancode, int32_t action, int32_t mods)

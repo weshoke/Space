@@ -38,6 +38,8 @@ namespace space {
                 Multivector<Algebra, brigand::list<brigand::at_c<VectorBasis, Index>>>;
 
             // Conformal Blades
+            using ori = brigand::at_c<VectorBasis, EuclideanDim>;
+            using inf = brigand::at_c<VectorBasis, EuclideanDim + 1>;
             using Ori = BladeMultivector<EuclideanDim>;
             using Inf = BladeMultivector<EuclideanDim + 1>;
 
