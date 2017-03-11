@@ -7,3 +7,6 @@
 [submodule "vendor/variant"]
 	path = vendor/variant
 	url = https://github.com/mpark/variant.git
+[submodule "vendor/filesystem"]
+	path = vendor/filesystem
+	url = https://github.com/wjakob/filesystem.git
