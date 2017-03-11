@@ -105,6 +105,12 @@ namespace space {
             return S{v} + mv;
         }
 
+        friend auto operator+(const Multivector& mv, ScalarValue v)
+        {
+            using S = typename Algebra::S;
+            return mv + S{v};
+        }
+
         template <class MultivectorB>
         auto operator-(const MultivectorB& b) const
         {
@@ -115,6 +121,12 @@ namespace space {
         {
             using S = typename Algebra::S;
             return S{v} - mv;
+        }
+
+        friend auto operator-(const Multivector& mv, ScalarValue v)
+        {
+            using S = typename Algebra::S;
+            return mv - S{v};
         }
 
         auto Dual() const

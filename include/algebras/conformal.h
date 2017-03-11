@@ -7,6 +7,7 @@
 #include "brigand/sequences/at.hpp"
 #include "conformal/flat.h"
 #include "conformal/round.h"
+#include "conformal/versor.h"
 #include "metric.h"
 #include "multivector.h"
 #include "ops/product.h"
@@ -62,6 +63,7 @@ namespace space {
             // Subspace Operators
             using Flat = conformal::Flat<Self>;
             using Round = conformal::Round<Self>;
+            using Versor = conformal::Versor<Self>;
 
             // Aliases
             using Point = Vec;

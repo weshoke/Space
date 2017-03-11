@@ -252,21 +252,44 @@ class C1Viz {
         camera = viz::draw::Camera(
             Vec3(0.f, 0.f, 6.f), Vec3(0.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), 35.f, aspect);
 
-        MakeGrid();
         // VisualizeC1();
+
+        // DualPlane = Point <= FreeVector
+        // Tangent = Point ^ DualPlane
 
         auto p1 = C2::Round::Point(C2::EVec(1.f, 0.f));
         auto p2 = C2::Round::Point(C2::EVec(1.f, 1.f));
         auto p3 = C2::Round::Point(C2::EVec(-1.f, 0.f));
         auto L = p1 ^ p2 ^ C2::Inf(1.f);
+        auto T = C2::Versor::Translator(C2::EVec(1.f, 0.f));
+        auto L2 = L.Spin(T);
+        auto R = C2::EVec(1.f, 0.f) * C2::EVec(1.f, 0.3f).Normalized();
+        auto L3 = L2.Spin((T * R * ~T));
+        //		std::cout << R << "\n";
+        //		std::cout << (T * R * ~T) << "\n";
         renderables_.emplace_back(viz::draw::Create(viz::draw::Line2d(L), viz::draw::Colors::red));
+        renderables_.emplace_back(viz::draw::Create(viz::draw::Line2d(L2), viz::draw::Colors::sky));
+        renderables_.emplace_back(
+            viz::draw::Create(viz::draw::Line2d(L3), viz::draw::Colors::orange));
+
+        auto tang = p1 ^ (p1 <= (C2::EVec(-0.1f, 0.f) ^ C2::Inf(1.f)));
+        auto B = C2::Versor::Boost(tang);
 
         auto C = p1 ^ p2 ^ p3;
+
         renderables_.emplace_back(
             viz::draw::Create(viz::draw::Circle2d(C), viz::draw::Colors::red));
+        auto C2 = C;
+        for (auto i = 0u; i < 30u; ++i) {
+            C2 = C2.Spin(B);
+            renderables_.emplace_back(
+                viz::draw::Create(viz::draw::Circle2d(C2), viz::draw::Colors::sky));
+        }
         renderables_.emplace_back(viz::draw::Create(p1, viz::draw::Colors::black));
         renderables_.emplace_back(viz::draw::Create(p2, viz::draw::Colors::black));
         renderables_.emplace_back(viz::draw::Create(p3, viz::draw::Colors::black));
+
+        MakeGrid();
     }
 
     void Key(App* app, int32_t key, int32_t scancode, int32_t action, int32_t mods)
