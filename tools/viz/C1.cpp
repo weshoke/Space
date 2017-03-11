@@ -9,96 +9,12 @@
 #include "draw/renderable.h"
 #include "draw/renderable_factory.h"
 #include "draw/trackball.h"
+#include "filesystem/path.h"
 #include "geom/primitives.h"
 #include "mpark/variant.hpp"
 #include <sstream>
 
-static const char* vertex_shader_text =
-    "#version 410\n"
-    "uniform mat4 MVP;\n"
-    "in vec3 pos;\n"
-    "void main()\n"
-    "{\n"
-    "    gl_Position = MVP * vec4(pos, 1.0);\n"
-    "}\n";
-
-static const char* fragment_shader_text =
-    "#version 410\n"
-    "uniform vec4 color;\n"
-    "out vec4 pixel;\n"
-    "void main()\n"
-    "{\n"
-    "    pixel = color;\n"
-    "}\n";
-
-static const char* wireframe_vertex =
-    "#version 150\n"
-    "\n"
-    "uniform mat4 MVP;\n"
-    "in vec3 pos;\n"
-    "\n"
-    "void main() {\n"
-    "    gl_Position = MVP * vec4(pos, 1.0);\n"
-    "}\n";
-
-static const char* wireframe_geometry =
-    "#version 150\n"
-    "\n"
-    "layout (triangles) in;\n"
-    "layout (triangle_strip, max_vertices=3) out;\n"
-    "\n"
-    "uniform vec2 screen_size;\n"
-    "\n"
-    "out vec4 color;\n"
-    "noperspective out vec3 pixDistance;\n"
-    "\n"
-    "void main() {\n"
-    "    // taken from 'Single-Pass Wireframe Rendering'\n"
-    "    vec2 p0 = screen_size * gl_in[0].gl_Position.xy / gl_in[0].gl_Position.w;\n"
-    "    vec2 p1 = screen_size * gl_in[1].gl_Position.xy / gl_in[1].gl_Position.w;\n"
-    "    vec2 p2 = screen_size * gl_in[2].gl_Position.xy / gl_in[2].gl_Position.w;\n"
-    "\n"
-    "    vec2 v0 = p2 - p1;\n"
-    "    vec2 v1 = p2 - p0;\n"
-    "    vec2 v2 = p1 - p0;\n"
-    "    float fArea = abs( v1.x * v2.y - v1.y * v2.x );\n"
-    "\n"
-    "    pixDistance = vec3( fArea / length( v0 ), 0, 0 );\n"
-    "    gl_Position = gl_in[0].gl_Position;\n"
-    "    EmitVertex();\n"
-    "\n"
-    "    pixDistance = vec3( 0, fArea / length( v1 ), 0 );\n"
-    "    gl_Position = gl_in[1].gl_Position;\n"
-    "    EmitVertex();\n"
-    "\n"
-    "    pixDistance = vec3( 0, 0, fArea / length( v2 ) );\n"
-    "    gl_Position = gl_in[2].gl_Position;\n"
-    "    EmitVertex();\n"
-    "\n"
-    "    EndPrimitive();\n"
-    "}\n";
-
-static const char* wireframe_fragment =
-    "#version 150\n"
-    "\n"
-    "uniform vec4 color;\n"
-    "\n"
-    "noperspective in vec3 pixDistance;\n"
-    "out vec4 fragColor;\n"
-    "\n"
-    "void main() {\n"
-    "    // Determine frag distance to closest edge\n"
-    "    float nearest = min(min(pixDistance[0], pixDistance[1]), pixDistance[2]);\n"
-    "    float edge_intensity = exp2(-1.0 * nearest * nearest);\n"
-    "\n"
-    "    // Blend between edge color and face color\n"
-    "    vec3 face_color = color.rgb;\n"
-    "    //vec3 edge_color = vec3(0.2);\n"
-    "    vec3 edge_color = face_color * 0.8;\n"
-    "\n"
-    "    fragColor.rgb = mix(face_color, edge_color, edge_intensity);\n"
-    "    fragColor.a = 1.;\n"
-    "}\n";
+auto shader_dir = filesystem::path("../../tools/viz/shaders").make_absolute();
 
 struct MouseEventState {
    public:
@@ -238,14 +154,18 @@ class C1Viz {
 
     void Init(App* app)
     {
-        using Vec2 = viz::draw::Vec2;
+        //        using Vec2 = viz::draw::Vec2;
         using Vec3 = viz::draw::Vec3;
+
+        app->AddSearchPath(shader_dir);
 
         std::cout << glGetString(GL_VERSION) << "\n";
         viz::draw::Context::Get().RegisterProgram(
-            "color", vertex_shader_text, fragment_shader_text);
-        viz::draw::Context::Get().RegisterProgram(
-            "wireframe", wireframe_vertex, wireframe_geometry, wireframe_fragment);
+            "color", app->LoadFile("color.vs"), app->LoadFile("color.fs"));
+        viz::draw::Context::Get().RegisterProgram("wireframe",
+                                                  app->LoadFile("wireframe.vs"),
+                                                  app->LoadFile("wireframe.gs"),
+                                                  app->LoadFile("wireframe.fs"));
 
         auto window_size = app->WindowSize();
         auto aspect = float(window_size[0]) / float(window_size[1]);

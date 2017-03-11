@@ -5,8 +5,11 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 // clang-format on
+#include "filesystem/path.h"
 #include <array>
 #include <iostream>
+#include <fstream>
+#include <vector>
 
 namespace app {
     template <class Kernel>
@@ -102,6 +105,36 @@ namespace app {
             return {width, height};
         }
 
+        void AddSearchPath(filesystem::path path) { search_paths_.push_back(path); }
+        filesystem::path FindFile(filesystem::path file_name)
+        {
+            if (file_name.is_file()) {
+                return file_name;
+            }
+
+            for (const auto& path : search_paths_) {
+                auto full_path = path / file_name;
+                if (full_path.is_file()) {
+                    return full_path;
+                }
+            }
+            return filesystem::path();
+        }
+
+        std::string LoadFile(filesystem::path file_name)
+        {
+            auto full_path = FindFile(file_name);
+            std::ifstream ifs(full_path.str());
+            ifs.seekg(0, std::ios::end);
+            auto length = ifs.tellg();
+            ifs.seekg(std::ios::beg);
+
+            auto text = std::string();
+            text.reserve(length);
+            text.assign(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>());
+            return text;
+        }
+
        private:
         // Get the raw GLFW window pointer
         GLFWwindow* window() { return window_.get(); }
@@ -109,6 +142,7 @@ namespace app {
         // Destroy window with GLFW API on free
         std::unique_ptr<GLFWwindow, decltype(&glfwDestroyWindow)> window_;
         Kernel kernel_;
+        std::vector<filesystem::path> search_paths_;
     };
 }
 

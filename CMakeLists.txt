@@ -45,6 +45,7 @@ target_include_directories(C1 PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/brigand
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/include
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/variant/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/filesystem
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/viz
 )
 
