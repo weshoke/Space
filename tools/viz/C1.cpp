@@ -156,7 +156,7 @@ class C1Viz {
 
     void Init()
     {
-        //        using Vec2 = viz::draw::Vec2;
+        // using Vec2 = viz::draw::Vec2;
         using Vec3 = viz::draw::Vec3;
 
         app().AddSearchPath(shader_dir);

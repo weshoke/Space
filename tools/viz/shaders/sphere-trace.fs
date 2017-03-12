@@ -1,13 +1,8 @@
 #version 410
 
 uniform mat4 view_matrix;
-uniform float fov_y_scale;
-uniform float aspect;
-uniform float z_near;
-uniform float z_far;
-// uniform vec4 color;
 
-in vec2 coord;
+in vec3 world_pos;
 out vec4 pixel;
 
 struct Ray{
@@ -26,15 +21,10 @@ float RayParameter(Ray self, vec3 p)
     return dot(p - self.start, self.dir);
 }
 
-vec3 CoordToModelDirection(vec2 c, float fov_y_scale, float aspect) {
-    return vec3(c.x * fov_y_scale * aspect, c.y * fov_y_scale, -1.0);
-}
-
-Ray CameraRay(mat4 model_view_matrix, vec2 coord, float fov_y_scale, float aspect) {
-    mat3 model_view_matrix3 = mat3(model_view_matrix);
-    vec3 eye = -(model_view_matrix[3].xyz) * model_view_matrix3;
-    vec3 model_dir = CoordToModelDirection(coord, fov_y_scale, aspect);
-    vec3 view_dir = model_dir * model_view_matrix3;
+Ray CameraRay(mat4 view_matrix, vec3 model_pos) {
+    mat3 view_matrix3 = mat3(view_matrix);
+    vec3 eye = -(view_matrix[3].xyz) * view_matrix3;
+    vec3 view_dir = world_pos - eye;
     return Ray(eye, normalize(view_dir));
 }
 
@@ -54,11 +44,11 @@ float IntersectSphere(Ray ray, vec3 center, float radius)
     float q;
     if (b < 0.0)
     {
-        q = (-b - sqrt(disc))/2.0;
+        q = (-b - sqrt(disc)) / 2.0;
     }
     else
     {
-        q = (-b + sqrt(disc))/2.0;
+        q = (-b + sqrt(disc)) / 2.0;
     }
 
     float t0 = q;
@@ -93,12 +83,21 @@ float IntersectSphere(Ray ray, vec3 center, float radius)
 void main()
 {
     vec3 center = vec3(0., 0., 0.);
-    vec3 world_center = (view_matrix * vec4(center, 1.)).xyz;
-    Ray ray = CameraRay(view_matrix, coord, fov_y_scale, aspect);
-    float t = IntersectSphere(ray, world_center, 1.);
-    pixel = vec4(ray.start, 1.0);
-    pixel.rgb = vec3(t);
-    // pixel.rgb = world_center;
-    // pixel = vec4(coord, 0.0, 1.0);
-    // pixel.b = aspect;
+    Ray ray = CameraRay(view_matrix, world_pos);
+    float t = IntersectSphere(ray, center, 1.);
+    if(t < 0.)
+    {
+        discard;
+    }
+    vec3 p = RayPoint(ray, t);
+    pixel.rgb = vec3(t * 0.1);
+    // float theta = (atan(p.y / p.x) + 3.14159 * 0.5);// / 3.14159;
+    float theta = (atan(p.y, p.x) + 3.14159) / (2. * 3.14159);
+    float phi = acos(p.z) / 3.14159;
+
+    pixel.rgb = vec3(0.);
+    float freq = 10.;
+    float x = abs(mod((phi + theta) / 2., 1. / freq) - 0.5 / freq) * freq * 2.;
+    x = smoothstep(0.35, 0.45, x);
+    pixel.rgb = vec3(x);
 }
