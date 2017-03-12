@@ -1,6 +1,7 @@
 #include "algebras/C1.h"
 #include "algebras/C2.h"
 #include "app/app.h"
+#include "app/trackball_state.h"
 #include "dbg/type.h"
 #include "draw/camera.h"
 #include "draw/color.h"
@@ -12,49 +13,9 @@
 #include "draw/trackball.h"
 #include "filesystem/path.h"
 #include "geom/primitives.h"
-#include "mpark/variant.hpp"
 #include <sstream>
 
 auto shader_dir = filesystem::path("../../tools/viz/shaders").make_absolute();
-
-struct MouseEventState {
-   public:
-    struct MousePressed {
-    };
-    struct MouseDown {
-    };
-    struct MouseUp {
-    };
-    struct MouseDrag {
-    };
-    struct MouseDragging {
-    };
-    using State = mpark::variant<MousePressed, MouseDown, MouseUp, MouseDrag, MouseDragging>;
-
-    MouseEventState()
-    : state_(MouseUp())
-    {
-    }
-
-    void ButtonPressed() { state_ = MousePressed(); };
-    void Cursor()
-    {
-        if (ButtonWasPressed()) {
-            state_ = MouseDown();
-        }
-        else if (DragWasStarted()) {
-            state_ = MouseDragging();
-        }
-    }
-    void ButtonReleased() { state_ = MouseUp(); };
-    void DragStarted() { state_ = MouseDrag(); }
-    bool ButtonWasPressed() { return mpark::holds_alternative<MousePressed>(state_); }
-    bool IsButtonDown() { return state_.index() <= 1; }
-    bool DragWasStarted() { return mpark::holds_alternative<MouseDrag>(state_); }
-    bool Dragging() { return state_.index() >= 3; }
-   private:
-    State state_;
-};
 
 using C1 = space::algebras::C1<float>;
 using C2 = space::algebras::C2<float>;
@@ -218,49 +179,19 @@ class C1Viz {
         // std::cout << "KEY\n";
     }
 
-    // GLFW_MOD_SHIFT
-    // GLFW_MOD_CONTROL
-    // GLFW_MOD_ALT
-    // GLFW_MOD_SUPER
-
     void Mouse(int32_t button, int32_t action, int32_t mods)
     {
-        if (mods == GLFW_MOD_ALT) {
-            action == 1 ? mouse.DragStarted() : mouse.ButtonReleased();
-        }
-        else if (mods == 0) {
-            action == 1 ? mouse.ButtonPressed() : mouse.ButtonReleased();
-        }
-        else if (action == 0) {
-            mouse.ButtonReleased();
-        }
+        trackball_state.Mouse(button, action, mods);
     }
 
     void Cursor(double xpos, double ypos)
     {
-        const auto mouse_pos = [&]() {
-            auto window_size = app().WindowSize();
-            return viz::draw::Vec2((float(xpos) / float(window_size[0])) * 2.f - 1.f,
-                                   (float(ypos) / float(window_size[0])) * 2.f - 1.f);
-        };
+        using Vec2 = viz::draw::Vec2;
+        auto window_size = app().WindowSize();
+        auto mouse_pos = Vec2((float(xpos) / float(window_size[0])) * 2.f - 1.f,
+                              (float(ypos) / float(window_size[0])) * 2.f - 1.f);
 
-        if (mouse.IsButtonDown()) {
-            if (mouse.ButtonWasPressed()) {
-                trackball.Begin(camera, mouse_pos());
-            }
-            else {
-                camera = trackball.Next(mouse_pos());
-            }
-        }
-        else if (mouse.Dragging()) {
-            if (mouse.DragWasStarted()) {
-                trackball.Begin(camera, mouse_pos());
-            }
-            else {
-                camera = trackball.Pan(mouse_pos());
-            }
-        }
-        mouse.Cursor();
+        trackball_state.Cursor(camera, trackball, mouse_pos);
     }
 
     void Scroll(int xoffset, int yoffset) { trackball.Move(camera, float(yoffset) * 0.2f); }
@@ -285,7 +216,7 @@ class C1Viz {
     std::vector<viz::draw::Renderable::Ref> renderables_;
     viz::draw::Camera camera;
     viz::draw::Trackball trackball;
-    MouseEventState mouse;
+    viz::app::TrackballState trackball_state;
 };
 
 int main(void)
