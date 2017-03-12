@@ -69,7 +69,7 @@ using C2 = space::algebras::C2<float>;
 // }
 class C1Viz {
    public:
-    C1Viz(app::App& app)
+    C1Viz(viz::app::App& app)
     : app_(app)
     , camera(viz::draw::Camera::Default())
     , trackball(viz::draw::Trackball(1.3f, 1.f, 10.f))
@@ -288,8 +288,8 @@ class C1Viz {
         }
     }
 
-    app::App& app() { return app_; }
-    app::App& app_;
+    viz::app::App& app() { return app_; }
+    viz::app::App& app_;
     std::vector<viz::draw::Renderable::Ref> renderables_;
     viz::draw::Camera camera;
     viz::draw::Trackball trackball;
@@ -298,7 +298,7 @@ class C1Viz {
 
 int main(void)
 {
-    return app::App::Create("C1", 640, 480, [](app::App& app) {
+    return viz::app::App::Create("C1", 640, 480, [](viz::app::App& app) {
         auto c1 = C1Viz(app);
         return app.Run(c1);
     });
