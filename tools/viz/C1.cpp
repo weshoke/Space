@@ -59,14 +59,6 @@ struct MouseEventState {
 using C1 = space::algebras::C1<float>;
 using C2 = space::algebras::C2<float>;
 
-// TODO: should be nested contexts
-// TODO: use lambda and pass App into it
-// auto app = App {
-//      auto c1 = C1Viz {
-//
-//          return
-//      }
-// }
 class C1Viz {
    public:
     C1Viz(viz::app::App& app)
