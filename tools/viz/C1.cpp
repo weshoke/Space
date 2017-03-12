@@ -164,6 +164,8 @@ class C1Viz {
         std::cout << glGetString(GL_VERSION) << "\n";
         viz::draw::Context::Get().RegisterProgram(
             "color", app->LoadFile("color.vs"), app->LoadFile("color.fs"));
+        viz::draw::Context::Get().RegisterProgram(
+            "sphere-trace", app->LoadFile("sphere-trace.vs"), app->LoadFile("sphere-trace.fs"));
         viz::draw::Context::Get().RegisterProgram("wireframe",
                                                   app->LoadFile("wireframe.vs"),
                                                   app->LoadFile("wireframe.gs"),
@@ -175,7 +177,7 @@ class C1Viz {
             Vec3(0.f, 0.f, 6.f), Vec3(0.f, 0.f, -3.f), Vec3(0.f, 1.f, 0.f), 35.f, aspect);
 
         renderables_.emplace_back(viz::draw::Create(
-            viz::draw::CreateIcosohedron(), viz::draw::Colors::red, "wireframe", GL_TRIANGLES));
+            viz::draw::CreateIcosohedron(), viz::draw::Colors::red, "sphere-trace", GL_TRIANGLES));
 
         // VisualizeC1();
 

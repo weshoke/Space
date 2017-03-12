@@ -28,6 +28,9 @@ namespace viz {
                 auto m = camera.ModelViewMatrix();
                 ModelViewMatrix(m);
                 ProjectionMatrix(camera.ProjectionMatrix());
+                lens_angle_ = camera.lens_angle();
+                z_near_ = camera.near();
+                z_far_ = camera.far();
             }
             void SetProgramUniforms(gl::Program &program)
             {
@@ -48,6 +51,38 @@ namespace viz {
                     auto uniform = program.GetUniform("screen_size");
                     if (uniform.IsValid()) {
                         glUniform2fv(uniform, 1, screen_size_.values.data());
+                    }
+                }
+                {
+                    auto uniform = program.GetUniform("view_matrix");
+                    if (uniform.IsValid()) {
+                        glUniformMatrix4fv(uniform, 1, GL_FALSE, model_view_.values().data());
+                    }
+                }
+                {
+                    auto uniform = program.GetUniform("aspect");
+                    if (uniform.IsValid()) {
+                        auto aspect = screen_size_[0] / screen_size_[1];
+                        glUniform1fv(uniform, 1, &aspect);
+                    }
+                }
+                {
+                    auto uniform = program.GetUniform("fov_y_scale");
+                    if (uniform.IsValid()) {
+                        auto fov_y_scale = float(std::tan(lens_angle_ * M_PI / 180.f * 0.5f));
+                        glUniform1fv(uniform, 1, &fov_y_scale);
+                    }
+                }
+                {
+                    auto uniform = program.GetUniform("z_near");
+                    if (uniform.IsValid()) {
+                        glUniform1fv(uniform, 1, &z_near_);
+                    }
+                }
+                {
+                    auto uniform = program.GetUniform("z_far");
+                    if (uniform.IsValid()) {
+                        glUniform1fv(uniform, 1, &z_far_);
                     }
                 }
             }
@@ -86,6 +121,9 @@ namespace viz {
             std::unordered_map<std::string, gl::Program::Ref> programs_;
 
             Vec2 screen_size_;
+            float lens_angle_;
+            float z_near_;
+            float z_far_;
             Matrix4 model_view_;
             Matrix4 projection_;
             uint32_t color_;

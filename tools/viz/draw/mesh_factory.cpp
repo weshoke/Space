@@ -8,22 +8,23 @@ namespace viz {
         Mesh CreateIcosohedron()
         {
             auto t = (1.f + std::sqrt(5.f)) * 0.5f;
-            auto vertex = std::vector<Vec3>{Vec3(-1.f, t, 0.f),
-                                            Vec3(1.f, t, 0.f),
-                                            Vec3(-1.f, -t, 0.f),
-                                            Vec3(1.f, -t, 0.f),
-
-                                            Vec3(0.f, -1.f, t),
-                                            Vec3(0.f, 1.f, t),
-                                            Vec3(0.f, -1.f, -t),
-                                            Vec3(0.f, 1.f, -t),
-
-                                            Vec3(t, 0.f, -1.f),
-                                            Vec3(t, 0.f, 1.f),
-                                            Vec3(-t, 0.f, -1.f),
-                                            Vec3(-t, 0.f, 1.f)};
-
             // clang-format off
+            auto vertex = std::vector<Vec3>{
+				Vec3(-1.f, t, 0.f),
+				Vec3(1.f, t, 0.f),
+				Vec3(-1.f, -t, 0.f),
+				Vec3(1.f, -t, 0.f),
+
+				Vec3(0.f, -1.f, t),
+				Vec3(0.f, 1.f, t),
+				Vec3(0.f, -1.f, -t),
+				Vec3(0.f, 1.f, -t),
+
+				Vec3(t, 0.f, -1.f),
+				Vec3(t, 0.f, 1.f),
+				Vec3(-t, 0.f, -1.f),
+				Vec3(-t, 0.f, 1.f)};
+
             auto index = std::vector<uint32_t>{
                 // 5 faces around point 0
                 0, 11, 5,
