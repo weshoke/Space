@@ -67,6 +67,12 @@ namespace viz {
             {
             }
 
+            Pipeline(gl::Program::Ref program, Mesh&& mesh)
+            : program_(program)
+            , mesh_(std::move(mesh))
+            {
+            }
+
             Pipeline(const Pipeline& src) = delete;
 
             Pipeline(Pipeline&& src)
@@ -92,6 +98,11 @@ namespace viz {
                 pipeline.Bind().Mesh(
                     [&vertex, &index](auto&& binding) { binding.Vertex(vertex).Index(index); });
                 return pipeline;
+            }
+
+            static Pipeline Create(const std::string& program, Mesh&& mesh)
+            {
+                return Pipeline(Context::Get().Program(program), std::move(mesh));
             }
 
             Pipeline& Program(const std::string& vertex, const std::string& fragment)

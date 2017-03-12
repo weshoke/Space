@@ -114,5 +114,14 @@ namespace viz {
             return std::make_shared<ExplicitRenderable>(
                 Pipeline::Create("wireframe", points, index), GL_TRIANGLE_STRIP, color);
         }
+
+        Renderable::Ref Create(Mesh &&mesh,
+                               uint32_t color,
+                               const std::string &program,
+                               GLenum primitve)
+        {
+            return std::make_shared<ExplicitRenderable>(
+                Pipeline::Create(program, std::move(mesh)), primitve, color);
+        }
     }
 }

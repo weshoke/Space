@@ -34,6 +34,7 @@ add_executable(C1
     tools/viz/draw/pipeline.h
     tools/viz/draw/primitives.cpp
     tools/viz/draw/renderable.cpp
+    tools/viz/draw/mesh_factory.cpp
     tools/viz/draw/renderable_factory.cpp
     tools/viz/draw/renderable_factory.h
     tools/viz/gl/primitives.cpp

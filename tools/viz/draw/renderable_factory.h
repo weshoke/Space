@@ -4,6 +4,7 @@
 #include "draw.h"
 #include "geom/line_segment.h"
 #include "geom/sphere.h"
+#include "mesh.h"
 #include "renderable.h"
 #include <vector>
 
@@ -47,6 +48,11 @@ namespace viz {
         Renderable::Ref Create(const space::geom::Sphere<Vec3> &sphere,
                                uint32_t color,
                                float tol = 1e-3f);
+
+        Renderable::Ref Create(Mesh &&mesh,
+                               uint32_t color,
+                               const std::string &program,
+                               GLenum primitve);
     }
 }
 

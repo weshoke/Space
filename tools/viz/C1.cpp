@@ -5,6 +5,7 @@
 #include "draw/camera.h"
 #include "draw/color.h"
 #include "draw/draw.h"
+#include "draw/mesh_factory.h"
 #include "draw/pipeline.h"
 #include "draw/renderable.h"
 #include "draw/renderable_factory.h"
@@ -59,6 +60,7 @@ using C1 = space::algebras::C1<float>;
 using C2 = space::algebras::C2<float>;
 
 // TODO: should be nested contexts
+// TODO: use lambda and pass App into it
 // auto app = App {
 //      auto c1 = C1Viz {
 //
@@ -170,44 +172,49 @@ class C1Viz {
         auto window_size = app->WindowSize();
         auto aspect = float(window_size[0]) / float(window_size[1]);
         camera = viz::draw::Camera(
-            Vec3(0.f, 0.f, 6.f), Vec3(0.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f), 35.f, aspect);
+            Vec3(0.f, 0.f, 6.f), Vec3(0.f, 0.f, -3.f), Vec3(0.f, 1.f, 0.f), 35.f, aspect);
+
+        renderables_.emplace_back(viz::draw::Create(
+            viz::draw::CreateIcosohedron(), viz::draw::Colors::red, "wireframe", GL_TRIANGLES));
 
         // VisualizeC1();
 
         // DualPlane = Point <= FreeVector
         // Tangent = Point ^ DualPlane
 
-        auto p1 = C2::Round::Point(C2::EVec(1.f, 0.f));
-        auto p2 = C2::Round::Point(C2::EVec(1.f, 1.f));
-        auto p3 = C2::Round::Point(C2::EVec(-1.f, 0.f));
-        auto L = p1 ^ p2 ^ C2::Inf(1.f);
-        auto T = C2::Versor::Translator(C2::EVec(1.f, 0.f));
-        auto L2 = L.Spin(T);
-        auto R = C2::EVec(1.f, 0.f) * C2::EVec(1.f, 0.3f).Normalized();
-        auto L3 = L2.Spin((T * R * ~T));
-        //		std::cout << R << "\n";
-        //		std::cout << (T * R * ~T) << "\n";
-        renderables_.emplace_back(viz::draw::Create(viz::draw::Line2d(L), viz::draw::Colors::red));
-        renderables_.emplace_back(viz::draw::Create(viz::draw::Line2d(L2), viz::draw::Colors::sky));
-        renderables_.emplace_back(
-            viz::draw::Create(viz::draw::Line2d(L3), viz::draw::Colors::orange));
-
-        auto tang = p1 ^ (p1 <= (C2::EVec(-0.1f, 0.f) ^ C2::Inf(1.f)));
-        auto B = C2::Versor::Boost(tang);
-
-        auto C = p1 ^ p2 ^ p3;
-
-        renderables_.emplace_back(
-            viz::draw::Create(viz::draw::Circle2d(C), viz::draw::Colors::red));
-        auto C2 = C;
-        for (auto i = 0u; i < 30u; ++i) {
-            C2 = C2.Spin(B);
-            renderables_.emplace_back(
-                viz::draw::Create(viz::draw::Circle2d(C2), viz::draw::Colors::sky));
-        }
-        renderables_.emplace_back(viz::draw::Create(p1, viz::draw::Colors::black));
-        renderables_.emplace_back(viz::draw::Create(p2, viz::draw::Colors::black));
-        renderables_.emplace_back(viz::draw::Create(p3, viz::draw::Colors::black));
+        // auto p1 = C2::Round::Point(C2::EVec(1.f, 0.f));
+        // auto p2 = C2::Round::Point(C2::EVec(1.f, 1.f));
+        // auto p3 = C2::Round::Point(C2::EVec(-1.f, 0.f));
+        // auto L = p1 ^ p2 ^ C2::Inf(1.f);
+        // auto T = C2::Versor::Translator(C2::EVec(1.f, 0.f));
+        // auto L2 = L.Spin(T);
+        // auto R = C2::EVec(1.f, 0.f) * C2::EVec(1.f, 0.3f).Normalized();
+        // auto L3 = L2.Spin((T * R * ~T));
+        // //		std::cout << R << "\n";
+        // //		std::cout << (T * R * ~T) << "\n";
+        // renderables_.emplace_back(viz::draw::Create(viz::draw::Line2d(L),
+        // viz::draw::Colors::red));
+        // renderables_.emplace_back(viz::draw::Create(viz::draw::Line2d(L2),
+        // viz::draw::Colors::sky));
+        // renderables_.emplace_back(
+        //     viz::draw::Create(viz::draw::Line2d(L3), viz::draw::Colors::orange));
+        //
+        // auto tang = p1 ^ (p1 <= (C2::EVec(-0.1f, 0.f) ^ C2::Inf(1.f)));
+        // auto B = C2::Versor::Boost(tang);
+        //
+        // auto C = p1 ^ p2 ^ p3;
+        //
+        // renderables_.emplace_back(
+        //     viz::draw::Create(viz::draw::Circle2d(C), viz::draw::Colors::red));
+        // auto C2 = C;
+        // for (auto i = 0u; i < 30u; ++i) {
+        //     C2 = C2.Spin(B);
+        //     renderables_.emplace_back(
+        //         viz::draw::Create(viz::draw::Circle2d(C2), viz::draw::Colors::sky));
+        // }
+        // renderables_.emplace_back(viz::draw::Create(p1, viz::draw::Colors::black));
+        // renderables_.emplace_back(viz::draw::Create(p2, viz::draw::Colors::black));
+        // renderables_.emplace_back(viz::draw::Create(p3, viz::draw::Colors::black));
 
         MakeGrid();
     }
