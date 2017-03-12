@@ -69,12 +69,12 @@ using C2 = space::algebras::C2<float>;
 // }
 class C1Viz {
    public:
-    using App = app::App<C1Viz>;
-
-    C1Viz()
-    : camera(viz::draw::Camera::Default())
+    C1Viz(app::App& app)
+    : app_(app)
+    , camera(viz::draw::Camera::Default())
     , trackball(viz::draw::Trackball(1.3f, 1.f, 10.f))
     {
+        Init();
     }
 
     void MakeGrid()
@@ -154,24 +154,24 @@ class C1Viz {
             viz::draw::Create(Vec3(p2[0], 0.f, 0.f), viz::draw::Colors::grass));
     }
 
-    void Init(App* app)
+    void Init()
     {
         //        using Vec2 = viz::draw::Vec2;
         using Vec3 = viz::draw::Vec3;
 
-        app->AddSearchPath(shader_dir);
+        app().AddSearchPath(shader_dir);
 
         std::cout << glGetString(GL_VERSION) << "\n";
         viz::draw::Context::Get().RegisterProgram(
-            "color", app->LoadFile("color.vs"), app->LoadFile("color.fs"));
+            "color", app().LoadFile("color.vs"), app().LoadFile("color.fs"));
         viz::draw::Context::Get().RegisterProgram(
-            "sphere-trace", app->LoadFile("sphere-trace.vs"), app->LoadFile("sphere-trace.fs"));
+            "sphere-trace", app().LoadFile("sphere-trace.vs"), app().LoadFile("sphere-trace.fs"));
         viz::draw::Context::Get().RegisterProgram("wireframe",
-                                                  app->LoadFile("wireframe.vs"),
-                                                  app->LoadFile("wireframe.gs"),
-                                                  app->LoadFile("wireframe.fs"));
+                                                  app().LoadFile("wireframe.vs"),
+                                                  app().LoadFile("wireframe.gs"),
+                                                  app().LoadFile("wireframe.fs"));
 
-        auto window_size = app->WindowSize();
+        auto window_size = app().WindowSize();
         auto aspect = float(window_size[0]) / float(window_size[1]);
         camera = viz::draw::Camera(
             Vec3(0.f, 0.f, 6.f), Vec3(0.f, 0.f, -3.f), Vec3(0.f, 1.f, 0.f), 35.f, aspect);
@@ -221,7 +221,7 @@ class C1Viz {
         MakeGrid();
     }
 
-    void Key(App* app, int32_t key, int32_t scancode, int32_t action, int32_t mods)
+    void Key(int32_t key, int32_t scancode, int32_t action, int32_t mods)
     {
         // std::cout << "KEY\n";
     }
@@ -231,7 +231,7 @@ class C1Viz {
     // GLFW_MOD_ALT
     // GLFW_MOD_SUPER
 
-    void Mouse(App* app, int32_t button, int32_t action, int32_t mods)
+    void Mouse(int32_t button, int32_t action, int32_t mods)
     {
         if (mods == GLFW_MOD_ALT) {
             action == 1 ? mouse.DragStarted() : mouse.ButtonReleased();
@@ -244,10 +244,10 @@ class C1Viz {
         }
     }
 
-    void Cursor(App* app, double xpos, double ypos)
+    void Cursor(double xpos, double ypos)
     {
         const auto mouse_pos = [&]() {
-            auto window_size = app->WindowSize();
+            auto window_size = app().WindowSize();
             return viz::draw::Vec2((float(xpos) / float(window_size[0])) * 2.f - 1.f,
                                    (float(ypos) / float(window_size[0])) * 2.f - 1.f);
         };
@@ -271,14 +271,10 @@ class C1Viz {
         mouse.Cursor();
     }
 
-    void Scroll(App* app, int xoffset, int yoffset)
+    void Scroll(int xoffset, int yoffset) { trackball.Move(camera, float(yoffset) * 0.2f); }
+    void Draw()
     {
-        trackball.Move(camera, float(yoffset) * 0.2f);
-    }
-
-    void Draw(App* app)
-    {
-        auto window_size = app->WindowSize();
+        auto window_size = app().WindowSize();
         glViewport(0, 0, window_size[0], window_size[1]);
         glClearColor(0.93f, 0.93f, 0.93f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -292,10 +288,18 @@ class C1Viz {
         }
     }
 
+    app::App& app() { return app_; }
+    app::App& app_;
     std::vector<viz::draw::Renderable::Ref> renderables_;
     viz::draw::Camera camera;
     viz::draw::Trackball trackball;
     MouseEventState mouse;
 };
 
-int main(void) { return C1Viz::App::Create(C1Viz(), "C1", 640, 480)->Run(); }
+int main(void)
+{
+    return app::App::Create("C1", 640, 480, [](app::App& app) {
+        auto c1 = C1Viz(app);
+        return app.Run(c1);
+    });
+}
