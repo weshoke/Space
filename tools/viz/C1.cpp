@@ -198,10 +198,7 @@ class C1Viz {
     void Draw()
     {
         auto window_size = app().WindowSize();
-        glViewport(0, 0, window_size[0], window_size[1]);
-        glClearColor(0.93f, 0.93f, 0.93f, 1.f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
+        viz::draw::ClearWindowWithDepth(window_size, viz::draw::Colors::chromium);
 
         using Vec2 = viz::draw::Vec2;
         viz::draw::Context::Get().ApplyCamera(camera);

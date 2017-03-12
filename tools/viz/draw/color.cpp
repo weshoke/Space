@@ -23,5 +23,6 @@ namespace viz {
         const uint32_t Colors::cadet_blue = Color(0x5f9ea0u);
         const uint32_t Colors::hot_pink = Color(0xff69b4u);
         const uint32_t Colors::white = Color(0xffffffu);
+        const uint32_t Colors::chromium = Color(0xedededu);
     }
 }

@@ -46,6 +46,7 @@ namespace viz {
             static const uint32_t cadet_blue;
             static const uint32_t hot_pink;
             static const uint32_t white;
+            static const uint32_t chromium;
         };
     }
 }
