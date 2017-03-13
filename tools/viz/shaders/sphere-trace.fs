@@ -88,6 +88,11 @@ float Saw(float t, float N)
     return abs(mod(t, 1. / N) - 0.5 / N) * N * 2.;
 }
 
+bool Xor(bool a, bool b)
+{
+    return bool(int(a) + int(b) & 1);
+}
+
 void main()
 {
     Ray ray = CameraRay(view_matrix, world_pos);
@@ -98,10 +103,14 @@ void main()
         discard;
     }
     vec3 p = RayPoint(ray, t) - center;
-    float theta = (atan(p.y, p.x) + PI) / (2. * PI);
-    float phi = acos(p.z) / PI;
+    float theta = float(Xor(Xor(p.x > 0., p.y > 0.), p.z > 0.));
+    pixel.rgb = vec3(theta);
+    pixel.a = 1.;
 
-    pixel.rgb = vec3(0.);
-    float x = smoothstep(0.35, 0.45, Saw((phi + theta) / 2., 10.));
-    pixel.rgb = vec3(x);
+    // float theta = (atan(p.y, p.x) + PI) / (2. * PI);
+    // float phi = acos(p.z) / PI;
+    //
+    // pixel.rgb = vec3(0.);
+    // float x = smoothstep(0.35, 0.45, Saw((phi + theta) / 2., 10.));
+    // pixel.rgb = vec3(x);
 }
