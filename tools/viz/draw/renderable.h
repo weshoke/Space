@@ -2,6 +2,7 @@
 #define SPACE_VIZ_DRAW_RENDERABLE_H
 
 #include "draw.h"
+#include "geom/matrix4.h"
 #include "pipeline.h"
 #include <memory>
 
@@ -16,7 +17,10 @@ namespace viz {
 
         class ExplicitRenderable final : public Renderable {
            public:
-            ExplicitRenderable(Pipeline &&pipeline, GLenum primitive, uint32_t color);
+            ExplicitRenderable(Pipeline &&pipeline,
+                               GLenum primitive,
+                               uint32_t color,
+                               Matrix4 model = Matrix4::Identity());
             virtual ~ExplicitRenderable() {}
             void Draw();
 
@@ -24,6 +28,7 @@ namespace viz {
             Pipeline pipeline_;
             uint64_t primitive_;
             uint32_t color_;
+            Matrix4 model_;
         };
     }
 }

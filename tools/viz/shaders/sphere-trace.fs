@@ -80,24 +80,28 @@ float IntersectSphere(Ray ray, vec3 center, float radius)
     }
 }
 
+#define PI 3.14159265359
+
+float Saw(float t, float N)
+{
+    return abs(mod(t, 1. / N) - 0.5 / N) * N * 2.;
+}
+
 void main()
 {
-    vec3 center = vec3(0., 0., 0.);
+    vec3 center = vec3(1., 0., 0.);
     Ray ray = CameraRay(view_matrix, world_pos);
+
     float t = IntersectSphere(ray, center, 1.);
     if(t < 0.)
     {
         discard;
     }
-    vec3 p = RayPoint(ray, t);
-    pixel.rgb = vec3(t * 0.1);
-    // float theta = (atan(p.y / p.x) + 3.14159 * 0.5);// / 3.14159;
-    float theta = (atan(p.y, p.x) + 3.14159) / (2. * 3.14159);
-    float phi = acos(p.z) / 3.14159;
+    vec3 p = RayPoint(ray, t) - center;
+    float theta = (atan(p.y, p.x) + PI) / (2. * PI);
+    float phi = acos(p.z) / PI;
 
     pixel.rgb = vec3(0.);
-    float freq = 10.;
-    float x = abs(mod((phi + theta) / 2., 1. / freq) - 0.5 / freq) * freq * 2.;
-    x = smoothstep(0.35, 0.45, x);
+    float x = smoothstep(0.35, 0.45, Saw((phi + theta) / 2., 10.));
     pixel.rgb = vec3(x);
 }

@@ -52,7 +52,8 @@ namespace viz {
         Renderable::Ref Create(Mesh &&mesh,
                                uint32_t color,
                                const std::string &program,
-                               GLenum primitve);
+                               GLenum primitve,
+                               Matrix4 model = Matrix4::Identity());
     }
 }
 

@@ -115,13 +115,11 @@ namespace viz {
                 Pipeline::Create("wireframe", points, index), GL_TRIANGLE_STRIP, color);
         }
 
-        Renderable::Ref Create(Mesh &&mesh,
-                               uint32_t color,
-                               const std::string &program,
-                               GLenum primitve)
+        Renderable::Ref Create(
+            Mesh &&mesh, uint32_t color, const std::string &program, GLenum primitve, Matrix4 model)
         {
             return std::make_shared<ExplicitRenderable>(
-                Pipeline::Create(program, std::move(mesh)), primitve, color);
+                Pipeline::Create(program, std::move(mesh)), primitve, color, model);
         }
     }
 }

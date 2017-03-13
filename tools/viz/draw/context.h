@@ -20,13 +20,13 @@ namespace viz {
             }
 
             uint32_t AttributeLocation(const std::string &name) { return attributes_[name]; }
-            void ModelViewMatrix(const Matrix4 &model_view) { model_view_ = model_view; }
+            void ModelMatrix(const Matrix4 &model) { model_ = model; }
+            void ViewMatrix(const Matrix4 &view) { view_ = view; }
             void ProjectionMatrix(const Matrix4 &projection) { projection_ = projection; }
             void ScreenSize(const Vec2 &screen_size) { screen_size_ = screen_size; }
             void ApplyCamera(const Camera &camera)
             {
-                auto m = camera.ModelViewMatrix();
-                ModelViewMatrix(m);
+                ViewMatrix(camera.ViewMatrix());
                 ProjectionMatrix(camera.ProjectionMatrix());
                 lens_angle_ = camera.lens_angle();
                 z_near_ = camera.near();
@@ -37,7 +37,7 @@ namespace viz {
                 {
                     auto uniform = program.GetUniform("MVP");
                     if (uniform.IsValid()) {
-                        auto mvp = projection_ * model_view_;
+                        auto mvp = projection_ * view_ * model_;
                         glUniformMatrix4fv(uniform, 1, GL_FALSE, mvp.values().data());
                     }
                 }
@@ -56,7 +56,13 @@ namespace viz {
                 {
                     auto uniform = program.GetUniform("view_matrix");
                     if (uniform.IsValid()) {
-                        glUniformMatrix4fv(uniform, 1, GL_FALSE, model_view_.values().data());
+                        glUniformMatrix4fv(uniform, 1, GL_FALSE, view_.values().data());
+                    }
+                }
+                {
+                    auto uniform = program.GetUniform("model_matrix");
+                    if (uniform.IsValid()) {
+                        glUniformMatrix4fv(uniform, 1, GL_FALSE, model_.values().data());
                     }
                 }
                 {
@@ -111,7 +117,8 @@ namespace viz {
            private:
             Context()
             : attributes_{{"pos", 0}}
-            , model_view_(Matrix4::Identity())
+            , model_(Matrix4::Identity())
+            , view_(Matrix4::Identity())
             , projection_(Matrix4::Identity())
             , color_(Colors::black)
             {
@@ -124,7 +131,8 @@ namespace viz {
             float lens_angle_;
             float z_near_;
             float z_far_;
-            Matrix4 model_view_;
+            Matrix4 model_;
+            Matrix4 view_;
             Matrix4 projection_;
             uint32_t color_;
         };

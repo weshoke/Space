@@ -62,7 +62,7 @@ namespace viz {
                 look_at_ = look_at_ + v;
             }
 
-            Matrix4 ModelViewMatrix() const { return Matrix4::LookAt(eye(), look_at(), up()); }
+            Matrix4 ViewMatrix() const { return Matrix4::LookAt(eye(), look_at(), up()); }
             Matrix4 ProjectionMatrix() const
             {
                 return Matrix4::Perspective(lens_angle(), aspect(), near(), far());

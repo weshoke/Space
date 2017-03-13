@@ -129,8 +129,13 @@ class C1Viz {
         camera = viz::draw::Camera(
             Vec3(0.f, 0.f, 6.f), Vec3(0.f, 0.f, -3.f), Vec3(0.f, 1.f, 0.f), 35.f, aspect);
 
-        renderables_.emplace_back(viz::draw::Create(
-            viz::draw::CreateIcosohedron(), viz::draw::Colors::red, "sphere-trace", GL_TRIANGLES));
+        auto m = viz::draw::Matrix4::Identity();
+        m[12] = 1.f;
+        renderables_.emplace_back(viz::draw::Create(viz::draw::CreateIcosohedron(),
+                                                    viz::draw::Colors::red,
+                                                    "sphere-trace",
+                                                    GL_TRIANGLES,
+                                                    m));
 
         // VisualizeC1();
 
