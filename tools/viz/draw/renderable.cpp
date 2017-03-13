@@ -6,11 +6,13 @@ namespace viz {
         ExplicitRenderable::ExplicitRenderable(Pipeline &&pipeline,
                                                GLenum primitive,
                                                uint32_t color,
-                                               Matrix4 model)
+                                               Matrix4 model,
+                                               UniformMap uniforms)
         : pipeline_(std::move(pipeline))
         , primitive_(primitive)
         , color_(color)
         , model_(model)
+        , uniforms_(uniforms)
         {
         }
 
@@ -18,7 +20,16 @@ namespace viz {
         {
             Context::Get().Color(color_);
             Context::Get().ModelMatrix(model_);
-            pipeline_.Bind().Draw(primitive_);
+            auto binding = pipeline_.Bind();
+            //			{
+            //				auto uniform = pipeline_.program().GetUniform("center");
+            //				if (uniform.IsValid()) {
+            //					Vec3 f(1.f, 0.f, 0.f);
+            //					glUniform3fv(uniform, 1, f.Data());
+            //				}
+            //			}
+            uniforms_.Apply(pipeline_.program());
+            binding.Draw(primitive_);
             Context::Get().ModelMatrix(Matrix4::Identity());
         }
     }

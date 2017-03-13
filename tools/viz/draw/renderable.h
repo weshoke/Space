@@ -4,6 +4,7 @@
 #include "draw.h"
 #include "geom/matrix4.h"
 #include "pipeline.h"
+#include "uniform_map.h"
 #include <memory>
 
 namespace viz {
@@ -20,7 +21,8 @@ namespace viz {
             ExplicitRenderable(Pipeline &&pipeline,
                                GLenum primitive,
                                uint32_t color,
-                               Matrix4 model = Matrix4::Identity());
+                               Matrix4 model = Matrix4::Identity(),
+                               UniformMap uniforms = UniformMap());
             virtual ~ExplicitRenderable() {}
             void Draw();
 
@@ -29,6 +31,7 @@ namespace viz {
             uint64_t primitive_;
             uint32_t color_;
             Matrix4 model_;
+            UniformMap uniforms_;
         };
     }
 }

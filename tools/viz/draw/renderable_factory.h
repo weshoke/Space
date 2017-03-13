@@ -53,7 +53,8 @@ namespace viz {
                                uint32_t color,
                                const std::string &program,
                                GLenum primitve,
-                               Matrix4 model = Matrix4::Identity());
+                               Matrix4 model = Matrix4::Identity(),
+                               UniformMap uniforms = UniformMap());
     }
 }
 

@@ -131,11 +131,14 @@ class C1Viz {
 
         auto m = viz::draw::Matrix4::Identity();
         m[12] = 1.f;
-        renderables_.emplace_back(viz::draw::Create(viz::draw::CreateIcosohedron(),
-                                                    viz::draw::Colors::red,
-                                                    "sphere-trace",
-                                                    GL_TRIANGLES,
-                                                    m));
+        renderables_.emplace_back(viz::draw::Create(
+            viz::draw::CreateIcosohedron(),
+            viz::draw::Colors::red,
+            "sphere-trace",
+            GL_TRIANGLES,
+            m,
+            std::unordered_map<std::string, viz::draw::UniformMap::Value>(
+                {{"center", viz::draw::UniformMap::Value(Vec3(1.f, 0.f, 0.f))}})));
 
         // VisualizeC1();
 

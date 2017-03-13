@@ -1,6 +1,7 @@
 #version 410
 
 uniform mat4 view_matrix;
+uniform vec3 center;
 
 in vec3 world_pos;
 out vec4 pixel;
@@ -89,7 +90,6 @@ float Saw(float t, float N)
 
 void main()
 {
-    vec3 center = vec3(1., 0., 0.);
     Ray ray = CameraRay(view_matrix, world_pos);
 
     float t = IntersectSphere(ray, center, 1.);
