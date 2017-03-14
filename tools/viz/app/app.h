@@ -5,6 +5,7 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 // clang-format on
+#include "draw/context.h"
 #include "search_paths.h"
 #include <array>
 #include <iostream>
@@ -112,6 +113,20 @@ namespace viz {
             std::string LoadFile(filesystem::path file_name)
             {
                 return search_paths().LoadFile(file_name);
+            }
+
+            void LoadShader(const std::string& name)
+            {
+                if (FindFile(name + ".gs").is_file()) {
+                    draw::Context::Get().RegisterProgram(name,
+                                                         LoadFile(name + ".vs"),
+                                                         LoadFile(name + ".gs"),
+                                                         LoadFile(name + ".fs"));
+                }
+                else {
+                    draw::Context::Get().RegisterProgram(
+                        name, LoadFile(name + ".vs"), LoadFile(name + ".fs"));
+                }
             }
 
            private:

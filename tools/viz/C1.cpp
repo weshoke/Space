@@ -116,17 +116,11 @@ class C1Viz {
         app().AddSearchPath(shader_dir);
 
         std::cout << glGetString(GL_VERSION) << "\n";
-        viz::draw::Context::Get().RegisterProgram(
-            "color", app().LoadFile("color.vs"), app().LoadFile("color.fs"));
-        viz::draw::Context::Get().RegisterProgram(
-            "trace-point", app().LoadFile("trace-point.vs"), app().LoadFile("trace-point.fs"));
-        viz::draw::Context::Get().RegisterProgram("trace-sphere-real",
-                                                  app().LoadFile("trace-sphere-real.vs"),
-                                                  app().LoadFile("trace-sphere-real.fs"));
-        viz::draw::Context::Get().RegisterProgram("wireframe",
-                                                  app().LoadFile("wireframe.vs"),
-                                                  app().LoadFile("wireframe.gs"),
-                                                  app().LoadFile("wireframe.fs"));
+        app().LoadShader("color");
+        app().LoadShader("trace-point");
+        app().LoadShader("trace-sphere-real");
+        app().LoadShader("trace-sphere-imaginary");
+        app().LoadShader("wireframe");
 
         auto window_size = app().WindowSize();
         auto aspect = float(window_size[0]) / float(window_size[1]);
