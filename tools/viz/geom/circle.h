@@ -14,7 +14,7 @@ namespace space {
             using C = algebras::Conformal<T, Vec::Algebra::Metric::EuclideanDim()>;
             using E = algebras::Euclidean<T, Vec::Algebra::Metric::EuclideanDim()>;
             using EVec = typename C::EVec;
-            using MV = typename C::Circle;
+            using Direct = typename C::Circle;
             using Dir = typename E::PlanarDual;
 
            public:
@@ -25,10 +25,10 @@ namespace space {
             {
             }
 
-            Circle(const MV &mv)
-            : center_(C::Round::Point(C::Round::Center(mv)).template Cast<EVec>().values)
-            , radius_(C::Round::Radius(mv))
-            , normal_(Dir(C::Round::Direction(mv).Dual().values).Normalized())
+            Circle(const Direct &direct)
+            : center_(C::Round::CenterPoint(direct).template Cast<EVec>().values)
+            , radius_(C::Round::Radius(direct))
+            , normal_(Dir(C::Round::Direction(direct).Dual().values).Normalized())
             {
             }
 

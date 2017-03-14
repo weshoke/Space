@@ -114,6 +114,7 @@ namespace viz {
             }
 
             gl::Program::Ref Program(const std::string &name) { return programs_.at(name); }
+            float point_radius() const { return point_radius_; }
            private:
             Context()
             : attributes_{{"pos", 0}}

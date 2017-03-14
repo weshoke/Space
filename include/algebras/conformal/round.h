@@ -65,6 +65,12 @@ namespace space {
                 }
 
                 template <class Elem>
+                static auto CenterPoint(const Elem &elem)
+                {
+                    return Point(Center(elem));
+                }
+
+                template <class Elem>
                 static auto DualSphere(const Elem &elem, typename Elem::ScalarValue radius)
                 {
                     return Point(elem) +

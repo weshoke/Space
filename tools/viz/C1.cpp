@@ -118,7 +118,7 @@ class C1Viz {
         viz::draw::Context::Get().RegisterProgram(
             "color", app().LoadFile("color.vs"), app().LoadFile("color.fs"));
         viz::draw::Context::Get().RegisterProgram(
-            "sphere-trace", app().LoadFile("sphere-trace.vs"), app().LoadFile("sphere-trace.fs"));
+            "trace-point", app().LoadFile("trace-point.vs"), app().LoadFile("trace-point.fs"));
         viz::draw::Context::Get().RegisterProgram("wireframe",
                                                   app().LoadFile("wireframe.vs"),
                                                   app().LoadFile("wireframe.gs"),
@@ -129,15 +129,15 @@ class C1Viz {
         camera = viz::draw::Camera(
             Vec3(0.f, 0.f, 6.f), Vec3(0.f, 0.f, -3.f), Vec3(0.f, 1.f, 0.f), 35.f, aspect);
 
-        auto m = viz::draw::Matrix4::Identity();
-        m[12] = 1.f;
-        renderables_.emplace_back(
-            viz::draw::Create(viz::draw::CreateIcosohedron(),
-                              viz::draw::Colors::red,
-                              "sphere-trace",
-                              GL_TRIANGLES,
-                              m,
-                              viz::draw::UniformMap().Add("center", Vec3(1.f, 0.f, 0.f))));
+        renderables_.emplace_back(viz::draw::Create(Vec3(1.f, 0.f, 0.f), viz::draw::Colors::red));
+        //        renderables_.emplace_back(
+        //            viz::draw::Create(viz::draw::CreateIcosohedron(),
+        //                              viz::draw::Colors::red,
+        //                              "trace-point",
+        //                              GL_TRIANGLES,
+        //                              viz::draw::Matrix4::Translate(Vec3(1.f, 0.f, 0.f)),
+        //                              viz::draw::UniformMap().Add("center", Vec3(1.f, 0.f,
+        //                              0.f))));
 
         // VisualizeC1();
 

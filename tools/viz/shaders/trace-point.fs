@@ -2,6 +2,7 @@
 
 uniform mat4 view_matrix;
 uniform vec3 center;
+uniform float radius;
 
 in vec3 world_pos;
 out vec4 pixel;
@@ -97,20 +98,17 @@ void main()
 {
     Ray ray = CameraRay(view_matrix, world_pos);
 
-    float t = IntersectSphere(ray, center, 1.);
+    float t = IntersectSphere(ray, center, radius);
     if(t < 0.)
     {
         discard;
     }
-    vec3 p = RayPoint(ray, t) - center;
-    float theta = float(Xor(Xor(p.x > 0., p.y > 0.), p.z > 0.));
+    vec3 p = (RayPoint(ray, t) - center) / radius;
+    float ds = 0.005;
+    float theta = smoothstep(-ds, ds, p.x) + smoothstep(-ds, ds, p.y);
+    theta = 1. - abs(theta - 1.);
+    theta += smoothstep(-ds, ds, p.z);
+    theta = 1. - abs(theta - 1.);
     pixel.rgb = vec3(theta);
     pixel.a = 1.;
-
-    // float theta = (atan(p.y, p.x) + PI) / (2. * PI);
-    // float phi = acos(p.z) / PI;
-    //
-    // pixel.rgb = vec3(0.);
-    // float x = smoothstep(0.35, 0.45, Saw((phi + theta) / 2., 10.));
-    // pixel.rgb = vec3(x);
 }

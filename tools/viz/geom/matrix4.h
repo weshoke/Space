@@ -141,6 +141,26 @@ namespace space {
                                1.f);
             }
 
+            static Matrix4 Translate(const Vec3& vec)
+            {
+                return Matrix4(T{1},
+                               T{0},
+                               T{0},
+                               T{0},
+                               T{0},
+                               T{1},
+                               T{0},
+                               T{0},
+                               T{0},
+                               T{0},
+                               T{1},
+                               T{0},
+                               vec[0],
+                               vec[1],
+                               vec[2],
+                               T{1});
+            }
+
             T& Value(int32_t col, int32_t row) { return values_[Index(col, row)]; }
             T Value(int32_t col, int32_t row) const { return values_[Index(col, row)]; }
             T& operator[](const int32_t idx) { return values_[idx]; }
