@@ -88,7 +88,7 @@ namespace viz {
             {
                 return std::abs(radius) < 1e-3f
                            ? "trace-point"
-                           : (radius > 0.f ? "trace-sphere-direct" : "trace-sphere-dual");
+                           : (radius > 0.f ? "trace-sphere-real" : "trace-sphere-imaginary");
             }
         }
 

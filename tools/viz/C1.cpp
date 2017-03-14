@@ -19,6 +19,7 @@ auto shader_dir = filesystem::path("../../tools/viz/shaders").make_absolute();
 
 using C1 = space::algebras::C1<float>;
 using C2 = space::algebras::C2<float>;
+using C3 = space::algebras::C3<float>;
 
 class C1Viz {
    public:
@@ -119,6 +120,9 @@ class C1Viz {
             "color", app().LoadFile("color.vs"), app().LoadFile("color.fs"));
         viz::draw::Context::Get().RegisterProgram(
             "trace-point", app().LoadFile("trace-point.vs"), app().LoadFile("trace-point.fs"));
+        viz::draw::Context::Get().RegisterProgram("trace-sphere-real",
+                                                  app().LoadFile("trace-sphere-real.vs"),
+                                                  app().LoadFile("trace-sphere-real.fs"));
         viz::draw::Context::Get().RegisterProgram("wireframe",
                                                   app().LoadFile("wireframe.vs"),
                                                   app().LoadFile("wireframe.gs"),
@@ -129,7 +133,14 @@ class C1Viz {
         camera = viz::draw::Camera(
             Vec3(0.f, 0.f, 6.f), Vec3(0.f, 0.f, -3.f), Vec3(0.f, 1.f, 0.f), 35.f, aspect);
 
-        renderables_.emplace_back(viz::draw::Create(Vec3(1.f, 0.f, 0.f), viz::draw::Colors::red));
+        // renderables_.emplace_back(viz::draw::Create(Vec3(1.f, 0.f, 0.f),
+        // viz::draw::Colors::red));
+        auto p = C3::Round::DualSphere(C3::EVec(0.f, 0.f, 0.f), 1.f);
+        renderables_.emplace_back(viz::draw::Create(p, viz::draw::Colors::red));
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         //        renderables_.emplace_back(
         //            viz::draw::Create(viz::draw::CreateIcosohedron(),
         //                              viz::draw::Colors::red,
@@ -204,6 +215,8 @@ class C1Viz {
     void Scroll(int xoffset, int yoffset) { trackball.Move(camera, float(yoffset) * 0.2f); }
     void Draw()
     {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         auto window_size = app().WindowSize();
         viz::draw::ClearWindowWithDepth(window_size, viz::draw::Colors::chromium);
 

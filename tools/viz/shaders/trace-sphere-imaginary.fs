@@ -31,7 +31,7 @@ Ray CameraRay(mat4 view_matrix, vec3 model_pos) {
     return Ray(eye, normalize(view_dir));
 }
 
-float IntersectSphere(Ray ray, vec3 center, float radius)
+vec2 IntersectSphere(Ray ray, vec3 center, float radius)
 {
     vec3 oc = ray.start - center;
     float b = 2.0 * dot(ray.dir, oc);
@@ -40,7 +40,7 @@ float IntersectSphere(Ray ray, vec3 center, float radius)
 
     if (disc < 0.0)
     {
-        return -1.0;
+        return vec2(-1.0);
     }
 
     // compute q as described above
@@ -69,18 +69,9 @@ float IntersectSphere(Ray ray, vec3 center, float radius)
     // and consequently the ray misses the sphere
     if (t1 < 0.0)
     {
-        return -1.0;
+        return vec2(-1.0);
     }
-
-    // if t0 is less than zero, the intersection point is at t1
-    if (t0 < 0.0)
-    {
-        return t1;
-    }
-    else
-    {
-        return t0;
-    }
+    return vec2(t0, t1);
 }
 
 #define PI 3.14159265359
@@ -95,20 +86,33 @@ bool Xor(bool a, bool b)
     return bool(int(a) + int(b) & 1);
 }
 
+float Param(vec3 p)
+{
+    float ds = 0.005;
+    float phi = (atan(p.y, p.x) + PI) / ( 2.0 * PI);
+    float x = Saw(phi, 40.);
+    float y = Saw(abs(p.z), 10.);
+    phi = sqrt(x * x + y * y);
+    phi = 1. - smoothstep(0.4, 0.4 + ds, phi);
+    return phi;
+}
+
 void main()
 {
     Ray ray = CameraRay(view_matrix, world_pos);
 
-    float t = IntersectSphere(ray, center, radius);
-    if(t < 0.)
+    vec2 t = IntersectSphere(ray, center, radius);
+    if(t.y < 0.)
     {
         discard;
     }
-    vec3 p = (RayPoint(ray, t) - center) / radius;
-    float ds = 0.005;
-    float theta = smoothstep(-ds, ds, p.x) + smoothstep(-ds, ds, p.y);
-    theta = 1. - abs(theta - 1.);
-    theta += smoothstep(-ds, ds, p.z);
-    theta = 1. - abs(theta - 1.);
-    pixel = vec4(vec3(theta), 1.0) * color;
+    vec3 p_front = (RayPoint(ray, t.x) - center) / radius;
+    float res_front = Param(p_front);
+    if(res_front <= 0)
+    {
+        discard;
+    }
+
+    pixel = color;
+    pixel.a = res_front;
 }
