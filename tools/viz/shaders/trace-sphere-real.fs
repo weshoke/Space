@@ -92,6 +92,9 @@ float Param(vec3 p)
     float phi = ((atan(p.y, p.x) + PI) / ( 2.0 * PI) + (p.z) * 0.3);
     phi = Saw(phi, 10.0);
     phi = smoothstep(0.7, 0.7 + ds, phi);
+    phi *= float(abs(p.z) < 0.84);
+    phi += float(abs(p.z) > 0.9 && abs(p.z) < 0.95);
+    phi += float(abs(p.z) > 0.99);
     return min(phi, 1.0);
 }
 

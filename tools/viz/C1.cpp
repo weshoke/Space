@@ -129,8 +129,10 @@ class C1Viz {
 
         // renderables_.emplace_back(viz::draw::Create(Vec3(1.f, 0.f, 0.f),
         // viz::draw::Colors::red));
-        auto p = C3::Round::DualSphere(C3::EVec(0.f, 0.f, 0.f), 1.f);
-        renderables_.emplace_back(viz::draw::Create(p, viz::draw::Colors::red));
+        auto p1 = C3::Round::DualSphere(C3::EVec(-1.f, 0.f, 0.f), 1.f);
+        auto p2 = C3::Round::DualSphere(C3::EVec(1.f, 0.f, 0.f), -1.f);
+        renderables_.emplace_back(viz::draw::Create(p1, viz::draw::Colors::red));
+        renderables_.emplace_back(viz::draw::Create(p2, viz::draw::Colors::red));
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
