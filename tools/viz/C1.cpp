@@ -120,6 +120,7 @@ class C1Viz {
         app().LoadShader("trace-point");
         app().LoadShader("trace-sphere-real");
         app().LoadShader("trace-sphere-imaginary");
+        app().LoadShader("trace-rotor");
         app().LoadShader("wireframe");
 
         auto window_size = app().WindowSize();
@@ -131,20 +132,21 @@ class C1Viz {
         // viz::draw::Colors::red));
         auto p1 = C3::Round::DualSphere(C3::EVec(-1.f, 0.f, 0.f), 1.f);
         auto p2 = C3::Round::DualSphere(C3::EVec(1.f, 0.f, 0.f), -1.f);
-        renderables_.emplace_back(viz::draw::Create(p1, viz::draw::Colors::red));
-        renderables_.emplace_back(viz::draw::Create(p2, viz::draw::Colors::red));
+        // renderables_.emplace_back(viz::draw::Create(p1, viz::draw::Colors::red));
+        // renderables_.emplace_back(viz::draw::Create(p2, viz::draw::Colors::red));
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        //        renderables_.emplace_back(
-        //            viz::draw::Create(viz::draw::CreateIcosohedron(),
-        //                              viz::draw::Colors::red,
-        //                              "trace-point",
-        //                              GL_TRIANGLES,
-        //                              viz::draw::Matrix4::Translate(Vec3(1.f, 0.f, 0.f)),
-        //                              viz::draw::UniformMap().Add("center", Vec3(1.f, 0.f,
-        //                              0.f))));
+        renderables_.emplace_back(viz::draw::Create(viz::draw::CreateExtrudedPolygon(6),
+                                                    viz::draw::Colors::red,
+                                                    "trace-rotor",
+                                                    GL_TRIANGLES,
+                                                    viz::draw::Matrix4::Identity(),
+                                                    viz::draw::UniformMap()
+                                                        .Add("center", Vec3(0.f, 0.f, 0.f))
+                                                        .Add("axis", Vec3(0.f, 0.f, 1.f))
+                                                        .Add("radius", 1.f)));
 
         // VisualizeC1();
 

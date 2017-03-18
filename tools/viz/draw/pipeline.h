@@ -31,22 +31,22 @@ namespace viz {
 
                 // TODO: figure out how to do hierarchical binding.  Monads? .push? .pop?
                 template <class F>
-                Binding&& Mesh(F&& f)
+                Binding Mesh(F&& f)
                 {
                     f(mesh_binding_);
                     return std::move(*this);
                 }
 
-                Binding&& Link()
+                Binding Link()
                 {
-                    // TODO: iterator over context attributes and see if they exist in the program
+                    // TODO: iterater over context attributes and see if they exist in the program
                     // If so, set their location
                     glBindAttribLocation(
                         *(pipeline_.program_), Context::Get().AttributeLocation("pos"), "pos");
                     return std::move(*this);
                 }
 
-                Binding&& Draw(GLenum primitive)
+                Binding Draw(GLenum primitive)
                 {
                     mesh_binding_.Draw(primitive);
                     return std::move(*this);

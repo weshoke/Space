@@ -31,7 +31,7 @@ namespace viz {
                 }
 
                 template <class Data>
-                Binding&& Vertex(const Data& data)
+                Binding Vertex(const Data& data)
                 {
                     using T = typename Data::value_type;
                     mesh_.count_ = data.size();
@@ -44,7 +44,7 @@ namespace viz {
                 }
 
                 template <class Data>
-                Binding&& Index(const Data& data)
+                Binding Index(const Data& data)
                 {
                     using T = typename Data::value_type;
                     mesh_.count_ = data.size();
@@ -54,7 +54,7 @@ namespace viz {
                     return std::move(*this);
                 }
 
-                Binding&& Draw(GLenum primitive)
+                Binding Draw(GLenum primitive)
                 {
                     // TODO: wrap in GL primitives
                     if (mesh_.HasIndexBuffer()) {
