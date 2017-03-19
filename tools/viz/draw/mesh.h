@@ -35,8 +35,8 @@ namespace viz {
                 {
                     using T = typename Data::value_type;
                     mesh_.count_ = data.size();
-                    mesh_.vbos_.emplace_back(std::make_shared<gl::Buffer>());
-                    auto binding = mesh_.vbos_.back()->Bind(GL_ARRAY_BUFFER).Data(data);
+                    mesh_.vbos_.emplace_back(gl::Buffer());
+                    auto binding = mesh_.vbos_.back().Bind(GL_ARRAY_BUFFER).Data(data);
                     gl::Attribute(Context::Get().AttributeLocation("pos"))
                         .Enable()
                         .Pointer(gl::Attribute::Layout(draw::Size<T>(), GL_FLOAT));
@@ -49,8 +49,8 @@ namespace viz {
                     using T = typename Data::value_type;
                     mesh_.count_ = data.size();
                     mesh_.type_ = gl::Type<T>();
-                    mesh_.vbos_.emplace_back(std::make_shared<gl::Buffer>());
-                    auto binding = mesh_.vbos_.back()->Bind(GL_ELEMENT_ARRAY_BUFFER).Data(data);
+                    mesh_.vbos_.emplace_back(gl::Buffer());
+                    auto binding = mesh_.vbos_.back().Bind(GL_ELEMENT_ARRAY_BUFFER).Data(data);
                     return std::move(*this);
                 }
 
@@ -88,7 +88,7 @@ namespace viz {
             GLint count_;
             GLenum type_;
             gl::VertexArray vao_;
-            std::vector<gl::Buffer::Ref> vbos_;
+            std::vector<gl::Buffer> vbos_;
         };
     }
 }
