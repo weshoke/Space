@@ -1,5 +1,5 @@
-#ifndef VIZ_MESH_PIPELINE_H
-#define VIZ_MESH_PIPELINE_H
+#ifndef VIZ_DRAW_PIPELINE_H
+#define VIZ_DRAW_PIPELINE_H
 
 #include "context.h"
 #include "gl/program.h"

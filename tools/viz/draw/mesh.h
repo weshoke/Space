@@ -1,5 +1,5 @@
-#ifndef VIZ_MESH_DRAW_H
-#define VIZ_MESH_DRAW_H
+#ifndef VIZ_DRAW_MESH_H
+#define VIZ_DRAW_MESH_H
 
 #include "Optional/optional.hpp"
 #include "context.h"
