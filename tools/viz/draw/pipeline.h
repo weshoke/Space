@@ -15,9 +15,9 @@ namespace viz {
            public:
             class Binding {
                public:
-                Binding(Pipeline& pipeline, Mesh::Binding&& mesh_binding)
+                Binding(Pipeline& pipeline)
                 : pipeline_(pipeline)
-                , mesh_binding_(std::move(mesh_binding))
+                , mesh_binding_(pipeline.mesh_.Bind())
                 {
                 }
 
@@ -124,7 +124,7 @@ namespace viz {
             {
                 program().Use();
                 Context::Get().SetProgramUniforms(program());
-                return Binding(*this, mesh_.Bind());
+                return Binding(*this);
             }
 
             gl::Program& program() { return *program_; }
