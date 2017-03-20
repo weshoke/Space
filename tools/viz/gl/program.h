@@ -71,19 +71,27 @@ namespace viz {
                 return Attribute(glGetAttribLocation(id(), name.data()));
             }
 
-            template <class T>
-            T Get(GLenum pname)
+            // glGetProgram only has "iv" suffix
+            GLint Get(GLenum pname)
             {
-                T v;
+                GLint v;
                 glGetProgramiv(id(), pname, &v);
                 return v;
             }
 
-            bool Linked() { return !!Get<GLint>(GL_LINK_STATUS); }
+            bool Linked() { return !!Get(GL_LINK_STATUS); }
             std::string Log()
             {
-                auto log = std::array<GLchar, 1024>();
+                constexpr auto max_log_length_stack = GLint{1024};
                 auto size = GLsizei{0};
+                auto log_length = Get(GL_INFO_LOG_LENGTH);
+                if (log_length > max_log_length_stack) {
+                    auto heap_log = std::vector<GLchar>(log_length, '\0');
+                    glGetProgramInfoLog(id(), heap_log.size(), &size, heap_log.data());
+                    return std::string(heap_log.data());
+                }
+
+                auto log = std::array<GLchar, max_log_length_stack>();
                 glGetProgramInfoLog(id(), log.size(), &size, log.data());
                 return std::string(log.data());
             }
