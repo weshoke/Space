@@ -37,12 +37,17 @@ namespace viz {
                 Binding&& Vertex(const Data& data)
                 {
                     using T = typename Data::value_type;
-                    mesh_.count_ = data.size();
-                    mesh_.vbos_.emplace_back(gl::Buffer());
-                    auto binding = mesh_.vbos_.back().Bind(GL_ARRAY_BUFFER).Data(data);
-                    gl::Attribute(Context::Get().AttributeLocation("pos"))
-                        .Enable()
-                        .Pointer(gl::Attribute::Layout(draw::Size<T>(), GL_FLOAT));
+                    if (!mesh_.index_buffer_) {
+                        mesh_.count_ = data.size();
+                    }
+                    mesh_.vbos_.emplace_back(
+                        gl::Buffer().Bind(GL_ARRAY_BUFFER, [&](auto&& binding) {
+                            binding.Data(data);
+                            gl::Attribute(Context::Get().AttributeLocation("pos"))
+                                .Enable()
+                                .Pointer(gl::Attribute::Layout(draw::Size<T>(), GL_FLOAT));
+                            binding.Detach();
+                        }));
                     return std::move(*this);
                 }
 
@@ -52,8 +57,9 @@ namespace viz {
                     using T = typename Data::value_type;
                     mesh_.count_ = data.size();
                     mesh_.type_ = gl::Type<T>();
-                    mesh_.index_buffer_ = gl::Buffer();
-                    mesh_.index_buffer_.value().Bind(GL_ELEMENT_ARRAY_BUFFER).Data(data);
+                    mesh_.index_buffer_ =
+                        gl::Buffer().Bind(GL_ELEMENT_ARRAY_BUFFER,
+                                          [&](auto&& binding) { binding.Data(data).Detach(); });
                     return std::move(*this);
                 }
 

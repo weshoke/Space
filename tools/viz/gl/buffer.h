@@ -28,13 +28,7 @@ namespace viz {
 
                 Binding &operator=(Binding &&) = delete;
 
-                // TODO: somehow this binding needs to be attached to the VAO and "unbound" with
-                // that object
-                ~Binding()
-                {
-                    // Unbind(target(), id());
-                }
-
+                ~Binding() { Unbind(); }
                 template <class Data>
                 Binding &&Data(const Data &data, GLenum usage = GL_STATIC_DRAW)
                 {
@@ -43,6 +37,7 @@ namespace viz {
                     return std::move(*this);
                 }
 
+                void Detach() { id_ = 0u; }
                 GLenum target() const { return target_; }
                 GLuint id() const { return id_; }
                 operator GLint() { return id(); }
@@ -74,6 +69,13 @@ namespace viz {
             }
             ~Buffer() { Delete(); }
             Binding Bind(GLenum target) { return Binding(target, id()); }
+            template <class F>
+            Buffer &&Bind(GLenum target, F &&f)
+            {
+                f(Binding(target, id()));
+                return std::move(*this);
+            }
+
             GLuint id() { return id_; }
             operator GLint() { return id(); }
            private:
