@@ -109,10 +109,10 @@ namespace viz {
                 return Pipeline(Context::Get().Program(program), std::move(mesh));
             }
 
-            Pipeline& Program(const std::string& vertex, const std::string& fragment)
+            Pipeline&& Program(const std::string& vertex, const std::string& fragment)
             {
                 program_->Attach(vertex, fragment).Link().Use();
-                return *this;
+                return std::move(*this);
             }
 
             Binding Bind()
