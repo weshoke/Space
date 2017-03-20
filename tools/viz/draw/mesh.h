@@ -50,7 +50,7 @@ namespace viz {
                     mesh_.count_ = data.size();
                     mesh_.type_ = gl::Type<T>();
                     mesh_.vbos_.emplace_back(gl::Buffer());
-                    auto binding = mesh_.vbos_.back().Bind(GL_ELEMENT_ARRAY_BUFFER).Data(data);
+                    mesh_.vbos_.back().Bind(GL_ELEMENT_ARRAY_BUFFER).Data(data);
                     return std::move(*this);
                 }
 
