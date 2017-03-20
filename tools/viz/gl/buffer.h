@@ -61,8 +61,10 @@ namespace viz {
             {
                 glGenBuffers(1, &id_);
             }
+            Buffer(const Buffer &) = delete;
 
             Buffer(Buffer &&src) { id_ = std::exchange(src.id_, 0u); }
+            Buffer &operator=(Buffer &&) = delete;
             ~Buffer()
             {
                 if (id_ != 0u) {

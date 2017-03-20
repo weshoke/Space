@@ -81,6 +81,8 @@ namespace viz {
             {
             }
 
+            Pipeline& operator=(Pipeline&&) = delete;
+
             template <class Data>
             static Pipeline Create(const std::string& program, const Data& vertex)
             {
@@ -120,6 +122,8 @@ namespace viz {
 
             gl::Program& program() { return *program_; }
            private:
+            // TODO: why a program Ref and why Program returns &&, how does that conflict with
+            // current usage
             gl::Program::Ref program_;
             Mesh mesh_;
         };

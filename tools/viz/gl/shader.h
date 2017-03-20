@@ -16,6 +16,7 @@ namespace viz {
 
             Shader(const Shader& src) = delete;
             Shader(Shader&& src) { id_ = std::exchange(src.id_, 0u); }
+            Shader& operator=(Shader&&) = delete;
             ~Shader()
             {
                 if (id() != 0u) {

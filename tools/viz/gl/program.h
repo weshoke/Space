@@ -22,6 +22,8 @@ namespace viz {
             Program(const Program& src) = delete;
 
             Program(Program&& src) { id_ = std::exchange(src.id_, 0u); }
+            Program& operator=(Program&&) = delete;
+
             ~Program()
             {
                 if (id() != 0u) {

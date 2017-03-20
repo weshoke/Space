@@ -45,6 +45,7 @@ namespace viz {
             VertexArray(const VertexArray& src) = delete;
 
             VertexArray(VertexArray&& src) { id_ = std::exchange(src.id_, 0u); }
+            VertexArray& operator=(VertexArray&&) = delete;
             ~VertexArray()
             {
                 if (id_ != 0u) {
