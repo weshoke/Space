@@ -88,7 +88,7 @@ namespace viz {
 
             Pipeline&& Program(const std::string& vertex, const std::string& fragment)
             {
-                program().Attach(vertex, fragment).Link().Use();
+                program().program().Attach(vertex, fragment).Link().Use();
                 return std::move(*this);
             }
 
@@ -100,12 +100,12 @@ namespace viz {
 
             Binding Bind()
             {
-                program().Use();
+                program().program().Use();
                 Context::Get().SetProgramUniforms(program());
                 return Binding(*this);
             }
 
-            gl::Program& program() { return program_->program(); }
+            AnalyzedProgram& program() { return *program_; }
            private:
             // Using ProgramRef since programs are shared across many Pipelines and stored globally
             // in a key-value map in Context

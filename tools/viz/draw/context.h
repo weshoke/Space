@@ -36,7 +36,7 @@ namespace viz {
                 z_near_ = camera.near();
                 z_far_ = camera.far();
             }
-            void SetProgramUniforms(gl::Program &program)
+            void SetProgramUniforms(AnalyzedProgram &program)
             {
                 {
                     auto uniform = program.GetUniform("MVP");

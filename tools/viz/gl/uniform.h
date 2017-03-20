@@ -7,6 +7,11 @@ namespace viz {
     namespace gl {
         class Uniform {
            public:
+            Uniform()
+            : id_(-1)
+            {
+            }
+
             Uniform(GLint id)
             : id_(id)
             {

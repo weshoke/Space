@@ -6,6 +6,8 @@
 #include <string>
 #include <unordered_map>
 
+// To handle the wide variety of value sizes (float -> Matrix4x4),
+// Pack the data into buffers that are referenced by offset
 namespace viz {
     namespace draw {
         class UniformMap {
@@ -24,7 +26,7 @@ namespace viz {
                 return *this;
             }
 
-            void Apply(gl::Program &program)
+            void Apply(AnalyzedProgram &program)
             {
                 for (const auto &p : uniforms_) {
                     auto uniform = program.GetUniform(std::get<0>(p));
@@ -35,7 +37,7 @@ namespace viz {
             }
 
            private:
-            void Apply(gl::Uniform uniform, const Value &value)
+            static void Apply(gl::Uniform uniform, const Value &value)
             {
                 switch (value.index()) {
                     case 0:

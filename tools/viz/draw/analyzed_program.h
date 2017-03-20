@@ -3,7 +3,7 @@
 
 #include "gl/program.h"
 #include <memory>
-#include <unordered_set>
+#include <unordered_map>
 
 namespace viz {
     namespace draw {
@@ -30,7 +30,14 @@ namespace viz {
                 return *this;
             }
 
+            gl::Uniform GetUniform(const std::string& name)
+            {
+                auto it = uniform_names_.find(name);
+                return it == uniform_names_.end() ? gl::Uniform() : std::get<1>(*it);
+            }
+
             gl::Program& program() { return program_; }
+            operator GLuint() { return GLuint(program()); }
            private:
             void Setup() { StoreNonBlockUniformNames(); }
             void StoreNonBlockUniformNames()
@@ -44,13 +51,14 @@ namespace viz {
                     glGetActiveUniformName(program(), i, max_name_size, &name_size, name.data());
                     auto block_index = glGetUniformBlockIndex(program(), name.data());
                     if (block_index == GL_INVALID_INDEX) {
-                        uniform_names_.emplace(name.data());
+                        auto uniform_name = std::string(name.data());
+                        uniform_names_.emplace(uniform_name, program().GetUniform(uniform_name));
                     }
                 }
             }
 
             gl::Program program_;
-            std::unordered_set<std::string> uniform_names_;
+            std::unordered_map<std::string, gl::Uniform> uniform_names_;
         };
     }
 }
