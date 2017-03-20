@@ -41,7 +41,7 @@ namespace viz {
                         mesh_.count_ = data.size();
                     }
                     mesh_.vbos_.emplace_back(
-                        gl::Buffer().Bind(GL_ARRAY_BUFFER, [&](auto&& binding) {
+                        gl::Buffer().Bind(GL_ARRAY_BUFFER, [&data](auto&& binding) {
                             binding.Data(data);
                             gl::Attribute(Context::Get().AttributeLocation("pos"))
                                 .Enable()
@@ -59,7 +59,7 @@ namespace viz {
                     mesh_.type_ = gl::Type<T>();
                     mesh_.index_buffer_ =
                         gl::Buffer().Bind(GL_ELEMENT_ARRAY_BUFFER,
-                                          [&](auto&& binding) { binding.Data(data).Detach(); });
+                                          [&data](auto&& binding) { binding.Data(data).Detach(); });
                     return std::move(*this);
                 }
 
