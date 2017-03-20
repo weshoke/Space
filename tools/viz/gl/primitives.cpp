@@ -19,7 +19,7 @@ namespace viz {
             return GL_UNSIGNED_INT;
         }
 
-        void Error(const std::string &msg)
+        bool Error(const std::string &msg)
         {
             auto err = glGetError();
             switch (err) {
@@ -39,6 +39,7 @@ namespace viz {
                     std::cout << msg << " err: " << err << "\n";
                     break;
             }
+            return err != GL_NO_ERROR;
         };
     }
 }

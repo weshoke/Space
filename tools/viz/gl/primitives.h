@@ -9,7 +9,7 @@ namespace viz {
         template <class T>
         GLenum Type();
 
-        void Error(const std::string &msg);
+        bool Error(const std::string &msg);
     }
 }
 

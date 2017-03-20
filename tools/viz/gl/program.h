@@ -71,7 +71,8 @@ namespace viz {
                 return Attribute(glGetAttribLocation(id(), name.data()));
             }
 
-            // glGetProgram only has "iv" suffix
+            // glGetProgram only has "iv" suffix, so function doesn't need to be templated and
+            // specialized
             GLint Get(GLenum pname)
             {
                 GLint v;
