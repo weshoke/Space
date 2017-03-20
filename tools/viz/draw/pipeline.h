@@ -5,7 +5,9 @@
 #include "gl/program.h"
 #include "mesh.h"
 #include <memory>
+#include <unordered_set>
 
+// TODO: cache all uniforms in unordered_set
 namespace viz {
     namespace draw {
         class Pipeline {
@@ -39,20 +41,11 @@ namespace viz {
                 Mesh::Binding mesh_binding_;
             };
 
-            Pipeline()
-            : Pipeline(std::make_shared<gl::Program>())
-            {
-            }
-
-            Pipeline(Context::ProgramRef program)
-            : program_(program)
-            {
-            }
-
             Pipeline(Context::ProgramRef program, Mesh&& mesh)
             : program_(program)
             , mesh_(std::move(mesh))
             {
+                Setup();
             }
 
             Pipeline(const Pipeline& src) = delete;
@@ -73,9 +66,8 @@ namespace viz {
             template <class Data>
             static Pipeline Create(const std::string& program_name, const Data& vertex)
             {
-                auto pipeline = Pipeline(Context::Get().Program(program_name));
-                pipeline.mesh_.Bind().Vertex(vertex);
-                return pipeline;
+                return Pipeline(Context::Get().Program(program_name),
+                                Mesh().Bind([&vertex](auto&& binding) { binding.Vertex(vertex); }));
             }
 
             template <class VertexData, class IndexData>
@@ -83,9 +75,10 @@ namespace viz {
                                    const VertexData& vertex,
                                    const IndexData& index)
             {
-                auto pipeline = Pipeline(Context::Get().Program(program_name));
-                pipeline.mesh_.Bind().Vertex(vertex).Index(index);
-                return pipeline;
+                return Pipeline(Context::Get().Program(program_name),
+                                Mesh().Bind([&vertex, &index](auto&& binding) {
+                                    binding.Vertex(vertex).Index(index);
+                                }));
             }
 
             static Pipeline Create(const std::string& program_name, Mesh&& mesh)
@@ -114,10 +107,28 @@ namespace viz {
 
             gl::Program& program() { return *program_; }
            private:
+            void Setup() { StoreNonBlockUniformNames(); }
+            void StoreNonBlockUniformNames()
+            {
+                auto count = program().Get(GL_ACTIVE_UNIFORMS);
+                uniform_names_.reserve(count);
+                for (auto i = 0; i < count; ++i) {
+                    constexpr auto max_name_size = GLsizei{512};
+                    auto name = std::array<char, max_name_size>();
+                    auto name_size = GLsizei{0};
+                    glGetActiveUniformName(program(), i, max_name_size, &name_size, name.data());
+                    auto block_index = glGetUniformBlockIndex(program(), name.data());
+                    if (block_index == GL_INVALID_INDEX) {
+                        uniform_names_.emplace(name.data());
+                    }
+                }
+            }
+
             // Using ProgramRef since programs are shared across many Pipelines and stored globally
             // in a key-value map in Context
             Context::ProgramRef program_;
             Mesh mesh_;
+            std::unordered_set<std::string> uniform_names_;
         };
     }
 }

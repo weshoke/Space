@@ -103,6 +103,13 @@ namespace viz {
             }
 
             Binding Bind() { return Binding(*this); }
+            template <class F>
+            Mesh&& Bind(F&& f)
+            {
+                f(Bind());
+                return std::move(*this);
+            }
+
            private:
             GLint count_;
             GLenum type_;
