@@ -44,7 +44,7 @@ namespace viz {
                     // TODO: iterate over context attributes and see if they exist in the program
                     // If so, set their location
                     glBindAttribLocation(
-                        *(pipeline_.program_), Context::Get().AttributeLocation("pos"), "pos");
+                        pipeline_.program(), Context::Get().AttributeLocation("pos"), "pos");
                     return std::move(*this);
                 }
 

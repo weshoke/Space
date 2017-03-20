@@ -19,18 +19,17 @@ namespace viz {
                 Binding(const Binding& src) = delete;
                 Binding(Binding&& src) { id_ = std::exchange(src.id_, 0u); }
                 Binding& operator=(Binding&&) = delete;
-                ~Binding()
-                {
-                    if (id() != 0u) {
-                        Unbind();
-                    }
-                }
-
+                ~Binding() { Unbind(); }
                 GLuint id() const { return id_; }
                 operator GLuint() { return id(); }
                private:
                 static void Bind(GLuint id) { glBindVertexArray(id); }
-                static void Unbind() { Bind(0u); }
+                void Unbind()
+                {
+                    if (id() != 0u) {
+                        Bind(0u);
+                    }
+                }
                 GLuint id_;
             };
 

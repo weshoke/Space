@@ -32,9 +32,7 @@ namespace viz {
                 // that object
                 ~Binding()
                 {
-                    if (id() != 0u) {
-                        // Unbind(target());
-                    }
+                    // Unbind(target(), id());
                 }
 
                 template <class Data>
@@ -50,7 +48,12 @@ namespace viz {
                 operator GLint() { return id(); }
                private:
                 static void Bind(GLenum target, GLuint id) { glBindBuffer(target, id); }
-                static void Unbind(GLenum target) { glBindBuffer(target, 0u); }
+                void Unbind()
+                {
+                    if (id() != 0u) {
+                        Bind(target(), 0u);
+                    }
+                }
                 GLenum target_;
                 GLuint id_;
             };
