@@ -4,10 +4,7 @@
 #include "context.h"
 #include "gl/program.h"
 #include "mesh.h"
-
-// TODO: us monadic constructs for binding/using
-// composition of monadic constructs for pipeline to mirror the internal
-// composition of resources
+#include <memory>
 
 namespace viz {
     namespace draw {
@@ -30,23 +27,6 @@ namespace viz {
                 }
 
                 Binding& operator=(Binding&&) = delete;
-
-                // TODO: figure out how to do hierarchical binding.  Monads? .push? .pop?
-                template <class F>
-                Binding&& Mesh(F&& f)
-                {
-                    f(mesh_binding_);
-                    return std::move(*this);
-                }
-
-                Binding&& Link()
-                {
-                    // TODO: iterate over context attributes and see if they exist in the program
-                    // If so, set their location
-                    glBindAttribLocation(
-                        pipeline_.program(), Context::Get().AttributeLocation("pos"), "pos");
-                    return std::move(*this);
-                }
 
                 Binding&& Draw(GLenum primitive)
                 {
@@ -94,7 +74,7 @@ namespace viz {
             static Pipeline Create(const std::string& program_name, const Data& vertex)
             {
                 auto pipeline = Pipeline(Context::Get().Program(program_name));
-                pipeline.Bind().Mesh([&vertex](auto&& binding) { binding.Vertex(vertex); });
+                pipeline.mesh_.Bind().Vertex(vertex);
                 return pipeline;
             }
 
@@ -104,8 +84,7 @@ namespace viz {
                                    const IndexData& index)
             {
                 auto pipeline = Pipeline(Context::Get().Program(program_name));
-                pipeline.Bind().Mesh(
-                    [&vertex, &index](auto&& binding) { binding.Vertex(vertex).Index(index); });
+                pipeline.mesh_.Bind().Vertex(vertex).Index(index);
                 return pipeline;
             }
 
@@ -119,6 +98,12 @@ namespace viz {
                 program().Attach(vertex, fragment).Link().Use();
                 return std::move(*this);
             }
+
+            // Pipeline&& BindAttributes()
+            // {
+            //     // TODO: iterator over all context attributes
+            //     glBindAttribLocation(program(), Context::Get().AttributeLocation("pos"), "pos");
+            // }
 
             Binding Bind()
             {
