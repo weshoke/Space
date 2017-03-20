@@ -86,27 +86,27 @@ namespace viz {
             Pipeline& operator=(Pipeline&&) = delete;
 
             template <class Data>
-            static Pipeline Create(const std::string& program, const Data& vertex)
+            static Pipeline Create(const std::string& program_name, const Data& vertex)
             {
-                auto pipeline = Pipeline(Context::Get().Program(program));
+                auto pipeline = Pipeline(Context::Get().Program(program_name));
                 pipeline.Bind().Mesh([&vertex](auto&& binding) { binding.Vertex(vertex); });
                 return pipeline;
             }
 
             template <class VertexData, class IndexData>
-            static Pipeline Create(const std::string& program,
+            static Pipeline Create(const std::string& program_name,
                                    const VertexData& vertex,
                                    const IndexData& index)
             {
-                auto pipeline = Pipeline(Context::Get().Program(program));
+                auto pipeline = Pipeline(Context::Get().Program(program_name));
                 pipeline.Bind().Mesh(
                     [&vertex, &index](auto&& binding) { binding.Vertex(vertex).Index(index); });
                 return pipeline;
             }
 
-            static Pipeline Create(const std::string& program, Mesh&& mesh)
+            static Pipeline Create(const std::string& program_name, Mesh&& mesh)
             {
-                return Pipeline(Context::Get().Program(program), std::move(mesh));
+                return Pipeline(Context::Get().Program(program_name), std::move(mesh));
             }
 
             Pipeline&& Program(const std::string& vertex, const std::string& fragment)
@@ -118,7 +118,7 @@ namespace viz {
             Binding Bind()
             {
                 program().Use();
-                Context::Get().SetProgramUniforms(*program_);
+                Context::Get().SetProgramUniforms(program());
                 return Binding(*this, mesh_.Bind());
             }
 

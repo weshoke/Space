@@ -21,18 +21,19 @@ namespace viz {
                 Binding(const Binding &src) = delete;
 
                 Binding(Binding &&src)
+                : target_(src.target_)
                 {
-                    target_ = src.target_;
                     id_ = std::exchange(src.id_, 0u);
                 }
+
+                Binding &operator=(Binding &&) = delete;
 
                 // TODO: somehow this binding needs to be attached to the VAO and "unbound" with
                 // that object
                 ~Binding()
                 {
                     if (id() != 0u) {
-                        //						std::cout << "~Buffer\n";
-                        //                        Bind(target(), 0u);
+                        // Unbind(target());
                     }
                 }
 
@@ -44,11 +45,12 @@ namespace viz {
                     return std::move(*this);
                 }
 
-                static void Bind(GLenum target, GLuint id) { glBindBuffer(target, id); }
                 GLenum target() const { return target_; }
                 GLuint id() const { return id_; }
                 operator GLint() { return id(); }
                private:
+                static void Bind(GLenum target, GLuint id) { glBindBuffer(target, id); }
+                static void Unbind(GLenum target) { glBindBuffer(target, 0u); }
                 GLenum target_;
                 GLuint id_;
             };
