@@ -2,6 +2,7 @@
 #define VIZ_GL_SHADER_H
 
 #include "glad/glad.h"
+#include "primitives.h"
 #include <string>
 #include <utility>
 
@@ -37,22 +38,15 @@ namespace viz {
                 return std::move(*this);
             }
 
-            GLint Geti(GLenum pname)
+            GLint Get(GLenum pname)
             {
                 GLint v;
                 glGetShaderiv(id(), pname, &v);
                 return v;
             }
 
-            bool Compiled() { return !!Geti(GL_COMPILE_STATUS); }
-            std::string Log()
-            {
-                auto log = std::array<GLchar, 1024>();
-                auto size = GLsizei{0};
-                glGetShaderInfoLog(id(), log.size(), &size, log.data());
-                return std::string(log.data());
-            }
-
+            bool Compiled() { return !!Get(GL_COMPILE_STATUS); }
+            std::string Log() { return GlslLog(id(), Get(GL_INFO_LOG_LENGTH), glGetShaderInfoLog); }
             GLuint id() const { return id_; }
             operator GLuint() { return id(); }
            private:

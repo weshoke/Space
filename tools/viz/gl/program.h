@@ -3,6 +3,7 @@
 
 #include "attribute.h"
 #include "glad/glad.h"
+#include "primitives.h"
 #include "shader.h"
 #include "uniform.h"
 #include <utility>
@@ -83,18 +84,7 @@ namespace viz {
             bool Linked() { return !!Get(GL_LINK_STATUS); }
             std::string Log()
             {
-                constexpr auto max_log_length_stack = GLint{1024};
-                auto size = GLsizei{0};
-                auto log_length = Get(GL_INFO_LOG_LENGTH);
-                if (log_length > max_log_length_stack) {
-                    auto heap_log = std::vector<GLchar>(log_length, '\0');
-                    glGetProgramInfoLog(id(), heap_log.size(), &size, heap_log.data());
-                    return std::string(heap_log.data());
-                }
-
-                auto log = std::array<GLchar, max_log_length_stack>();
-                glGetProgramInfoLog(id(), log.size(), &size, log.data());
-                return std::string(log.data());
+                return GlslLog(id(), Get(GL_INFO_LOG_LENGTH), glGetProgramInfoLog);
             }
 
             GLuint id() { return id_; }
