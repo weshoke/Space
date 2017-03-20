@@ -2,16 +2,12 @@
 #define VIZ_GL_VERTEX_ARRAY_H
 
 #include "glad/glad.h"
-#include <memory>
 #include <utility>
-#include <vector>
 
 namespace viz {
     namespace gl {
         class VertexArray {
            public:
-            using Ref = std::shared_ptr<VertexArray>;
-
             class Binding {
                public:
                 Binding(GLuint id)
@@ -26,14 +22,15 @@ namespace viz {
                 ~Binding()
                 {
                     if (id() != 0u) {
-                        Bind(0u);
+                        Unbind();
                     }
                 }
 
-                static void Bind(GLuint id) { glBindVertexArray(id); }
                 GLuint id() const { return id_; }
                 operator GLuint() { return id(); }
                private:
+                static void Bind(GLuint id) { glBindVertexArray(id); }
+                static void Unbind() { Bind(0u); }
                 GLuint id_;
             };
 
