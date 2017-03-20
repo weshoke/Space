@@ -29,6 +29,8 @@ namespace viz {
                 {
                 }
 
+                Binding& operator=(Binding&&) = delete;
+
                 // TODO: figure out how to do hierarchical binding.  Monads? .push? .pop?
                 template <class F>
                 Binding Mesh(F&& f)
@@ -62,12 +64,12 @@ namespace viz {
             {
             }
 
-            Pipeline(gl::Program::Ref program)
+            Pipeline(Context::ProgramRef program)
             : program_(program)
             {
             }
 
-            Pipeline(gl::Program::Ref program, Mesh&& mesh)
+            Pipeline(Context::ProgramRef program, Mesh&& mesh)
             : program_(program)
             , mesh_(std::move(mesh))
             {
@@ -124,7 +126,7 @@ namespace viz {
            private:
             // TODO: why a program Ref and why Program returns &&, how does that conflict with
             // current usage
-            gl::Program::Ref program_;
+            Context::ProgramRef program_;
             Mesh mesh_;
         };
     }

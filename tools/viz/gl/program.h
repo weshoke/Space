@@ -5,15 +5,12 @@
 #include "glad/glad.h"
 #include "shader.h"
 #include "uniform.h"
-#include <memory>
 #include <utility>
 
 namespace viz {
     namespace gl {
         class Program {
            public:
-            using Ref = std::shared_ptr<Program>;
-
             Program()
             : id_(glCreateProgram())
             {

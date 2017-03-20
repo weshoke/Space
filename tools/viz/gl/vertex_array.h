@@ -22,6 +22,7 @@ namespace viz {
 
                 Binding(const Binding& src) = delete;
                 Binding(Binding&& src) { id_ = std::exchange(src.id_, 0u); }
+                Binding& operator=(Binding&&) = delete;
                 ~Binding()
                 {
                     if (id() != 0u) {

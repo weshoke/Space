@@ -30,6 +30,8 @@ namespace viz {
                 {
                 }
 
+                Binding& operator=(Binding&&) = delete;
+
                 template <class Data>
                 Binding&& Vertex(const Data& data)
                 {

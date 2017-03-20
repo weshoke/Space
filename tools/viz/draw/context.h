@@ -6,6 +6,7 @@
 #include "draw.h"
 #include "gl/program.h"
 #include "primitives.h"
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -13,6 +14,8 @@ namespace viz {
     namespace draw {
         class Context {
            public:
+            using ProgramRef = std::shared_ptr<gl::Program>;
+
             static Context &Get()
             {
                 static auto ctx = Context();
@@ -113,7 +116,7 @@ namespace viz {
                 programs_.emplace(name, program);
             }
 
-            gl::Program::Ref Program(const std::string &name) { return programs_.at(name); }
+            ProgramRef Program(const std::string &name) { return programs_.at(name); }
            private:
             Context()
             : attributes_{{"pos", 0}}
@@ -125,7 +128,7 @@ namespace viz {
             }
 
             std::unordered_map<std::string, uint32_t> attributes_;
-            std::unordered_map<std::string, gl::Program::Ref> programs_;
+            std::unordered_map<std::string, ProgramRef> programs_;
 
             Vec2 screen_size_;
             float lens_angle_;

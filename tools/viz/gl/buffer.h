@@ -2,7 +2,6 @@
 #define VIZ_GL_BUFFER_H
 
 #include "glad/glad.h"
-#include <memory>
 #include <utility>
 #include <vector>
 
@@ -10,8 +9,6 @@ namespace viz {
     namespace gl {
         class Buffer {
            public:
-            using Ref = std::shared_ptr<Buffer>;
-
             class Binding {
                public:
                 Binding(GLenum target, GLuint id)
