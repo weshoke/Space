@@ -41,6 +41,7 @@ namespace viz {
                 Mesh::Binding mesh_binding_;
             };
 
+            // TODO: move uniform_names_ to a data structure on Context
             Pipeline(Context::ProgramRef program, Mesh&& mesh)
             : program_(program)
             , mesh_(std::move(mesh))
@@ -53,6 +54,7 @@ namespace viz {
             Pipeline(Pipeline&& src)
             : program_(std::move(src.program_))
             , mesh_(std::move(src.mesh_))
+            , uniform_names_(std::move(src.uniform_names_))
             {
             }
 
@@ -60,6 +62,7 @@ namespace viz {
             {
                 program_ = std::move(src.program_);
                 mesh_ = std::move(src.mesh_);
+                uniform_names_ = std::move(src.uniform_names_);
                 return *this;
             }
 
