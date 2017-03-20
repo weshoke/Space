@@ -33,13 +33,13 @@ namespace viz {
 
                 // TODO: figure out how to do hierarchical binding.  Monads? .push? .pop?
                 template <class F>
-                Binding Mesh(F&& f)
+                Binding&& Mesh(F&& f)
                 {
                     f(mesh_binding_);
                     return std::move(*this);
                 }
 
-                Binding Link()
+                Binding&& Link()
                 {
                     // TODO: iterate over context attributes and see if they exist in the program
                     // If so, set their location
@@ -48,7 +48,7 @@ namespace viz {
                     return std::move(*this);
                 }
 
-                Binding Draw(GLenum primitive)
+                Binding&& Draw(GLenum primitive)
                 {
                     mesh_binding_.Draw(primitive);
                     return std::move(*this);
