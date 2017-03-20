@@ -124,8 +124,8 @@ namespace viz {
 
             gl::Program& program() { return *program_; }
            private:
-            // TODO: why a program Ref and why Program returns &&, how does that conflict with
-            // current usage
+            // Using ProgramRef since programs are shared across many Pipelines
+            // and stored globally in a key-value map in Context
             Context::ProgramRef program_;
             Mesh mesh_;
         };
