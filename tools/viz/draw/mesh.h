@@ -17,9 +17,9 @@ namespace viz {
            public:
             class Binding {
                public:
-                Binding(Mesh& mesh, gl::VertexArray::Binding&& binding)
+                Binding(Mesh& mesh)
                 : mesh_(mesh)
-                , binding_(std::move(binding))
+                , binding_(mesh.vao_.Bind())
                 {
                 }
 
@@ -96,7 +96,7 @@ namespace viz {
                 return *this;
             }
 
-            Binding Bind() { return Binding(*this, vao_.Bind()); }
+            Binding Bind() { return Binding(*this); }
            private:
             GLint count_;
             GLenum type_;
