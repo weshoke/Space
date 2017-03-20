@@ -1,6 +1,7 @@
 #ifndef SPACE_VIZ_DRAW_CONTEXT_H
 #define SPACE_VIZ_DRAW_CONTEXT_H
 
+#include "analyzed_program.h"
 #include "camera.h"
 #include "color.h"
 #include "draw.h"
@@ -14,7 +15,7 @@ namespace viz {
     namespace draw {
         class Context {
            public:
-            using ProgramRef = std::shared_ptr<gl::Program>;
+            using ProgramRef = std::shared_ptr<AnalyzedProgram>;
 
             static Context &Get()
             {
@@ -101,9 +102,9 @@ namespace viz {
                                  const std::string &vertex,
                                  const std::string &fragment)
             {
-                auto program = std::make_shared<gl::Program>();
-                program->Attach(vertex, fragment).Link();
-                programs_.emplace(name, program);
+                programs_.emplace(name,
+                                  std::make_shared<AnalyzedProgram>(
+                                      gl::Program().Attach(vertex, fragment).Link()));
             }
 
             void RegisterProgram(const std::string &name,
@@ -111,9 +112,9 @@ namespace viz {
                                  const std::string &geometry,
                                  const std::string &fragment)
             {
-                auto program = std::make_shared<gl::Program>();
-                program->Attach(vertex, geometry, fragment).Link();
-                programs_.emplace(name, program);
+                programs_.emplace(name,
+                                  std::make_shared<AnalyzedProgram>(
+                                      gl::Program().Attach(vertex, geometry, fragment).Link()));
             }
 
             ProgramRef Program(const std::string &name) { return programs_.at(name); }

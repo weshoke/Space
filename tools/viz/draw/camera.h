@@ -3,7 +3,6 @@
 
 #include "geom/matrix4.h"
 #include "primitives.h"
-#include <iostream>
 
 namespace viz {
     namespace draw {
