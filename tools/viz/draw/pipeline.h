@@ -111,13 +111,13 @@ namespace viz {
 
             Pipeline&& Program(const std::string& vertex, const std::string& fragment)
             {
-                program_->Attach(vertex, fragment).Link().Use();
+                program().Attach(vertex, fragment).Link().Use();
                 return std::move(*this);
             }
 
             Binding Bind()
             {
-                program_->Use();
+                program().Use();
                 Context::Get().SetProgramUniforms(*program_);
                 return Binding(*this, mesh_.Bind());
             }
