@@ -13,22 +13,21 @@ namespace viz {
         class Program {
            public:
             Program()
-            : id_(glCreateProgram())
+            : id_(Create())
             {
             }
 
             Program(const Program& src) = delete;
 
             Program(Program&& src) { id_ = std::exchange(src.id_, 0u); }
-            Program& operator=(Program&&) = delete;
-
-            ~Program()
+            Program& operator=(Program&& src)
             {
-                if (id() != 0u) {
-                    glDeleteProgram(id());
-                }
+                Delete();
+                id_ = std::exchange(src.id_, 0u);
+                return *this;
             }
 
+            ~Program() { Delete(); }
             Program&& Attach(const Shader& shader)
             {
                 glAttachShader(id(), shader.id());
@@ -90,6 +89,14 @@ namespace viz {
             GLuint id() { return id_; }
             operator GLuint() { return id(); }
            private:
+            static GLuint Create() { return glCreateProgram(); }
+            void Delete()
+            {
+                if (id() != 0u) {
+                    glDeleteProgram(id());
+                }
+            }
+
             GLuint id_;
         };
     }

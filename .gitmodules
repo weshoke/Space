@@ -10,3 +10,6 @@
 [submodule "vendor/filesystem"]
 	path = vendor/filesystem
 	url = https://github.com/wjakob/filesystem.git
+[submodule "vendor/Optional"]
+	path = vendor/Optional
+	url = https://github.com/akrzemi1/Optional.git

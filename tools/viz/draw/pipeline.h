@@ -83,7 +83,12 @@ namespace viz {
             {
             }
 
-            Pipeline& operator=(Pipeline&&) = delete;
+            Pipeline& operator=(Pipeline&& src)
+            {
+                program_ = std::move(src.program_);
+                mesh_ = std::move(src.mesh_);
+                return *this;
+            }
 
             template <class Data>
             static Pipeline Create(const std::string& program_name, const Data& vertex)

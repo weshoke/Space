@@ -58,23 +58,30 @@ namespace viz {
             Buffer()
             : id_(0u)
             {
-                glGenBuffers(1, &id_);
+                Gen();
             }
             Buffer(const Buffer &) = delete;
 
             Buffer(Buffer &&src) { id_ = std::exchange(src.id_, 0u); }
-            Buffer &operator=(Buffer &&) = delete;
-            ~Buffer()
+            Buffer &operator=(Buffer &&src)
+            {
+                Delete();
+                id_ = std::exchange(src.id_, 0u);
+                return *this;
+            }
+            ~Buffer() { Delete(); }
+            Binding Bind(GLenum target) { return Binding(target, id()); }
+            GLuint id() { return id_; }
+            operator GLint() { return id(); }
+           private:
+            void Gen() { glGenBuffers(1, &id_); }
+            void Delete()
             {
                 if (id_ != 0u) {
                     glDeleteBuffers(1, &id_);
                 }
             }
 
-            Binding Bind(GLenum target) { return Binding(target, id()); }
-            GLuint id() { return id_; }
-            operator GLint() { return id(); }
-           private:
             GLuint id_;
         };
     }

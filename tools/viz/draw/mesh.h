@@ -1,6 +1,7 @@
 #ifndef VIZ_MESH_DRAW_H
 #define VIZ_MESH_DRAW_H
 
+#include "Optional/optional.hpp"
 #include "context.h"
 #include "gl/buffer.h"
 #include "gl/primitives.h"
@@ -51,15 +52,15 @@ namespace viz {
                     using T = typename Data::value_type;
                     mesh_.count_ = data.size();
                     mesh_.type_ = gl::Type<T>();
-                    mesh_.vbos_.emplace_back(gl::Buffer());
-                    mesh_.vbos_.back().Bind(GL_ELEMENT_ARRAY_BUFFER).Data(data);
+                    mesh_.index_buffer_ = gl::Buffer();
+                    mesh_.index_buffer_.value().Bind(GL_ELEMENT_ARRAY_BUFFER).Data(data);
                     return std::move(*this);
                 }
 
                 Binding&& Draw(GLenum primitive)
                 {
                     // TODO: wrap in GL primitives
-                    if (mesh_.HasIndexBuffer()) {
+                    if (mesh_.index_buffer_) {
                         glDrawElements(primitive, mesh_.count_, mesh_.type_, nullptr);
                     }
                     else {
@@ -80,18 +81,27 @@ namespace viz {
             : count_(src.count_)
             , type_(src.type_)
             , vao_(std::move(src.vao_))
+            , index_buffer_(std::move(src.index_buffer_))
             , vbos_(std::move(src.vbos_))
             {
             }
 
-            Mesh& operator=(Mesh&&) = delete;
+            Mesh& operator=(Mesh&& src)
+            {
+                count_ = src.count_;
+                type_ = src.type_;
+                vao_ = std::move(src.vao_);
+                index_buffer_ = std::move(src.index_buffer_);
+                vbos_ = std::move(src.vbos_);
+                return *this;
+            }
 
             Binding Bind() { return Binding(*this, vao_.Bind()); }
            private:
-            bool HasIndexBuffer() { return vbos_.size() >= 2; }
             GLint count_;
             GLenum type_;
             gl::VertexArray vao_;
+            std::experimental::optional<gl::Buffer> index_buffer_;
             std::vector<gl::Buffer> vbos_;
         };
     }

@@ -37,24 +37,31 @@ namespace viz {
             VertexArray()
             : id_(0u)
             {
-                glGenVertexArrays(1, &id_);
+                Gen();
             }
 
             VertexArray(const VertexArray& src) = delete;
 
             VertexArray(VertexArray&& src) { id_ = std::exchange(src.id_, 0u); }
-            VertexArray& operator=(VertexArray&&) = delete;
-            ~VertexArray()
+            VertexArray& operator=(VertexArray&& src)
+            {
+                Delete();
+                id_ = std::exchange(src.id_, 0u);
+                return *this;
+            }
+
+            ~VertexArray() { Delete(); }
+            Binding Bind() { return Binding(id()); }
+            GLuint id() const { return id_; }
+            operator GLuint() { return id(); }
+           private:
+            void Gen() { glGenVertexArrays(1, &id_); }
+            void Delete()
             {
                 if (id_ != 0u) {
                     glDeleteVertexArrays(1, &id_);
                 }
             }
-
-            Binding Bind() { return Binding(id()); }
-            GLuint id() const { return id_; }
-            operator GLuint() { return id(); }
-           private:
             GLuint id_;
         };
     }

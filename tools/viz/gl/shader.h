@@ -11,20 +11,19 @@ namespace viz {
         class Shader {
            public:
             Shader(GLenum type)
-            : id_(glCreateShader(type))
+            : id_(Create(type))
             {
             }
 
             Shader(const Shader& src) = delete;
             Shader(Shader&& src) { id_ = std::exchange(src.id_, 0u); }
-            Shader& operator=(Shader&&) = delete;
-            ~Shader()
+            Shader& operator=(Shader&& src)
             {
-                if (id() != 0u) {
-                    glDeleteShader(id());
-                }
+                Delete();
+                id_ = std::exchange(src.id_, 0u);
+                return *this;
             }
-
+            ~Shader() { Delete(); }
             Shader&& Source(const std::string& source)
             {
                 const auto* data = source.data();
@@ -50,6 +49,13 @@ namespace viz {
             GLuint id() const { return id_; }
             operator GLuint() { return id(); }
            private:
+            static GLuint Create(GLenum type) { return glCreateShader(type); }
+            void Delete()
+            {
+                if (id() != 0u) {
+                    glDeleteShader(id());
+                }
+            }
             GLuint id_;
         };
     }

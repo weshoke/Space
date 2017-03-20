@@ -43,6 +43,7 @@ target_compile_options(C1 PUBLIC ${DEBUG_COMPILER_OPTIONS})
 
 target_include_directories(C1 PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/brigand
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/include
     ${CMAKE_CURRENT_SOURCE_DIR}/vendor/variant/include
