@@ -41,7 +41,7 @@ namespace viz {
 
                 Binding Link()
                 {
-                    // TODO: iterater over context attributes and see if they exist in the program
+                    // TODO: iterate over context attributes and see if they exist in the program
                     // If so, set their location
                     glBindAttribLocation(
                         *(pipeline_.program_), Context::Get().AttributeLocation("pos"), "pos");
@@ -124,8 +124,8 @@ namespace viz {
 
             gl::Program& program() { return *program_; }
            private:
-            // Using ProgramRef since programs are shared across many Pipelines
-            // and stored globally in a key-value map in Context
+            // Using ProgramRef since programs are shared across many Pipelines and stored globally
+            // in a key-value map in Context
             Context::ProgramRef program_;
             Mesh mesh_;
         };
