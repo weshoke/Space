@@ -86,7 +86,7 @@ namespace viz {
                 return GlslLog(id(), Get(GL_INFO_LOG_LENGTH), glGetProgramInfoLog);
             }
 
-            GLuint id() { return id_; }
+            GLuint id() const { return id_; }
             operator GLuint() { return id(); }
            private:
             static GLuint Create() { return glCreateProgram(); }

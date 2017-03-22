@@ -76,7 +76,7 @@ namespace viz {
                 return std::move(*this);
             }
 
-            GLuint id() { return id_; }
+            GLuint id() const { return id_; }
             operator GLint() { return id(); }
            private:
             void Gen() { glGenBuffers(1, &id_); }

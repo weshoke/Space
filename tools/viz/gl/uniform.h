@@ -17,9 +17,9 @@ namespace viz {
             {
             }
 
-            GLint id() { return id_; }
+            GLint id() const { return id_; }
             operator GLint() { return id(); }
-            bool IsValid() { return id_ >= 0; }
+            bool IsValid() const { return id_ >= 0; }
             operator bool() { return IsValid(); }
            private:
             GLint id_;

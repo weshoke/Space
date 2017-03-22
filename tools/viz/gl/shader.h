@@ -37,15 +37,18 @@ namespace viz {
                 return std::move(*this);
             }
 
-            GLint Get(GLenum pname)
+            GLint Get(GLenum pname) const
             {
                 GLint v;
                 glGetShaderiv(id(), pname, &v);
                 return v;
             }
 
-            bool Compiled() { return !!Get(GL_COMPILE_STATUS); }
-            std::string Log() { return GlslLog(id(), Get(GL_INFO_LOG_LENGTH), glGetShaderInfoLog); }
+            bool Compiled() const { return !!Get(GL_COMPILE_STATUS); }
+            std::string Log() const
+            {
+                return GlslLog(id(), Get(GL_INFO_LOG_LENGTH), glGetShaderInfoLog);
+            }
             GLuint id() const { return id_; }
             operator GLuint() { return id(); }
            private:
