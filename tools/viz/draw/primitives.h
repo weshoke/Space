@@ -5,6 +5,7 @@
 #include "algebras/C3.h"
 #include "algebras/E2.h"
 #include "algebras/E3.h"
+#include "algebras/E4.h"
 #include "geom/circle.h"
 #include "geom/line.h"
 #include "geom/line_segment.h"
@@ -15,11 +16,13 @@ namespace viz {
     namespace draw {
         using E2 = space::algebras::E2<float>;
         using E3 = space::algebras::E3<float>;
+        using E4 = space::algebras::E4<float>;
         using C2 = space::algebras::C2<float>;
         using C3 = space::algebras::C3<float>;
 
         using Vec2 = typename E2::Vec;
         using Vec3 = typename E3::Vec;
+        using Vec4 = typename E4::Vec;
         using Point2d = typename C2::Vec;
         using Point = typename C3::Vec;
 

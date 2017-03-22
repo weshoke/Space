@@ -6,12 +6,13 @@
 #include <cstring>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace viz {
     namespace draw {
         class UniformMap {
            public:
-            using Value = mpark::variant<float, Vec2, Vec3>;
+            using Value = mpark::variant<float, Vec2, Vec3, Vec4>;
 
            private:
             enum class ValueType { Float = 0, Vec2, Vec3, Vec4, Matrix3, Matrix4 };
