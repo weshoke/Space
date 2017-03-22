@@ -36,17 +36,17 @@ namespace viz {
 
             Program&& Attach(const std::string& vertex, const std::string& fragment)
             {
-                return Attach(Shader(GL_VERTEX_SHADER).Source(vertex).Compile())
-                    .Attach(Shader(GL_FRAGMENT_SHADER).Source(fragment).Compile());
+                return Attach(Shader(GL_VERTEX_SHADER).Source(vertex).Compile().Verify())
+                    .Attach(Shader(GL_FRAGMENT_SHADER).Source(fragment).Compile().Verify());
             }
 
             Program&& Attach(const std::string& vertex,
                              const std::string& geometry,
                              const std::string& fragment)
             {
-                return Attach(Shader(GL_VERTEX_SHADER).Source(vertex).Compile())
-                    .Attach(Shader(GL_GEOMETRY_SHADER).Source(geometry).Compile())
-                    .Attach(Shader(GL_FRAGMENT_SHADER).Source(fragment).Compile());
+                return Attach(Shader(GL_VERTEX_SHADER).Source(vertex).Compile().Verify())
+                    .Attach(Shader(GL_GEOMETRY_SHADER).Source(geometry).Compile().Verify())
+                    .Attach(Shader(GL_FRAGMENT_SHADER).Source(fragment).Compile().Verify());
             }
 
             Program&& Link()

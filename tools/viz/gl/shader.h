@@ -3,6 +3,7 @@
 
 #include "glad/glad.h"
 #include "primitives.h"
+#include <iostream>
 #include <string>
 #include <utility>
 
@@ -34,6 +35,14 @@ namespace viz {
             Shader&& Compile()
             {
                 glCompileShader(id());
+                return std::move(*this);
+            }
+
+            Shader&& Verify()
+            {
+                if (!Compiled()) {
+                    std::cout << Log() << "\n";
+                }
                 return std::move(*this);
             }
 

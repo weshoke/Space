@@ -7,6 +7,7 @@
 #include "draw.h"
 #include "gl/program.h"
 #include "primitives.h"
+#include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -53,9 +54,18 @@ namespace viz {
                                  const std::string &vertex,
                                  const std::string &fragment)
             {
-                programs_.emplace(name,
-                                  std::make_shared<AnalyzedProgram>(
-                                      gl::Program().Attach(vertex, fragment).Link()));
+                auto vertex_shader = gl::Shader(GL_VERTEX_SHADER).Source(vertex).Compile();
+                VerifyShader(vertex_shader, name, "vertex");
+                auto fragment_shader = gl::Shader(GL_FRAGMENT_SHADER).Source(fragment).Compile();
+                VerifyShader(fragment_shader, name, "fragment");
+
+                auto program = gl::Program()
+                                   .Attach(std::move(vertex_shader))
+                                   .Attach(std::move(fragment_shader))
+                                   .Link();
+                VerifyProgram(program, name);
+
+                programs_.emplace(name, std::make_shared<AnalyzedProgram>(std::move(program)));
             }
 
             void RegisterProgram(const std::string &name,
@@ -63,9 +73,19 @@ namespace viz {
                                  const std::string &geometry,
                                  const std::string &fragment)
             {
-                programs_.emplace(name,
-                                  std::make_shared<AnalyzedProgram>(
-                                      gl::Program().Attach(vertex, geometry, fragment).Link()));
+                auto vertex_shader = gl::Shader(GL_VERTEX_SHADER).Source(vertex).Compile();
+                VerifyShader(vertex_shader, name, "vertex");
+                auto geometry_shader = gl::Shader(GL_GEOMETRY_SHADER).Source(geometry).Compile();
+                VerifyShader(geometry_shader, name, "geometry");
+                auto fragment_shader = gl::Shader(GL_FRAGMENT_SHADER).Source(fragment).Compile();
+                VerifyShader(fragment_shader, name, "fragment");
+                auto program = gl::Program()
+                                   .Attach(std::move(vertex_shader))
+                                   .Attach(std::move(geometry_shader))
+                                   .Attach(std::move(fragment_shader))
+                                   .Link();
+                VerifyProgram(program, name);
+                programs_.emplace(name, std::make_shared<AnalyzedProgram>(std::move(program)));
             }
 
             ProgramRef Program(const std::string &name) { return programs_.at(name); }
@@ -86,6 +106,22 @@ namespace viz {
             , projection_(Matrix4::Identity())
             , color_(Colors::black)
             {
+            }
+
+            void VerifyShader(gl::Shader &shader, const std::string &name, const std::string &type)
+            {
+                if (!shader.Compiled()) {
+                    std::cout << "Error compiling " << type << " shader " << name << "\n";
+                    std::cout << shader.Log();
+                }
+            }
+
+            void VerifyProgram(gl::Program &program, const std::string &name)
+            {
+                if (!program.Linked()) {
+                    std::cout << "Error linking program " << name << "\n";
+                    std::cout << program.Log() << "\n";
+                }
             }
 
             void ModelViewProjectionMatrixUniform(gl::Uniform uniform)

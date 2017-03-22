@@ -117,11 +117,11 @@ class C1Viz {
 
         std::cout << glGetString(GL_VERSION) << "\n";
         app().LoadShader("color");
-        app().LoadShader("trace-point");
-        app().LoadShader("trace-sphere-real");
-        app().LoadShader("trace-sphere-imaginary");
+        //        app().LoadShader("trace-point");
+        //        app().LoadShader("trace-sphere-real");
+        //        app().LoadShader("trace-sphere-imaginary");
         app().LoadShader("trace-rotor");
-        app().LoadShader("wireframe");
+        //        app().LoadShader("wireframe");
 
         auto window_size = app().WindowSize();
         auto aspect = float(window_size[0]) / float(window_size[1]);
