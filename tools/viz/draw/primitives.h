@@ -9,6 +9,7 @@
 #include "geom/circle.h"
 #include "geom/line.h"
 #include "geom/line_segment.h"
+#include "geom/matrix3.h"
 #include "geom/matrix4.h"
 #include "geom/sphere.h"
 
@@ -33,6 +34,7 @@ namespace viz {
         using Circle2d = space::geom::Circle<Vec2>;
         using Circle = space::geom::Circle<Vec3>;
         using Sphere = space::geom::Sphere<Vec3>;
+        using Matrix3 = space::geom::Matrix3<float>;
         using Matrix4 = space::geom::Matrix4<float>;
 
         template <class T>

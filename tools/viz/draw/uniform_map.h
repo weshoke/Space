@@ -12,7 +12,9 @@ namespace viz {
     namespace draw {
         class UniformMap {
            public:
-            using Value = mpark::variant<float, Vec2, Vec3, Vec4>;
+            // Large union type that wastes space but provides a nice interface
+            // Under the hood, values will be packed into a tight buffer.
+            using Value = mpark::variant<float, Vec2, Vec3, Vec4, Matrix3, Matrix4>;
 
            private:
             enum class ValueType { Float = 0, Vec2, Vec3, Vec4, Matrix3, Matrix4 };
@@ -76,6 +78,12 @@ namespace viz {
                         return mpark::get<1>(value).Data();
                     case 2:
                         return mpark::get<2>(value).Data();
+                    case 3:
+                        return mpark::get<3>(value).Data();
+                    case 4:
+                        return mpark::get<4>(value).Data();
+                    case 5:
+                        return mpark::get<5>(value).Data();
                 }
                 return nullptr;
             }

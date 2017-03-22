@@ -69,6 +69,8 @@ namespace space {
             T Value(int32_t col, int32_t row) const { return values_[Index(col, row)]; }
             T& operator[](const int32_t idx) { return values_[idx]; }
             T operator[](const int32_t idx) const { return values_[idx]; }
+            T* Data() { return values().data(); }
+            const T* Data() const { return values().data(); }
             const std::array<T, 9>& values() const { return values_; }
             friend std::ostream& operator<<(std::ostream& os, const Matrix3& m)
             {
