@@ -20,6 +20,7 @@ namespace viz {
             GLint id() { return id_; }
             operator GLint() { return id(); }
             bool IsValid() { return id_ >= 0; }
+            operator bool() { return IsValid(); }
            private:
             GLint id_;
         };

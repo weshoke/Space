@@ -36,63 +36,14 @@ namespace viz {
                 z_near_ = camera.near();
                 z_far_ = camera.far();
             }
+
             void SetProgramUniforms(AnalyzedProgram &program)
             {
-                {
-                    auto uniform = program.GetUniform("MVP");
-                    if (uniform.IsValid()) {
-                        auto mvp = projection_ * view_ * model_;
-                        glUniformMatrix4fv(uniform, 1, GL_FALSE, mvp.values().data());
-                    }
-                }
-                {
-                    auto uniform = program.GetUniform("color");
-                    if (uniform.IsValid()) {
-                        glUniform4fv(uniform, 1, ColorComponents(color_).data());
-                    }
-                }
-                {
-                    auto uniform = program.GetUniform("screen_size");
-                    if (uniform.IsValid()) {
-                        glUniform2fv(uniform, 1, screen_size_.values.data());
-                    }
-                }
-                {
-                    auto uniform = program.GetUniform("view_matrix");
-                    if (uniform.IsValid()) {
-                        glUniformMatrix4fv(uniform, 1, GL_FALSE, view_.values().data());
-                    }
-                }
-                {
-                    auto uniform = program.GetUniform("model_matrix");
-                    if (uniform.IsValid()) {
-                        glUniformMatrix4fv(uniform, 1, GL_FALSE, model_.values().data());
-                    }
-                }
-                {
-                    auto uniform = program.GetUniform("aspect");
-                    if (uniform.IsValid()) {
-                        auto aspect = screen_size_[0] / screen_size_[1];
-                        glUniform1fv(uniform, 1, &aspect);
-                    }
-                }
-                {
-                    auto uniform = program.GetUniform("fov_y_scale");
-                    if (uniform.IsValid()) {
-                        auto fov_y_scale = float(std::tan(lens_angle_ * M_PI / 180.f * 0.5f));
-                        glUniform1fv(uniform, 1, &fov_y_scale);
-                    }
-                }
-                {
-                    auto uniform = program.GetUniform("z_near");
-                    if (uniform.IsValid()) {
-                        glUniform1fv(uniform, 1, &z_near_);
-                    }
-                }
-                {
-                    auto uniform = program.GetUniform("z_far");
-                    if (uniform.IsValid()) {
-                        glUniform1fv(uniform, 1, &z_far_);
+                for (const auto &p : uniforms_) {
+                    const auto &name = std::get<0>(p);
+                    if (auto uniform = program.GetUniform(name)) {
+                        auto fn = std::get<1>(p);
+                        (this->*fn)(uniform);
                     }
                 }
             }
@@ -121,6 +72,15 @@ namespace viz {
            private:
             Context()
             : attributes_{{"pos", 0}}
+            , uniforms_{{"MVP", &Context::ModelViewProjectionMatrixUniform},
+                        {"view_matrix", &Context::ViewMatrixUniform},
+                        {"model_matrix", &Context::ModelMatrixUniform},
+                        {"color", &Context::ColorUniform},
+                        {"screen_size", &Context::ScreenSizeUniform},
+                        {"aspect", &Context::AspectUniform},
+                        {"fov_y_scale", &Context::FovYScaleUniform},
+                        {"z_near", &Context::ZNearUniform},
+                        {"z_far", &Context::ZFarUniform}}
             , model_(Matrix4::Identity())
             , view_(Matrix4::Identity())
             , projection_(Matrix4::Identity())
@@ -128,8 +88,51 @@ namespace viz {
             {
             }
 
+            void ModelViewProjectionMatrixUniform(gl::Uniform uniform)
+            {
+                auto mvp = projection_ * view_ * model_;
+                glUniformMatrix4fv(uniform, 1, GL_FALSE, mvp.values().data());
+            }
+
+            void ViewMatrixUniform(gl::Uniform uniform)
+            {
+                glUniformMatrix4fv(uniform, 1, GL_FALSE, view_.values().data());
+            }
+
+            void ModelMatrixUniform(gl::Uniform uniform)
+            {
+                glUniformMatrix4fv(uniform, 1, GL_FALSE, model_.values().data());
+            }
+
+            void ColorUniform(gl::Uniform uniform)
+            {
+                glUniform4fv(uniform, 1, ColorComponents(color_).data());
+            }
+
+            void ScreenSizeUniform(gl::Uniform uniform)
+            {
+                glUniform2fv(uniform, 1, screen_size_.values.data());
+            }
+
+            void AspectUniform(gl::Uniform uniform)
+            {
+                auto aspect = screen_size_[0] / screen_size_[1];
+                glUniform1fv(uniform, 1, &aspect);
+            }
+
+            void FovYScaleUniform(gl::Uniform uniform)
+            {
+                auto fov_y_scale = float(std::tan(lens_angle_ * M_PI / 180.f * 0.5f));
+                glUniform1fv(uniform, 1, &fov_y_scale);
+            }
+
+            void ZNearUniform(gl::Uniform uniform) { glUniform1fv(uniform, 1, &z_near_); }
+            void ZFarUniform(gl::Uniform uniform) { glUniform1fv(uniform, 1, &z_far_); }
+            typedef void (Context::*UniformFn)(gl::Uniform uniform);
+
             std::unordered_map<std::string, uint32_t> attributes_;
             std::unordered_map<std::string, ProgramRef> programs_;
+            std::unordered_map<std::string, UniformFn> uniforms_;
 
             Vec2 screen_size_;
             float lens_angle_;
