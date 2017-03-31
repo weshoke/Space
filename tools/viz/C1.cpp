@@ -118,10 +118,10 @@ class C1Viz {
 
         std::cout << glGetString(GL_VERSION) << "\n";
         app().LoadProgram("color");
-        //        app().LoadProgram("trace-point");
-        //        app().LoadProgram("trace-sphere-real");
-        //        app().LoadProgram("trace-sphere-imaginary");
-        app().LoadProgram("trace-rotor");
+        app().LoadProgram("trace-point");
+        app().LoadProgram("trace-sphere-real");
+        app().LoadProgram("trace-sphere-imaginary");
+        //        app().LoadProgram("trace-rotor");
         //        app().LoadProgram("wireframe");
 
         auto window_size = app().WindowSize();
@@ -133,21 +133,22 @@ class C1Viz {
         // viz::draw::Colors::red));
         auto p1 = C3::Round::DualSphere(C3::EVec(-1.f, 0.f, 0.f), 1.f);
         auto p2 = C3::Round::DualSphere(C3::EVec(1.f, 0.f, 0.f), -1.f);
-        // renderables_.emplace_back(viz::draw::Create(p1, viz::draw::Colors::red));
-        // renderables_.emplace_back(viz::draw::Create(p2, viz::draw::Colors::red));
+        renderables_.emplace_back(viz::draw::Create(p1, viz::draw::Colors::red));
+        //         renderables_.emplace_back(viz::draw::Create(p2, viz::draw::Colors::red));
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        renderables_.emplace_back(viz::draw::Create(viz::draw::CreateExtrudedPolygon(6),
-                                                    viz::draw::Colors::red,
-                                                    "trace-rotor",
-                                                    GL_TRIANGLES,
-                                                    viz::draw::Matrix4::Identity(),
-                                                    viz::draw::UniformMap()
-                                                        .Add("center", Vec3(0.f, 0.f, 0.f))
-                                                        .Add("axis", Vec3(0.f, 0.f, 1.f))
-                                                        .Add("radius", 1.f)));
+        //        renderables_.emplace_back(viz::draw::Create(viz::draw::CreateExtrudedPolygon(6),
+        //                                                    viz::draw::Colors::red,
+        //                                                    "trace-rotor",
+        //                                                    GL_TRIANGLES,
+        //                                                    viz::draw::Matrix4::Identity(),
+        //                                                    viz::draw::UniformMap()
+        //                                                        .Add("center", Vec3(0.f, 0.f,
+        //                                                        0.f))
+        //                                                        .Add("axis", Vec3(0.f, 0.f, 1.f))
+        //                                                        .Add("radius", 1.f)));
 
         // VisualizeC1();
 
