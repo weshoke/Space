@@ -28,7 +28,20 @@ namespace viz {
             Shader&& Source(const std::string& source)
             {
                 const auto* data = source.data();
-                glShaderSource(id(), 1, &data, NULL);
+                glShaderSource(id(), 1, &data, nullptr);
+                return std::move(*this);
+            }
+
+            Shader&& Source(const std::vector<std::string>& source)
+            {
+                auto ptrs = std::vector<const GLchar*>();
+                ptrs.reserve(source.size());
+                std::transform(
+                    source.begin(), source.end(), std::back_inserter(ptrs), [](const auto& s) {
+                        return s.data();
+                    });
+
+                glShaderSource(id(), ptrs.size(), ptrs.data(), nullptr);
                 return std::move(*this);
             }
 

@@ -115,18 +115,12 @@ namespace viz {
                 return search_paths().LoadFile(file_name);
             }
 
-            void LoadShader(const std::string& name)
+            void LoadProgram(const std::string& name)
             {
-                if (FindFile(name + ".gs").is_file()) {
-                    draw::Context::Get().RegisterProgram(name,
-                                                         LoadFile(name + ".vs"),
-                                                         LoadFile(name + ".gs"),
-                                                         LoadFile(name + ".fs"));
-                }
-                else {
-                    draw::Context::Get().RegisterProgram(
-                        name, LoadFile(name + ".vs"), LoadFile(name + ".fs"));
-                }
+                return draw::Context::Get().RegisterProgram(
+                    name,
+                    [&](const auto& file_name) { return LoadFile(file_name); },
+                    [&](const auto& file_name) { return FindFile(file_name).is_file(); });
             }
 
            private:

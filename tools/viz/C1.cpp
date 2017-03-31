@@ -10,6 +10,7 @@
 #include "draw/pipeline.h"
 #include "draw/renderable.h"
 #include "draw/renderable_factory.h"
+#include "draw/shader_preprocessor.h"
 #include "draw/trackball.h"
 #include "filesystem/path.h"
 #include "geom/primitives.h"
@@ -116,12 +117,12 @@ class C1Viz {
         app().AddSearchPath(shader_dir);
 
         std::cout << glGetString(GL_VERSION) << "\n";
-        app().LoadShader("color");
-        //        app().LoadShader("trace-point");
-        //        app().LoadShader("trace-sphere-real");
-        //        app().LoadShader("trace-sphere-imaginary");
-        app().LoadShader("trace-rotor");
-        //        app().LoadShader("wireframe");
+        app().LoadProgram("color");
+        //        app().LoadProgram("trace-point");
+        //        app().LoadProgram("trace-sphere-real");
+        //        app().LoadProgram("trace-sphere-imaginary");
+        app().LoadProgram("trace-rotor");
+        //        app().LoadProgram("wireframe");
 
         auto window_size = app().WindowSize();
         auto aspect = float(window_size[0]) / float(window_size[1]);
