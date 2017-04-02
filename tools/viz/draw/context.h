@@ -167,7 +167,7 @@ namespace viz {
 
             void ColorUniform(gl::Uniform uniform)
             {
-                glUniform4fv(uniform, 1, ColorComponents(color_).data());
+                glUniform4fv(uniform, 1, ColorComponents(color_).Data());
             }
 
             void ScreenSizeUniform(gl::Uniform uniform)

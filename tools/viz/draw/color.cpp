@@ -2,6 +2,26 @@
 
 namespace viz {
     namespace draw {
+        uint32_t Color(Vec3 rgb, float a)
+        {
+            return detail::Convert(rgb[0]) << 24 | detail::Convert(rgb[1]) << 16 |
+                   detail::Convert(rgb[2]) << 8 | detail::Convert(a);
+        }
+
+        uint32_t Color(Vec4 rgba)
+        {
+            return detail::Convert(rgba[0]) << 24 | detail::Convert(rgba[1]) << 16 |
+                   detail::Convert(rgba[2]) << 8 | detail::Convert(rgba[3]);
+        }
+
+        Vec4 ColorComponents(uint32_t color)
+        {
+            return Vec4(detail::Convert(color >> 24),
+                        detail::Convert(color >> 16),
+                        detail::Convert(color >> 8),
+                        detail::Convert(color));
+        }
+
         const uint32_t Colors::orange = Color(0xff5f2eu);
         const uint32_t Colors::yellow = Color(0xfcbe32u);
         const uint32_t Colors::navy = Color(0x004e66u);

@@ -52,6 +52,14 @@ namespace viz {
                 draw();
             }
 
+            std::vector<uint32_t> Image()
+            {
+                auto image = std::vector<uint32_t>(PixelCount(), 0u);
+                color_buffers_[0]->Bind().GetImage(GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, image);
+                return image;
+            }
+
+            uint32_t PixelCount() const { return size()[0] * size()[1]; }
             const std::array<uint32_t, 2>& size() const { return size_; }
             uint32_t clear_color() const { return clear_color_; };
            private:

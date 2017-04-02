@@ -72,6 +72,13 @@ namespace viz {
                     return std::move(*this);
                 }
 
+                template <class T>
+                Binding &&GetImage(GLenum format, GLenum type, std::vector<T> &image)
+                {
+                    glGetTexImage(target(), 0, format, type, image.data());
+                    return std::move(*this);
+                }
+
                 Binding &&Parameter(GLenum pname, GLint param)
                 {
                     glTexParameteri(target(), pname, param);

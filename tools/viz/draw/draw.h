@@ -6,7 +6,6 @@
 namespace viz {
     namespace draw {
         void ClearWindowWithDepth(std::array<uint32_t, 2> window_size, uint32_t color);
-        std::array<float, 4> ColorComponents(uint32_t color);
     }
 }
 

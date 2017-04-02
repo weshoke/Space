@@ -181,6 +181,11 @@ class C1Viz {
                                                  {tex}));
 
         surface.Draw(camera, []() {});
+        auto image2 = surface.Image();
+        for (auto pix : image2) {
+            std::cout << std::bitset<32>(pix) << " " << viz::draw::ColorComponents(pix) << "\n";
+        }
+        std::cout << std::bitset<32>(viz::draw::Colors::chromium) << "\n";
 
         //		auto N = 2;
         //		for(auto j = -N; j <= N; ++j)
