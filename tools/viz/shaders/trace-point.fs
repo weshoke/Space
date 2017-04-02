@@ -21,8 +21,7 @@ float Saw(float t, float N)
 void main()
 {
     Ray ray = CameraRay(view_matrix, world_pos);
-
-    float t = IntersectSphere(ray, center, radius);
+    float t = IntersectSphere(ray, center, radius).x;
     if(t < 0.)
     {
         discard;

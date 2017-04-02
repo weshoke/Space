@@ -36,19 +36,16 @@ namespace viz {
                 template <class Data>
                 Binding&& Vertex(const Data& data)
                 {
-                    using T = typename Data::value_type;
                     if (!mesh_.index_buffer_) {
                         mesh_.count_ = data.size();
                     }
-                    mesh_.vbos_.emplace_back(
-                        gl::Buffer().Bind(GL_ARRAY_BUFFER, [&data](auto&& binding) {
-                            binding.Data(data);
-                            gl::Attribute(Context::Get().AttributeLocation("pos"))
-                                .Enable()
-                                .Pointer(gl::Attribute::Layout(draw::Size<T>(), GL_FLOAT));
-                            binding.Detach();
-                        }));
-                    return std::move(*this);
+                    return Attribute(data, "pos");
+                }
+
+                template <class Data>
+                Binding&& TexCoord(const Data& data)
+                {
+                    return Attribute(data, "tex_coord");
                 }
 
                 template <class Data>
@@ -76,6 +73,21 @@ namespace viz {
                 }
 
                private:
+                template <class Data>
+                Binding&& Attribute(const Data& data, const std::string& name)
+                {
+                    using T = typename Data::value_type;
+                    mesh_.vbos_.emplace_back(
+                        gl::Buffer().Bind(GL_ARRAY_BUFFER, [&data, &name](auto&& binding) {
+                            binding.Data(data);
+                            gl::Attribute(Context::Get().AttributeLocation(name))
+                                .Enable()
+                                .Pointer(gl::Attribute::Layout(draw::Size<T>(), GL_FLOAT));
+                            binding.Detach();
+                        }));
+                    return std::move(*this);
+                }
+
                 Mesh& mesh_;
                 gl::VertexArray::Binding binding_;
             };

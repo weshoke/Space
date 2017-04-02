@@ -1,11 +1,13 @@
 #ifndef SPACE_VIZ_DRAW_RENDERABLE_H
 #define SPACE_VIZ_DRAW_RENDERABLE_H
 
+#include "context.h"
 #include "draw.h"
 #include "geom/matrix4.h"
 #include "pipeline.h"
 #include "uniform_map.h"
 #include <memory>
+#include <vector>
 
 namespace viz {
     namespace draw {
@@ -18,11 +20,13 @@ namespace viz {
 
         class ExplicitRenderable final : public Renderable {
            public:
-            ExplicitRenderable(Pipeline &&pipeline,
-                               GLenum primitive,
-                               uint32_t color,
-                               Matrix4 model = Matrix4::Identity(),
-                               UniformMap uniforms = UniformMap());
+            ExplicitRenderable(
+                Pipeline &&pipeline,
+                GLenum primitive,
+                uint32_t color,
+                Matrix4 model = Matrix4::Identity(),
+                UniformMap uniforms = UniformMap(),
+                std::vector<Context::TextureRef> textures = std::vector<Context::TextureRef>());
             virtual ~ExplicitRenderable() {}
             void Draw();
 
@@ -32,6 +36,7 @@ namespace viz {
             uint32_t color_;
             Matrix4 model_;
             UniformMap uniforms_;
+            std::vector<Context::TextureRef> textures_;
         };
     }
 }

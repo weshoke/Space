@@ -14,17 +14,17 @@ namespace viz {
            public:
             // Large union type that wastes space but provides a nice interface
             // Under the hood, values will be packed into a tight buffer.
-            using Value = mpark::variant<float, Vec2, Vec3, Vec4, Matrix3, Matrix4>;
+            using Value = mpark::variant<GLint, GLfloat, Vec2, Vec3, Vec4, Matrix3, Matrix4>;
 
            private:
-            enum class ValueType { Float = 0, Vec2, Vec3, Vec4, Matrix3, Matrix4 };
+            enum class ValueType { Int = 0, Float, Vec2, Vec3, Vec4, Matrix3, Matrix4 };
 
             struct Entry {
                 ValueType value_type;
                 uint32_t index;
             };
 
-            ValueType ValueTypeFromValue(const Value& value)
+            static constexpr ValueType ValueTypeFromValue(const Value& value)
             {
                 return static_cast<ValueType>(value.index());
             }
@@ -53,6 +53,8 @@ namespace viz {
             static uint32_t ValueTypeCount(ValueType value_type)
             {
                 switch (value_type) {
+                    case ValueType::Int:
+                        return 1u;
                     case ValueType::Float:
                         return 1u;
                     case ValueType::Vec2:
@@ -69,13 +71,14 @@ namespace viz {
                 return 0u;
             }
 
-            static const float* ValueData(const Value& value)
+            static const void* ValueData(const Value& value)
             {
+                // TODO: use ValueType enums
                 switch (value.index()) {
                     case 0:
                         return &mpark::get<0>(value);
                     case 1:
-                        return mpark::get<1>(value).Data();
+                        return &mpark::get<1>(value);
                     case 2:
                         return mpark::get<2>(value).Data();
                     case 3:
@@ -84,6 +87,10 @@ namespace viz {
                         return mpark::get<4>(value).Data();
                     case 5:
                         return mpark::get<5>(value).Data();
+                    case 6:
+                        return mpark::get<6>(value).Data();
+                    default:
+                        break;
                 }
                 return nullptr;
             }
@@ -93,30 +100,34 @@ namespace viz {
                 auto offset = size_t(values_.size());
                 auto count = ValueTypeCount(ValueTypeFromValue(value));
                 values_.resize(offset + count);
+                // TODO: in term of bytes
                 std::memcpy(values_.data() + offset, ValueData(value), count * sizeof(float));
                 return offset;
             }
 
-            static void Apply(gl::Uniform uniform, ValueType value_type, const float* value)
+            static void Apply(gl::Uniform uniform, ValueType value_type, const void* value)
             {
                 switch (value_type) {
+                    case ValueType::Int:
+                        glUniform1iv(uniform, 1, (const GLint*)value);
+                        break;
                     case ValueType::Float:
-                        glUniform1fv(uniform, 1, value);
+                        glUniform1fv(uniform, 1, (const GLfloat*)value);
                         break;
                     case ValueType::Vec2:
-                        glUniform2fv(uniform, 1, value);
+                        glUniform2fv(uniform, 1, (const GLfloat*)value);
                         break;
                     case ValueType::Vec3:
-                        glUniform3fv(uniform, 1, value);
+                        glUniform3fv(uniform, 1, (const GLfloat*)value);
                         break;
                     case ValueType::Vec4:
-                        glUniform4fv(uniform, 1, value);
+                        glUniform4fv(uniform, 1, (const GLfloat*)value);
                         break;
                     case ValueType::Matrix3:
-                        glUniformMatrix3fv(uniform, 1, GL_FALSE, value);
+                        glUniformMatrix3fv(uniform, 1, GL_FALSE, (const GLfloat*)value);
                         break;
                     case ValueType::Matrix4:
-                        glUniformMatrix4fv(uniform, 1, GL_FALSE, value);
+                        glUniformMatrix4fv(uniform, 1, GL_FALSE, (const GLfloat*)value);
                         break;
                 }
             }

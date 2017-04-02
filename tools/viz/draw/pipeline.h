@@ -92,12 +92,6 @@ namespace viz {
                 return std::move(*this);
             }
 
-            // Pipeline&& BindAttributes()
-            // {
-            //     // TODO: iterator over all context attributes
-            //     glBindAttribLocation(program(), Context::Get().AttributeLocation("pos"), "pos");
-            // }
-
             Binding Bind()
             {
                 program().program().Use();

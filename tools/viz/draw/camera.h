@@ -67,6 +67,7 @@ namespace viz {
                 return Matrix4::Perspective(lens_angle(), aspect(), near(), far());
             }
 
+            Ray ViewRay(Vec3 p) { return Ray(eye(), (p - eye()).Normalized()); }
             const Vec3 &eye() const { return eye_; }
             const Vec3 &look_at() const { return look_at_; }
             const Vec3 &up() const { return up_; }

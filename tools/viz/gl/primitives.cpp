@@ -18,6 +18,11 @@ namespace viz {
         {
             return GL_UNSIGNED_INT;
         }
+        template <>
+        GLenum Type<float>()
+        {
+            return GL_FLOAT;
+        }
 
         bool Error(const std::string &msg)
         {

@@ -11,6 +11,9 @@ namespace viz {
         template <class T>
         GLenum Type();
 
+        template <class T>
+        GLenum InternalFormat();
+
         bool Error(const std::string& msg);
 
         template <class F>

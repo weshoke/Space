@@ -130,10 +130,15 @@ namespace viz {
                                const std::string &program,
                                GLenum primitve,
                                Matrix4 model,
-                               UniformMap uniforms)
+                               UniformMap uniforms,
+                               std::vector<Context::TextureRef> textures)
         {
-            return std::make_shared<ExplicitRenderable>(
-                Pipeline::Create(program, std::move(mesh)), primitve, color, model, uniforms);
+            return std::make_shared<ExplicitRenderable>(Pipeline::Create(program, std::move(mesh)),
+                                                        primitve,
+                                                        color,
+                                                        model,
+                                                        uniforms,
+                                                        textures);
         }
     }
 }

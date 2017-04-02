@@ -7,7 +7,7 @@ in vec3 pos;
 
 out vec3 world_pos;
 
-#define TWO_OVER_SQRT_3 1.155
+#define TWO_OVER_SQRT_3 1.16
 
 void main() {
     float s = TWO_OVER_SQRT_3 * radius;

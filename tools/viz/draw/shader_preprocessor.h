@@ -98,7 +98,9 @@ namespace viz {
 
                     auto file_name = line_text.substr(sidx + 1, eidx - sidx - 1);
                     source.Append(Preprocess(file_name, load_file));
-                    source.Append("#line " + std::to_string(line) + " 0\n");
+                    // Offset line since we're replacing the #include with #line and
+                    // the line number represents the next line in the source file
+                    source.Append("#line " + std::to_string(line + 1) + " 0\n");
                 }
                 else {
                     source.Append(line_text + "\n");

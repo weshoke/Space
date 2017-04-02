@@ -11,6 +11,7 @@
 #include "geom/line_segment.h"
 #include "geom/matrix3.h"
 #include "geom/matrix4.h"
+#include "geom/ray.h"
 #include "geom/sphere.h"
 
 namespace viz {
@@ -31,6 +32,7 @@ namespace viz {
         using LineSegment = space::geom::LineSegment<Vec3>;
         using Line2d = space::geom::Line<Vec2>;
         using Line = space::geom::Line<Vec3>;
+        using Ray = space::geom::Ray<Vec3>;
         using Circle2d = space::geom::Circle<Vec2>;
         using Circle = space::geom::Circle<Vec3>;
         using Sphere = space::geom::Sphere<Vec3>;

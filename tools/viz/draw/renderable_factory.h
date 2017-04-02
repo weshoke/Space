@@ -35,7 +35,15 @@ namespace viz {
                                uint32_t color,
                                float extent = 5.f)
         {
-            return Create(LineSegment2d(line.Point(-extent), line.Point(extent)), color);
+            using LineSegment = space::geom::LineSegment<Vec>;
+            return Create(LineSegment(line.Point(-extent), line.Point(extent)), color);
+        }
+
+        template <class Vec>
+        Renderable::Ref Create(const space::geom::Ray<Vec> &ray, uint32_t color, float extent = 5.f)
+        {
+            using LineSegment = space::geom::LineSegment<Vec>;
+            return Create(LineSegment(ray.start(), ray.Point(extent)), color);
         }
 
         Renderable::Ref Create(const Circle2d &circle, uint32_t color);
@@ -47,12 +55,14 @@ namespace viz {
         Renderable::Ref Create(const Vec3 &p, uint32_t color, float radius = 0.05f);
         Renderable::Ref Create(const space::geom::Sphere<Vec3> &sphere, uint32_t color);
 
-        Renderable::Ref Create(Mesh &&mesh,
-                               uint32_t color,
-                               const std::string &program,
-                               GLenum primitve,
-                               Matrix4 model = Matrix4::Identity(),
-                               UniformMap uniforms = UniformMap());
+        Renderable::Ref Create(
+            Mesh &&mesh,
+            uint32_t color,
+            const std::string &program,
+            GLenum primitve,
+            Matrix4 model = Matrix4::Identity(),
+            UniformMap uniforms = UniformMap(),
+            std::vector<Context::TextureRef> textures = std::vector<Context::TextureRef>());
     }
 }
 
