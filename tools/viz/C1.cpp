@@ -165,7 +165,6 @@ class C1Viz {
             image.push_back(float(i) / 15.f);
         }
         auto tex = std::make_shared<viz::gl::Texture>();
-        viz::gl::Error("tex");
         tex->Bind()
             .ImageData(GL_R32F, GL_RED, 4, 4, image)
             .Parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST)
@@ -180,6 +179,8 @@ class C1Viz {
                                                  viz::draw::Matrix4::Identity(),
                                                  viz::draw::UniformMap().Add("tex", 0),
                                                  {tex}));
+
+        surface.Draw(camera, []() {});
 
         //		auto N = 2;
         //		for(auto j = -N; j <= N; ++j)
@@ -299,14 +300,11 @@ class C1Viz {
     void Scroll(int xoffset, int yoffset) { trackball.Move(camera, float(yoffset) * 0.2f); }
     void Draw()
     {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         auto window_size = app().WindowSize();
         viz::draw::ClearWindowWithDepth(window_size, viz::draw::Colors::chromium);
 
-        using Vec2 = viz::draw::Vec2;
         viz::draw::Context::Get().ApplyCamera(camera);
-        viz::draw::Context::Get().ScreenSize(Vec2(float(window_size[0]), float(window_size[1])));
+        viz::draw::Context::Get().ScreenSize(window_size);
 
         const auto draw_renderables = [](auto& renderables) {
             for (auto& renderable : renderables) {

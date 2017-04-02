@@ -2,6 +2,7 @@
 #define VIZ_DRAW_SURFACE_H
 
 #include "context.h"
+#include "draw/camera.h"
 #include "gl/framebuffer.h"
 #include "gl/renderbuffer.h"
 #include "gl/texture.h"
@@ -15,6 +16,7 @@ namespace viz {
                     gl::Renderbuffer&& depth_buffer,
                     std::vector<Context::TextureRef>&& color_buffers)
             : size_(size)
+            , clear_color_(viz::draw::Colors::chromium)
             , framebuffer_(std::move(framebuffer))
             , depth_buffer_(std::move(depth_buffer))
             , color_buffers_(std::move(color_buffers))
@@ -40,8 +42,21 @@ namespace viz {
                                {color_buffer});
             }
 
+            template <class F>
+            void Draw(const Camera& camera, F&& draw)
+            {
+                auto binding = framebuffer_.Bind(GL_FRAMEBUFFER);
+                viz::draw::ClearWindowWithDepth(size(), clear_color());
+                viz::draw::Context::Get().ApplyCamera(camera);
+                viz::draw::Context::Get().ScreenSize(size());
+                draw();
+            }
+
+            const std::array<uint32_t, 2>& size() const { return size_; }
+            uint32_t clear_color() const { return clear_color_; };
            private:
             std::array<uint32_t, 2> size_;
+            uint32_t clear_color_;
             gl::Framebuffer framebuffer_;
             gl::Renderbuffer depth_buffer_;
             std::vector<Context::TextureRef> color_buffers_;

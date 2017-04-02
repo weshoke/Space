@@ -97,11 +97,11 @@ namespace viz {
                 return 0;
             }
 
-            std::array<int32_t, 2> WindowSize()
+            std::array<uint32_t, 2> WindowSize()
             {
                 int32_t width, height;
                 glfwGetFramebufferSize(window(), &width, &height);
-                return {width, height};
+                return {uint32_t(width), uint32_t(height)};
             }
 
             void AddSearchPath(filesystem::path path) { return search_paths().AddSearchPath(path); }

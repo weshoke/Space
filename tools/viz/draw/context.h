@@ -36,6 +36,10 @@ namespace viz {
             void ViewMatrix(const Matrix4 &view) { view_ = view; }
             void ProjectionMatrix(const Matrix4 &projection) { projection_ = projection; }
             void ScreenSize(const Vec2 &screen_size) { screen_size_ = screen_size; }
+            void ScreenSize(const std::array<uint32_t, 2> &screen_size)
+            {
+                screen_size_ = Vec2(float(screen_size[0]), float(screen_size[1]));
+            }
             void ApplyCamera(const Camera &camera)
             {
                 ViewMatrix(camera.ViewMatrix());
