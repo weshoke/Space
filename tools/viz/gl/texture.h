@@ -78,7 +78,6 @@ namespace viz {
                     return std::move(*this);
                 }
 
-                void Detach() { id_ = 0u; }
                 GLenum target() const { return target_; }
                 GLuint id() const { return id_; }
                 operator GLint() { return id(); }
@@ -94,8 +93,9 @@ namespace viz {
                 GLuint id_;
             };
 
-            Texture()
-            : id_(0u)
+            Texture(GLenum target = GL_TEXTURE_2D)
+            : target_(target)
+            , id_(0u)
             {
                 Gen();
             }
@@ -110,17 +110,18 @@ namespace viz {
             }
             ~Texture() { Delete(); }
             static void Active(uint32_t idx) { glActiveTexture(GL_TEXTURE0 + idx); }
-            Binding Bind(GLenum target)
+            Binding Bind()
             {
                 Active(0);
-                return Binding(target, id());
+                return Binding(target(), id());
             }
-            Binding Bind(GLenum target, uint32_t idx)
+            Binding Bind(uint32_t idx)
             {
                 Active(idx);
-                return Binding(target, id());
+                return Binding(target(), id());
             }
 
+            GLenum target() const { return target_; }
             GLuint id() const { return id_; }
             operator GLuint() { return id(); }
            private:
@@ -131,6 +132,7 @@ namespace viz {
                     glDeleteTextures(1, &id_);
                 }
             }
+            GLenum target_;
             GLuint id_;
         };
     }

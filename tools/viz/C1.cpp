@@ -166,7 +166,7 @@ class C1Viz {
         }
         auto tex = std::make_shared<viz::gl::Texture>();
         viz::gl::Error("tex");
-        tex->Bind(GL_TEXTURE_2D)
+        tex->Bind()
             .Image(GL_R32F, GL_RED, 4, 4, image)
             .Parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST)
             .Parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -189,22 +189,24 @@ class C1Viz {
         //				auto p = Vec3(-0.5f * i, -0.5f * j, -6.f) + camera.eye();
         //				auto ray = camera.ViewRay(p);
         //				renderables_.emplace_back(viz::draw::Create(ray, viz::draw::Colors::black,
-        //10.f));
+        // 10.f));
         //				auto t = 0.f;
         ////				std::cout << "\n\n";
         //				auto count = 0;
-        //				auto d = cylinder_distance(ray.Point(t), Vec3(0.f, 0.f, 0.f), Vec3(0.f, 0.f, 1.f),
-        //1.f, 0.1f);
+        //				auto d = cylinder_distance(ray.Point(t), Vec3(0.f, 0.f, 0.f), Vec3(0.f, 0.f,
+        //1.f),
+        // 1.f, 0.1f);
         ////				std::cout << d << "\n";
         //				while(d > 1e-2f && count < 3)
         //				{
         //					t += d;
-        //					d = cylinder_distance(ray.Point(t), Vec3(0.f, 0.f, 0.f), Vec3(0.f, 0.f, 1.f),
-        //1.f, 0.1f);
+        //					d = cylinder_distance(ray.Point(t), Vec3(0.f, 0.f, 0.f), Vec3(0.f, 0.f,
+        //1.f),
+        // 1.f, 0.1f);
         ////					std::cout << d << "\n";
         //					++count;
         //					renderables_.emplace_back(viz::draw::Create(ray.Point(t),
-        //viz::draw::Colors::sky));
+        // viz::draw::Colors::sky));
         //				}
         //			}
         //		}

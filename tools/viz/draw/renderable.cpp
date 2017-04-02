@@ -26,7 +26,7 @@ namespace viz {
             uniforms_.Apply(pipeline_.program());
             auto texture_bindings = std::array<gl::Texture::Binding, 16>();
             for (auto i = 0u; i < textures_.size(); ++i) {
-                texture_bindings[i] = textures_[i]->Bind(GL_TEXTURE_2D, i);
+                texture_bindings[i] = textures_[i]->Bind(i);
             }
             binding.Draw(primitive_);
             Context::Get().ModelMatrix(Matrix4::Identity());
