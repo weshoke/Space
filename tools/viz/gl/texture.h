@@ -40,11 +40,11 @@ namespace viz {
 
                 ~Binding() { Unbind(); }
                 template <class Image>
-                Binding &&Image(GLenum internal_format,
-                                GLenum format,
-                                GLsizei width,
-                                GLsizei height,
-                                const Image &image)
+                Binding &&ImageData(GLenum internal_format,
+                                    GLenum format,
+                                    GLsizei width,
+                                    GLsizei height,
+                                    const Image &image)
                 {
                     using T = typename Image::value_type;
                     glTexImage2D(target(),

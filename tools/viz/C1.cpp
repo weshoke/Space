@@ -30,6 +30,7 @@ class C1Viz {
     , tests_mask_(0xFF)
     , camera(viz::draw::Camera::Default())
     , trackball(viz::draw::Trackball(1.3f, 1.f, 10.f))
+    , surface(viz::draw::Surface::Create(4, 4))
     {
         Init();
     }
@@ -135,10 +136,8 @@ class C1Viz {
         camera = viz::draw::Camera(
             Vec3(0.f, 0.f, 6.f), Vec3(0.f, 0.f, -3.f), Vec3(0.f, 1.f, 0.f), 35.f, aspect);
 
-        // renderables_.emplace_back(viz::draw::Create(Vec3(1.f, 0.f, 0.f),
-        // viz::draw::Colors::red));
-        auto p1 = C3::Round::DualSphere(C3::EVec(-1.f, 0.f, 0.f), 1.f);
-        auto p2 = C3::Round::DualSphere(C3::EVec(1.f, 0.f, 0.f), -1.f);
+        // auto p1 = C3::Round::DualSphere(C3::EVec(-1.f, 0.f, 0.f), 1.f);
+        // auto p2 = C3::Round::DualSphere(C3::EVec(1.f, 0.f, 0.f), -1.f);
         //        renderables_.emplace_back(viz::draw::Create(p1, viz::draw::Colors::red));
         //         renderables_.emplace_back(viz::draw::Create(p2, viz::draw::Colors::red));
 
@@ -168,7 +167,7 @@ class C1Viz {
         auto tex = std::make_shared<viz::gl::Texture>();
         viz::gl::Error("tex");
         tex->Bind()
-            .Image(GL_R32F, GL_RED, 4, 4, image)
+            .ImageData(GL_R32F, GL_RED, 4, 4, image)
             .Parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST)
             .Parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -329,6 +328,7 @@ class C1Viz {
     std::unordered_map<uint32_t, std::vector<viz::draw::Renderable::Ref>> tests_;
     viz::draw::Camera camera;
     viz::draw::Trackball trackball;
+    viz::draw::Surface surface;
     viz::app::TrackballState trackball_state;
 };
 

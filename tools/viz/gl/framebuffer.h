@@ -28,7 +28,7 @@ namespace viz {
                 }
 
                 Binding &operator=(Binding &&) = delete;
-
+                ~Binding() { Unbind(); }
                 Binding &&Renderbuffer(GLenum attachment,
                                        const gl::Renderbuffer &renderbuffer,
                                        GLint level = 0)

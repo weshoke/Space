@@ -33,7 +33,7 @@ namespace viz {
                     glRenderbufferStorage(target(), internal_format, width, height);
                     return std::move(*this);
                 }
-
+                ~Binding() { Unbind(); }
                 GLenum target() const { return target_; }
                 GLuint id() const { return id_; }
                 operator GLuint() const { return id(); }

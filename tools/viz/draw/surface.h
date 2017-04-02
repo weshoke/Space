@@ -24,7 +24,7 @@ namespace viz {
             static Surface Create(uint32_t width, uint32_t height)
             {
                 auto color_buffer = std::make_shared<gl::Texture>();
-                color_buffer->Bind().Image(GL_RGBA8, GL_RGBA, width, height, GL_UNSIGNED_BYTE);
+                color_buffer->Bind().Image(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, width, height);
 
                 auto depth_buffer = gl::Renderbuffer();
                 depth_buffer.Bind().Storage(GL_DEPTH_COMPONENT, width, height);
