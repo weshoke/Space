@@ -123,7 +123,7 @@ namespace viz {
 
             GLenum target() const { return target_; }
             GLuint id() const { return id_; }
-            operator GLuint() { return id(); }
+            operator GLuint() const & { return id(); }
            private:
             void Gen() { glGenTextures(1, &id_); }
             void Delete()

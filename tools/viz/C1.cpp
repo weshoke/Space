@@ -11,6 +11,7 @@
 #include "draw/renderable.h"
 #include "draw/renderable_factory.h"
 #include "draw/shader_preprocessor.h"
+#include "draw/surface.h"
 #include "draw/trackball.h"
 #include "filesystem/path.h"
 #include "geom/primitives.h"
@@ -194,14 +195,14 @@ class C1Viz {
         ////				std::cout << "\n\n";
         //				auto count = 0;
         //				auto d = cylinder_distance(ray.Point(t), Vec3(0.f, 0.f, 0.f), Vec3(0.f, 0.f,
-        //1.f),
+        // 1.f),
         // 1.f, 0.1f);
         ////				std::cout << d << "\n";
         //				while(d > 1e-2f && count < 3)
         //				{
         //					t += d;
         //					d = cylinder_distance(ray.Point(t), Vec3(0.f, 0.f, 0.f), Vec3(0.f, 0.f,
-        //1.f),
+        // 1.f),
         // 1.f, 0.1f);
         ////					std::cout << d << "\n";
         //					++count;

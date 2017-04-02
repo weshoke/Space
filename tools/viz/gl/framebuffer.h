@@ -33,16 +33,14 @@ namespace viz {
                                        const gl::Renderbuffer &renderbuffer,
                                        GLint level = 0)
                 {
-                    glFramebufferRenderbuffer(target(),
-                                              attachment,
-                                              GL_RENDERBUFFER,
-                                              renderbuffer) return std::move(*this);
+                    glFramebufferRenderbuffer(target(), attachment, GL_RENDERBUFFER, renderbuffer);
+                    return std::move(*this);
                 }
 
                 Binding &&Texture(GLenum attachment, const gl::Texture &texture, GLint level = 0)
                 {
-                    glFramebufferTexture(
-                        target(), attachment, texture, level) return std::move(*this);
+                    glFramebufferTexture(target(), attachment, texture, level);
+                    return std::move(*this);
                 }
 
                 Binding &&DrawBuffers(const std::vector<GLenum> &buffers)

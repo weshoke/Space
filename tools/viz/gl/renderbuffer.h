@@ -30,13 +30,13 @@ namespace viz {
 
                 Binding &&Storage(GLenum internal_format, GLsizei width, GLsizei height)
                 {
-                    glRenderBufferStorage(target(), internal_format, width, height);
+                    glRenderbufferStorage(target(), internal_format, width, height);
                     return std::move(*this);
                 }
 
                 GLenum target() const { return target_; }
                 GLuint id() const { return id_; }
-                operator GLint() { return id(); }
+                operator GLuint() const { return id(); }
                private:
                 static void Bind(GLenum target, GLuint id) { glBindRenderbuffer(target, id); }
                 void Unbind()
@@ -64,9 +64,9 @@ namespace viz {
                 return *this;
             }
             ~Renderbuffer() { Delete(); }
-            Binding Bind(GLenum target) { return Binding(target, id()); }
+            Binding Bind() { return Binding(GL_RENDERBUFFER, id()); }
             GLuint id() const { return id_; }
-            operator GLuint() { return id(); }
+            operator GLuint() const & { return id(); }
            private:
             void Gen() { glGenRenderbuffers(1, &id_); }
             void Delete()
