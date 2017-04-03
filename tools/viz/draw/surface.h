@@ -16,7 +16,7 @@ namespace viz {
                     gl::Renderbuffer&& depth_buffer,
                     std::vector<Context::TextureRef>&& color_buffers)
             : size_(size)
-            , clear_color_(viz::draw::Colors::chromium)
+            , clear_color_(viz::draw::Colors::red)
             , framebuffer_(std::move(framebuffer))
             , depth_buffer_(std::move(depth_buffer))
             , color_buffers_(std::move(color_buffers))
@@ -26,7 +26,10 @@ namespace viz {
             static Surface Create(uint32_t width, uint32_t height)
             {
                 auto color_buffer = std::make_shared<gl::Texture>();
-                color_buffer->Bind().Image(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, width, height);
+                color_buffer->Bind()
+                    .Image(GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, width, height)
+                    .Parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+                    .Parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
                 auto depth_buffer = gl::Renderbuffer();
                 depth_buffer.Bind().Storage(GL_DEPTH_COMPONENT, width, height);
@@ -60,8 +63,9 @@ namespace viz {
             }
 
             uint32_t PixelCount() const { return size()[0] * size()[1]; }
+            Context::TextureRef ColorBuffer(uint32_t idx = 0) { return color_buffers_[idx]; }
             const std::array<uint32_t, 2>& size() const { return size_; }
-            uint32_t clear_color() const { return clear_color_; };
+            uint32_t clear_color() const { return clear_color_; }
            private:
             std::array<uint32_t, 2> size_;
             uint32_t clear_color_;

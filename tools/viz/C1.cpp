@@ -30,7 +30,7 @@ class C1Viz {
     , tests_mask_(0xFF)
     , camera(viz::draw::Camera::Default())
     , trackball(viz::draw::Trackball(1.3f, 1.f, 10.f))
-    , surface(viz::draw::Surface::Create(4, 4))
+    , surface(viz::draw::Surface::Create(512, 512))
     {
         Init();
     }
@@ -166,26 +166,31 @@ class C1Viz {
         }
         auto tex = std::make_shared<viz::gl::Texture>();
         tex->Bind()
-            .ImageData(GL_R32F, GL_RED, 4, 4, image)
+            .ImageData(GL_R32F, GL_RED, 16, 16, image)
             .Parameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST)
             .Parameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         auto mesh = viz::draw::Mesh();
         mesh.Bind().Vertex(qp).TexCoord(qtc).Index(qi);
-        tests_[0].emplace_back(viz::draw::Create(std::move(mesh),
-                                                 viz::draw::Colors::grey,
+        tests_[0].emplace_back(
+            viz::draw::Create(std::move(mesh), viz::draw::Colors::sky, "color", GL_TRIANGLES));
+
+        auto mesh2 = viz::draw::Mesh();
+        mesh2.Bind().Vertex(qp).TexCoord(qtc).Index(qi);
+        tests_[1].emplace_back(viz::draw::Create(std::move(mesh2),
+                                                 viz::draw::Colors::red,
                                                  "color-texture",
                                                  GL_TRIANGLES,
                                                  viz::draw::Matrix4::Identity(),
                                                  viz::draw::UniformMap().Add("tex", 0),
-                                                 {tex}));
-
-        surface.Draw(camera, []() {});
-        auto image2 = surface.Image();
-        for (auto pix : image2) {
-            std::cout << std::bitset<32>(pix) << " " << viz::draw::ColorComponents(pix) << "\n";
-        }
-        std::cout << std::bitset<32>(viz::draw::Colors::chromium) << "\n";
+                                                 {surface.ColorBuffer()}));
+        tests_mask_ ^= 0x1;
+        surface.Draw(camera, [this]() { tests_[0][0]->Draw(); });
+        //        auto image2 = surface.Image();
+        //        for (auto pix : image2) {
+        //            std::cout << std::bitset<32>(pix) << " " << viz::draw::ColorComponents(pix) <<
+        //            "\n";
+        //        }
 
         //		auto N = 2;
         //		for(auto j = -N; j <= N; ++j)
@@ -305,10 +310,13 @@ class C1Viz {
     void Scroll(int xoffset, int yoffset) { trackball.Move(camera, float(yoffset) * 0.2f); }
     void Draw()
     {
+        surface.Draw(camera, [this]() { tests_[0][0]->Draw(); });
+
         auto window_size = app().WindowSize();
         viz::draw::ClearWindowWithDepth(window_size, viz::draw::Colors::chromium);
 
-        viz::draw::Context::Get().ApplyCamera(camera);
+        auto ortho_camera = viz::draw::Camera::Ortho();
+        viz::draw::Context::Get().ApplyCamera(ortho_camera);
         viz::draw::Context::Get().ScreenSize(window_size);
 
         const auto draw_renderables = [](auto& renderables) {
